@@ -4,6 +4,107 @@
 -- Run this in Supabase SQL Editor
 -- ============================================
 
+-- ============================================
+-- STEP 0: PATCH ANY PRE-EXISTING TABLES
+-- Add missing columns before RLS policies run.
+-- Safe to run even if tables don't exist yet.
+-- ============================================
+DO $patch$
+BEGIN
+
+  -- teachers
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'teachers') THEN
+    ALTER TABLE teachers ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
+    ALTER TABLE teachers ADD COLUMN IF NOT EXISTS display_order INT NOT NULL DEFAULT 0;
+    ALTER TABLE teachers ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+  END IF;
+
+  -- health_categories
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'health_categories') THEN
+    ALTER TABLE health_categories ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
+    ALTER TABLE health_categories ADD COLUMN IF NOT EXISTS display_order INT NOT NULL DEFAULT 0;
+    ALTER TABLE health_categories ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+  END IF;
+
+  -- programs
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'programs') THEN
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS is_featured BOOLEAN NOT NULL DEFAULT false;
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS currency TEXT NOT NULL DEFAULT 'CHF';
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS stripe_price_id TEXT;
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS display_order INT NOT NULL DEFAULT 0;
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+  END IF;
+
+  -- events
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'events') THEN
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS is_published BOOLEAN NOT NULL DEFAULT false;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS is_featured BOOLEAN NOT NULL DEFAULT false;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS currency TEXT NOT NULL DEFAULT 'CHF';
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS stripe_price_id TEXT;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS current_attendees INT NOT NULL DEFAULT 0;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+  END IF;
+
+  -- pages
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'pages') THEN
+    ALTER TABLE pages ADD COLUMN IF NOT EXISTS is_published BOOLEAN NOT NULL DEFAULT false;
+    ALTER TABLE pages ADD COLUMN IF NOT EXISTS page_order INT NOT NULL DEFAULT 0;
+    ALTER TABLE pages ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+  END IF;
+
+  -- sections
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'sections') THEN
+    ALTER TABLE sections ADD COLUMN IF NOT EXISTS is_visible BOOLEAN NOT NULL DEFAULT true;
+    ALTER TABLE sections ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+  END IF;
+
+  -- testimonials
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'testimonials') THEN
+    ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS is_published BOOLEAN NOT NULL DEFAULT true;
+    ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS is_featured BOOLEAN NOT NULL DEFAULT false;
+    ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS display_order INT NOT NULL DEFAULT 0;
+  END IF;
+
+  -- membership_plans
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'membership_plans') THEN
+    ALTER TABLE membership_plans ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
+    ALTER TABLE membership_plans ADD COLUMN IF NOT EXISTS is_popular BOOLEAN NOT NULL DEFAULT false;
+    ALTER TABLE membership_plans ADD COLUMN IF NOT EXISTS display_order INT NOT NULL DEFAULT 0;
+    ALTER TABLE membership_plans ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+  END IF;
+
+  -- blog_posts
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'blog_posts') THEN
+    ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS is_published BOOLEAN NOT NULL DEFAULT false;
+    ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS is_featured BOOLEAN NOT NULL DEFAULT false;
+    ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS is_members_only BOOLEAN NOT NULL DEFAULT false;
+    ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+  END IF;
+
+  -- case_studies
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'case_studies') THEN
+    ALTER TABLE case_studies ADD COLUMN IF NOT EXISTS is_published BOOLEAN NOT NULL DEFAULT false;
+  END IF;
+
+  -- newsletter_subscribers
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'newsletter_subscribers') THEN
+    ALTER TABLE newsletter_subscribers ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
+  END IF;
+
+  -- event_registrations — payment fields
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'event_registrations') THEN
+    ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS payment_method TEXT DEFAULT 'stripe';
+    ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS amount NUMERIC(10,2);
+    ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS currency TEXT DEFAULT 'EUR';
+    ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS bank_transfer_reference TEXT;
+    ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS confirmed_by UUID;
+    ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS confirmed_at TIMESTAMPTZ;
+    ALTER TABLE event_registrations ADD COLUMN IF NOT EXISTS notes TEXT;
+  END IF;
+
+END $patch$;
+
 -- Enable UUID extension
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 

@@ -20,23 +20,15 @@ export default function AdminDashboard() {
 
   useEffect(() => {
     async function loadStats() {
-      const supabase = createClient();
-      const [users, posts, events, contacts, subscribers, members] = await Promise.all([
-        supabase.from('profiles').select('id', { count: 'exact', head: true }),
-        supabase.from('blog_posts').select('id', { count: 'exact', head: true }),
-        supabase.from('events').select('id', { count: 'exact', head: true }),
-        supabase.from('contact_submissions').select('id', { count: 'exact', head: true }).eq('status', 'new'),
-        supabase.from('newsletter_subscribers').select('id', { count: 'exact', head: true }).eq('is_active', true),
-        supabase.from('profiles').select('id', { count: 'exact', head: true }).eq('subscription_status', 'active'),
-      ]);
-      setStats({
-        users: users.count ?? 0,
-        blogPosts: posts.count ?? 0,
-        events: events.count ?? 0,
-        contacts: contacts.count ?? 0,
-        subscribers: subscribers.count ?? 0,
-        activeMembers: members.count ?? 0,
-      });
+      try {
+        const res = await fetch('/api/admin/stats');
+        if (res.ok) {
+          const data = await res.json();
+          setStats(data);
+        }
+      } catch {
+        // stats remain at 0
+      }
       setLoading(false);
     }
     loadStats();

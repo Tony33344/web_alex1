@@ -5,7 +5,6 @@ import { Trash2, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { createClient } from '@/lib/supabase/client';
 import type { NewsletterSubscriber } from '@/types/database';
 
 export default function AdminNewsletterPage() {
@@ -13,19 +12,15 @@ export default function AdminNewsletterPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-      const { data } = await supabase.from('newsletter_subscribers').select('*').order('subscribed_at', { ascending: false });
-      setSubs((data as NewsletterSubscriber[]) ?? []);
-      setLoading(false);
-    }
-    load();
+    fetch('/api/admin/newsletter')
+      .then(r => r.json())
+      .then(data => { setSubs(Array.isArray(data) ? data as NewsletterSubscriber[] : []); setLoading(false); })
+      .catch(() => setLoading(false));
   }, []);
 
   async function deleteSub(id: string) {
     if (!confirm('Remove this subscriber?')) return;
-    const supabase = createClient();
-    await supabase.from('newsletter_subscribers').delete().eq('id', id);
+    await fetch('/api/admin/newsletter', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
     setSubs(subs.filter(s => s.id !== id));
   }
 

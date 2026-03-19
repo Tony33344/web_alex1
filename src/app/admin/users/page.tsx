@@ -5,7 +5,6 @@ import { Shield, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { createClient } from '@/lib/supabase/client';
 import type { Profile } from '@/types/database';
 
 export default function AdminUsersPage() {
@@ -13,19 +12,15 @@ export default function AdminUsersPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-      const { data } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
-      setUsers((data as Profile[]) ?? []);
-      setLoading(false);
-    }
-    load();
+    fetch('/api/admin/users')
+      .then(r => r.json())
+      .then(data => { setUsers(Array.isArray(data) ? data as Profile[] : []); setLoading(false); })
+      .catch(() => setLoading(false));
   }, []);
 
   async function toggleAdmin(id: string, currentRole: string) {
     const newRole = currentRole === 'admin' ? 'user' : 'admin';
-    const supabase = createClient();
-    await supabase.from('profiles').update({ role: newRole }).eq('id', id);
+    await fetch('/api/admin/users', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, role: newRole }) });
     setUsers(users.map(u => u.id === id ? { ...u, role: newRole as Profile['role'] } : u));
   }
 

@@ -5,7 +5,6 @@ import { Mail, Eye, Archive, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { createClient } from '@/lib/supabase/client';
 import type { ContactSubmission } from '@/types/database';
 
 export default function AdminContactsPage() {
@@ -13,25 +12,20 @@ export default function AdminContactsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-      const { data } = await supabase.from('contact_submissions').select('*').order('created_at', { ascending: false });
-      setContacts((data as ContactSubmission[]) ?? []);
-      setLoading(false);
-    }
-    load();
+    fetch('/api/admin/contacts')
+      .then(r => r.json())
+      .then(data => { setContacts(Array.isArray(data) ? data as ContactSubmission[] : []); setLoading(false); })
+      .catch(() => setLoading(false));
   }, []);
 
   async function updateStatus(id: string, status: string) {
-    const supabase = createClient();
-    await supabase.from('contact_submissions').update({ status }).eq('id', id);
+    await fetch('/api/admin/contacts', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, status }) });
     setContacts(contacts.map(c => c.id === id ? { ...c, status: status as ContactSubmission['status'] } : c));
   }
 
   async function deleteContact(id: string) {
     if (!confirm('Delete this message?')) return;
-    const supabase = createClient();
-    await supabase.from('contact_submissions').delete().eq('id', id);
+    await fetch('/api/admin/contacts', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id }) });
     setContacts(contacts.filter(c => c.id !== id));
   }
 

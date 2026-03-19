@@ -50,6 +50,21 @@ export default function LoginPage() {
       return;
     }
 
+    // Check if user is admin → redirect to admin dashboard
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+      if (profile?.role === 'admin' || profile?.role === 'super_admin') {
+        router.push('/admin');
+        router.refresh();
+        return;
+      }
+    }
+
     router.push(redirect || `/${locale}/profile`);
     router.refresh();
   }

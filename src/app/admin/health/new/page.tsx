@@ -8,8 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { createClient } from '@/lib/supabase/client';
-
 export default function NewHealthCategoryPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
@@ -20,19 +18,18 @@ export default function NewHealthCategoryPage() {
     const fd = new FormData(e.currentTarget);
     const slug = (fd.get('name_en') as string).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-    const supabase = createClient();
-    const { error } = await supabase.from('health_categories').insert({
-      slug,
-      name_en: fd.get('name_en') as string,
-      name_de: fd.get('name_de') as string || null,
-      description_en: fd.get('description_en') as string || null,
-      long_content_en: fd.get('long_content_en') as string || null,
-      icon_name: fd.get('icon_name') as string || null,
-      cover_image_url: fd.get('cover_image_url') as string || null,
-      is_active: fd.get('is_active') === 'on',
+    const res = await fetch('/api/admin/data', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'health_categories', data: {
+        slug, name_en: fd.get('name_en'), name_de: fd.get('name_de') || null,
+        description_en: fd.get('description_en') || null,
+        long_content_en: fd.get('long_content_en') || null,
+        icon_name: fd.get('icon_name') || null,
+        cover_image_url: fd.get('cover_image_url') || null,
+        is_active: fd.get('is_active') === 'on',
+      }}),
     });
-
-    if (!error) router.push('/admin/health');
+    if (res.ok) router.push('/admin/health');
     setSaving(false);
   }
 

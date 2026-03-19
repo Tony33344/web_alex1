@@ -8,8 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { createClient } from '@/lib/supabase/client';
-
 export default function NewTestimonialPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
@@ -19,18 +17,17 @@ export default function NewTestimonialPage() {
     setSaving(true);
     const fd = new FormData(e.currentTarget);
 
-    const supabase = createClient();
-    const { error } = await supabase.from('testimonials').insert({
-      author_name: fd.get('author_name') as string,
-      author_title: fd.get('author_title') as string || null,
-      content_en: fd.get('content_en') as string,
-      content_de: fd.get('content_de') as string || null,
-      rating: parseInt(fd.get('rating') as string) || 5,
-      is_published: fd.get('is_published') === 'on',
-      is_featured: fd.get('is_featured') === 'on',
+    const res = await fetch('/api/admin/data', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'testimonials', data: {
+        author_name: fd.get('author_name'), author_title: fd.get('author_title') || null,
+        content_en: fd.get('content_en'), content_de: fd.get('content_de') || null,
+        rating: parseInt(fd.get('rating') as string) || 5,
+        is_published: fd.get('is_published') === 'on',
+        is_featured: fd.get('is_featured') === 'on',
+      }}),
     });
-
-    if (!error) router.push('/admin/testimonials');
+    if (res.ok) router.push('/admin/testimonials');
     setSaving(false);
   }
 

@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { createClient } from '@/lib/supabase/client';
 import type { Testimonial } from '@/types/database';
 
 export default function EditTestimonialPage() {
@@ -19,13 +18,9 @@ export default function EditTestimonialPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-      const { data } = await supabase.from('testimonials').select('*').eq('id', id).single();
-      setItem(data as Testimonial | null);
-      setLoading(false);
-    }
-    load();
+    fetch(`/api/admin/data?table=testimonials&id=${id}`)
+      .then(r => r.json()).then(d => { setItem(d as Testimonial | null); setLoading(false); })
+      .catch(() => setLoading(false));
   }, [id]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -33,19 +28,18 @@ export default function EditTestimonialPage() {
     setSaving(true);
     const fd = new FormData(e.currentTarget);
 
-    const supabase = createClient();
-    const { error } = await supabase.from('testimonials').update({
-      author_name: fd.get('author_name') as string,
-      author_title: fd.get('author_title') as string || null,
-      content_en: fd.get('content_en') as string,
-      content_de: fd.get('content_de') as string || null,
-      rating: parseInt(fd.get('rating') as string) || 5,
-      author_photo_url: fd.get('author_photo_url') as string || null,
-      is_published: fd.get('is_published') === 'on',
-      is_featured: fd.get('is_featured') === 'on',
-    }).eq('id', id);
-
-    if (!error) router.push('/admin/testimonials');
+    const res = await fetch('/api/admin/data', {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'testimonials', id, data: {
+        author_name: fd.get('author_name'), author_title: fd.get('author_title') || null,
+        content_en: fd.get('content_en'), content_de: fd.get('content_de') || null,
+        rating: parseInt(fd.get('rating') as string) || 5,
+        author_photo_url: fd.get('author_photo_url') || null,
+        is_published: fd.get('is_published') === 'on',
+        is_featured: fd.get('is_featured') === 'on',
+      }}),
+    });
+    if (res.ok) router.push('/admin/testimonials');
     setSaving(false);
   }
 

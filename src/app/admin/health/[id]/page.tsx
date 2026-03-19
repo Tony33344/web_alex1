@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { createClient } from '@/lib/supabase/client';
 import type { HealthCategory } from '@/types/database';
 
 export default function EditHealthCategoryPage() {
@@ -19,13 +18,9 @@ export default function EditHealthCategoryPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-      const { data } = await supabase.from('health_categories').select('*').eq('id', id).single();
-      setCategory(data as HealthCategory | null);
-      setLoading(false);
-    }
-    load();
+    fetch(`/api/admin/data?table=health_categories&id=${id}`)
+      .then(r => r.json()).then(d => { setCategory(d as HealthCategory | null); setLoading(false); })
+      .catch(() => setLoading(false));
   }, [id]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -33,18 +28,18 @@ export default function EditHealthCategoryPage() {
     setSaving(true);
     const fd = new FormData(e.currentTarget);
 
-    const supabase = createClient();
-    const { error } = await supabase.from('health_categories').update({
-      name_en: fd.get('name_en') as string,
-      name_de: fd.get('name_de') as string || null,
-      description_en: fd.get('description_en') as string || null,
-      long_content_en: fd.get('long_content_en') as string || null,
-      icon_name: fd.get('icon_name') as string || null,
-      cover_image_url: fd.get('cover_image_url') as string || null,
-      is_active: fd.get('is_active') === 'on',
-    }).eq('id', id);
-
-    if (!error) router.push('/admin/health');
+    const res = await fetch('/api/admin/data', {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'health_categories', id, data: {
+        name_en: fd.get('name_en'), name_de: fd.get('name_de') || null,
+        description_en: fd.get('description_en') || null,
+        long_content_en: fd.get('long_content_en') || null,
+        icon_name: fd.get('icon_name') || null,
+        cover_image_url: fd.get('cover_image_url') || null,
+        is_active: fd.get('is_active') === 'on',
+      }}),
+    });
+    if (res.ok) router.push('/admin/health');
     setSaving(false);
   }
 

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X, ChevronDown, User, LogOut, LayoutDashboard } from 'lucide-react';
 import { Logo } from './Logo';
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -62,10 +62,10 @@ export function Header({ locale }: HeaderProps) {
 
   return (
     <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 ${
         scrolled
           ? 'bg-background/95 shadow-sm backdrop-blur supports-[backdrop-filter]:bg-background/80'
-          : 'bg-transparent'
+          : 'bg-background'
       }`}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -302,6 +302,7 @@ function NavDropdown({
   active: boolean;
   items: { label: string; href: string }[];
 }) {
+  const router = useRouter();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -314,7 +315,7 @@ function NavDropdown({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="min-w-[200px]">
         {items.map((item) => (
-          <DropdownMenuItem key={item.href} onClick={() => (window.location.href = item.href)}>
+          <DropdownMenuItem key={item.href} onClick={() => router.push(item.href)}>
             {item.label}
           </DropdownMenuItem>
         ))}

@@ -1,58 +1,61 @@
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import { ArrowRight } from 'lucide-react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { getTeachers } from '@/lib/queries/teachers';
+import { getLocalizedField } from '@/lib/localization';
 
-export default function RoleTeachersPage() {
-  const t = useTranslations();
-
-  const teachers = [
-    {
-      name: 'Avalon',
-      slug: 'avalon',
-      title: 'Founder & Lead Teacher',
-      shortBio: 'With over 20 years of experience in holistic wellness, Avalon guides students toward their infinite potential through Sunyoga, meditation, and transformative coaching.',
-      specialties: ['Sunyoga', 'Meditation', 'Holistic Healing', 'Life Coaching'],
-    },
-    {
-      name: 'Akasha',
-      slug: 'akasha',
-      title: 'Senior Teacher',
-      shortBio: 'Akasha brings deep expertise in Acupresura and Yoga, helping students discover the healing power within themselves through ancient practices adapted for modern life.',
-      specialties: ['Acupresura', 'Yoga', 'Wellness Coaching', 'Nutrition'],
-    },
-  ];
+export default async function RoleTeachersPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations();
+  const teachers = await getTeachers();
 
   return (
     <>
       <PageHeader title={t('navigation.meetTeachers')} subtitle="Discover the wisdom and guidance of our expert Role Teachers" />
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="space-y-16">
-          {teachers.map((teacher, i) => (
-            <div key={teacher.slug} className={`grid items-center gap-12 lg:grid-cols-2 ${i % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
-              <div className={`aspect-[4/5] overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 ${i % 2 === 1 ? 'lg:order-2' : ''}`} />
-              <div className="space-y-6">
-                <div>
-                  <h2 className="text-3xl font-bold">{teacher.name}</h2>
-                  <p className="mt-1 text-lg text-primary">{teacher.title}</p>
+        {teachers.length === 0 ? (
+          <p className="text-center text-muted-foreground">No teachers found. Content will appear once added via the admin dashboard.</p>
+        ) : (
+          <div className="space-y-16">
+            {teachers.map((teacher, i) => (
+              <div key={teacher.slug} className={`grid items-center gap-12 lg:grid-cols-2 ${i % 2 === 1 ? 'lg:flex-row-reverse' : ''}`}>
+                <div className={`aspect-[4/5] overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10 ${i % 2 === 1 ? 'lg:order-2' : ''}`}>
+                  {teacher.photo_url && (
+                    <img src={teacher.photo_url} alt={teacher.name} className="h-full w-full object-cover" />
+                  )}
                 </div>
-                <p className="text-muted-foreground leading-relaxed">{teacher.shortBio}</p>
-                <div className="flex flex-wrap gap-2">
-                  {teacher.specialties.map((s) => (
-                    <Badge key={s} variant="secondary">{s}</Badge>
-                  ))}
+                <div className="space-y-6">
+                  <div>
+                    <h2 className="text-3xl font-bold">{teacher.name}</h2>
+                    <p className="mt-1 text-lg text-primary">
+                      {getLocalizedField(teacher, 'title', locale) || 'Role Teacher'}
+                    </p>
+                  </div>
+                  <p className="text-muted-foreground leading-relaxed">
+                    {getLocalizedField(teacher, 'short_bio', locale) || getLocalizedField(teacher, 'bio', locale) || ''}
+                  </p>
+                  {teacher.specialties?.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {teacher.specialties.map((s) => (
+                        <Badge key={s} variant="secondary">{s}</Badge>
+                      ))}
+                    </div>
+                  )}
+                  <Link href={`/${locale}/role-teachers/${teacher.slug}`}>
+                    <Button className="gap-2">
+                      {t('common.learnMore')}
+                      <ArrowRight className="h-4 w-4" />
+                    </Button>
+                  </Link>
                 </div>
-                <Button className="gap-2">
-                  {t('common.learnMore')}
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
     </>
   );

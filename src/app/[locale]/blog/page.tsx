@@ -1,65 +1,92 @@
-import { useTranslations } from 'next-intl';
+import { getTranslations } from 'next-intl/server';
 import { BookOpen, Clock } from 'lucide-react';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { getBlogPosts } from '@/lib/queries/blog';
+import { getLocalizedField } from '@/lib/localization';
 
-export default function BlogPage() {
-  const t = useTranslations();
+export default async function BlogPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
+  const t = await getTranslations();
+  const { posts } = await getBlogPosts({ limit: 20 });
 
-  const placeholderPosts = [
-    { id: '1', title: 'The Power of Morning Rituals for Holistic Health', excerpt: 'Discover how simple morning practices can transform your entire day and improve your overall wellbeing.', category: 'wellness', readTime: 5, date: 'Jan 15, 2026', featured: true },
-    { id: '2', title: 'Introduction to Sunyoga: Harnessing Solar Energy', excerpt: 'Learn about the ancient practice of Sunyoga and how it can revitalize your body and spirit.', category: 'health', readTime: 7, date: 'Jan 10, 2026', featured: false },
-    { id: '3', title: 'Nutrition for the Mind: Foods That Boost Meditation', excerpt: 'What you eat impacts your ability to meditate. Here are the best foods for a calm, focused mind.', category: 'nutrition', readTime: 4, date: 'Jan 5, 2026', featured: false },
-    { id: '4', title: 'Coach Training: What to Expect in Your First Month', excerpt: 'A comprehensive guide for new coach training participants on what lies ahead.', category: 'training', readTime: 6, date: 'Dec 28, 2025', featured: false },
-    { id: '5', title: 'Acupresura for Stress Relief: A Beginners Guide', excerpt: 'Simple acupresura techniques you can practice at home to reduce stress and anxiety.', category: 'health', readTime: 5, date: 'Dec 20, 2025', featured: false },
-    { id: '6', title: 'Building a Daily Yoga Practice at Home', excerpt: 'Tips and sequences for establishing a sustainable home yoga practice.', category: 'wellness', readTime: 8, date: 'Dec 15, 2025', featured: false },
-  ];
+  const featuredPosts = posts.filter((p) => p.is_featured);
+  const regularPosts = posts.filter((p) => !p.is_featured);
 
   return (
     <>
       <PageHeader title={t('navigation.blog')} subtitle="Insights, stories, and wellness tips from our teachers" />
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        {/* Featured Post */}
-        {placeholderPosts.filter(p => p.featured).map((post) => (
-          <Card key={post.id} className="mb-12 overflow-hidden lg:flex">
-            <div className="aspect-video bg-gradient-to-br from-primary/10 to-secondary/10 lg:aspect-auto lg:w-1/2" />
-            <div className="flex flex-col justify-center p-8 lg:w-1/2">
-              <Badge variant="secondary" className="w-fit mb-3">Featured</Badge>
-              <h2 className="text-2xl font-bold">{post.title}</h2>
-              <p className="mt-3 text-muted-foreground">{post.excerpt}</p>
-              <div className="mt-4 flex items-center gap-3 text-xs text-muted-foreground">
-                <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{post.readTime} min read</span>
-                <span>{post.date}</span>
-              </div>
-              <Button className="mt-6 w-fit">{t('common.readMore')}</Button>
-            </div>
-          </Card>
-        ))}
+        {posts.length === 0 ? (
+          <p className="text-center text-muted-foreground">No blog posts yet. Check back soon!</p>
+        ) : (
+          <>
+            {featuredPosts.map((post) => {
+              const title = getLocalizedField(post, 'title', locale) || post.title_en;
+              const excerpt = getLocalizedField(post, 'excerpt', locale) || '';
+              const date = post.published_at ? new Date(post.published_at).toLocaleDateString(locale, { dateStyle: 'medium' }) : '';
 
-        {/* Grid */}
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {placeholderPosts.filter(p => !p.featured).map((post) => (
-            <Card key={post.id} className="group overflow-hidden transition-shadow hover:shadow-lg">
-              <div className="aspect-video bg-gradient-to-br from-primary/5 to-muted" />
-              <CardHeader>
-                <Badge variant="outline" className="w-fit text-xs capitalize">{post.category}</Badge>
-                <CardTitle className="line-clamp-2 text-lg group-hover:text-primary transition-colors">
-                  {post.title}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="line-clamp-2 text-sm text-muted-foreground">{post.excerpt}</p>
-                <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1"><BookOpen className="h-3.5 w-3.5" />{post.readTime} min read</span>
-                  <span>{post.date}</span>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+              return (
+                <Link key={post.id} href={`/${locale}/blog/${post.slug}`}>
+                  <Card className="mb-12 overflow-hidden lg:flex group">
+                    <div className="aspect-video bg-gradient-to-br from-primary/10 to-secondary/10 lg:aspect-auto lg:w-1/2">
+                      {post.featured_image_url && (
+                        <img src={post.featured_image_url} alt={title} className="h-full w-full object-cover" />
+                      )}
+                    </div>
+                    <div className="flex flex-col justify-center p-8 lg:w-1/2">
+                      <Badge variant="secondary" className="w-fit mb-3">Featured</Badge>
+                      <h2 className="text-2xl font-bold group-hover:text-primary transition-colors">{title}</h2>
+                      <p className="mt-3 text-muted-foreground">{excerpt}</p>
+                      <div className="mt-4 flex items-center gap-3 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{post.reading_time_minutes} min read</span>
+                        <span>{date}</span>
+                      </div>
+                      <Button className="mt-6 w-fit">{t('common.readMore')}</Button>
+                    </div>
+                  </Card>
+                </Link>
+              );
+            })}
+
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {regularPosts.map((post) => {
+                const title = getLocalizedField(post, 'title', locale) || post.title_en;
+                const excerpt = getLocalizedField(post, 'excerpt', locale) || '';
+                const date = post.published_at ? new Date(post.published_at).toLocaleDateString(locale, { dateStyle: 'medium' }) : '';
+
+                return (
+                  <Link key={post.id} href={`/${locale}/blog/${post.slug}`}>
+                    <Card className="group h-full overflow-hidden transition-shadow hover:shadow-lg">
+                      <div className="aspect-video bg-gradient-to-br from-primary/5 to-muted">
+                        {post.featured_image_url && (
+                          <img src={post.featured_image_url} alt={title} className="h-full w-full object-cover" />
+                        )}
+                      </div>
+                      <CardHeader>
+                        {post.category && <Badge variant="outline" className="w-fit text-xs capitalize">{post.category}</Badge>}
+                        <CardTitle className="line-clamp-2 text-lg group-hover:text-primary transition-colors">
+                          {title}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="line-clamp-2 text-sm text-muted-foreground">{excerpt}</p>
+                        <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
+                          <span className="flex items-center gap-1"><BookOpen className="h-3.5 w-3.5" />{post.reading_time_minutes} min read</span>
+                          <span>{date}</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                );
+              })}
+            </div>
+          </>
+        )}
       </section>
     </>
   );

@@ -65,7 +65,8 @@ export async function POST(request: Request) {
     });
 
     if (error) {
-      return NextResponse.json({ error: 'Registration failed' }, { status: 500 });
+      console.error('Event registration insert error:', error);
+      return NextResponse.json({ error: 'Registration failed: ' + error.message }, { status: 500 });
     }
 
     if (!isFull) {

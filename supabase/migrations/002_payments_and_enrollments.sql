@@ -791,9 +791,9 @@ INSERT INTO site_settings (key, value, description) VALUES
   ('social_linkedin', '""', 'LinkedIn URL'),
   ('social_youtube', '""', 'YouTube URL'),
   ('bank_company', '"AMS4EVER AG"', 'Bank company name'),
-  ('bank_iban', '""', 'Bank IBAN'),
-  ('bank_bic', '""', 'Bank BIC/SWIFT'),
-  ('bank_name', '""', 'Bank name'),
+  ('bank_iban', '"CH93 0076 2011 6238 5295 7"', 'Bank IBAN - mock data for AMS4EVER AG'),
+  ('bank_bic', '"AEAGCH22"', 'Bank BIC/SWIFT - mock data for AMS4EVER AG'),
+  ('bank_name', '"UBS Switzerland AG"', 'Bank name'),
   ('bank_transfer_enabled', 'true', 'Enable bank transfer as payment method'),
-  ('bank_account_holder', '"Infinity Role Teachers"', 'Account holder name for bank transfers')
+  ('bank_account_holder', '"AMS4EVER AG"', 'Account holder name for bank transfers')
 ON CONFLICT (key) DO NOTHING;

@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import { Loader2, User as UserIcon, Settings, Calendar, CreditCard } from 'lucide-react';
+import { Loader2, User as UserIcon, Settings, Calendar, CreditCard, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -27,6 +27,8 @@ export default function ProfilePage() {
 
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
+  const [registrations, setRegistrations] = useState<Array<{ id: string; status: string; payment_status: string; created_at: string; events: { title_en: string; start_date: string; location: string | null; is_online: boolean } | null }>>([]);
+  const [regsLoading, setRegsLoading] = useState(false);
 
   const {
     register,
@@ -52,6 +54,22 @@ export default function ProfilePage() {
       router.push(`/${locale}/login`);
     }
   }, [user, userLoading, router, locale]);
+
+  useEffect(() => {
+    if (!user) return;
+    setRegsLoading(true);
+    const supabase = createClient();
+    supabase
+      .from('event_registrations')
+      .select('id, status, payment_status, created_at, events(title_en, start_date, location, is_online)')
+      .eq('user_id', user.id)
+      .order('created_at', { ascending: false })
+      .limit(20)
+      .then(({ data }) => {
+        setRegistrations((data as unknown as typeof registrations) ?? []);
+        setRegsLoading(false);
+      });
+  }, [user]);
 
   async function onSubmit(data: ProfileFormData) {
     setSaving(true);
@@ -198,7 +216,43 @@ export default function ProfilePage() {
               <CardTitle>My Event Registrations</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-sm text-muted-foreground">Your upcoming and past event registrations will appear here.</p>
+              {regsLoading ? (
+                <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
+              ) : registrations.length === 0 ? (
+                <div className="py-8 text-center">
+                  <Calendar className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
+                  <p className="text-sm text-muted-foreground">No event registrations yet.</p>
+                  <Button variant="outline" size="sm" className="mt-4" onClick={() => router.push(`/${locale}/events`)}>Browse Events</Button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {registrations.map((reg) => (
+                    <div key={reg.id} className="flex items-start justify-between rounded-lg border p-4">
+                      <div className="space-y-1">
+                        <p className="font-medium">{reg.events?.title_en ?? 'Event'}</p>
+                        <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
+                          {reg.events?.start_date && (
+                            <span className="flex items-center gap-1">
+                              <Calendar className="h-3 w-3" />
+                              {new Date(reg.events.start_date).toLocaleDateString()}
+                            </span>
+                          )}
+                          {reg.events && (
+                            <span className="flex items-center gap-1">
+                              <MapPin className="h-3 w-3" />
+                              {reg.events.is_online ? 'Online' : reg.events.location ?? 'TBA'}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-end gap-1">
+                        <Badge variant={reg.status === 'registered' || reg.status === 'confirmed' ? 'default' : 'secondary'} className="text-xs">{reg.status}</Badge>
+                        <Badge variant={reg.payment_status === 'paid' || reg.payment_status === 'free' ? 'outline' : 'secondary'} className="text-xs">{reg.payment_status}</Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

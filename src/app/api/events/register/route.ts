@@ -5,6 +5,12 @@ import { createCheckoutSession, createOrRetrieveCustomer } from '@/lib/stripe/he
 
 export async function POST(request: Request) {
   try {
+    // Check for required env vars
+    if (!process.env.NEXT_SUPABASE_SERVICE_KEY && !process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      console.error('Missing SUPABASE_SERVICE_ROLE_KEY env var');
+      return NextResponse.json({ error: 'Server configuration error: Missing service key' }, { status: 500 });
+    }
+
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 

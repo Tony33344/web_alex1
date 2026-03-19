@@ -40,6 +40,7 @@ export default function EditProgramPage() {
       description_en: fd.get('description_en') as string || null,
       duration: fd.get('duration') as string || null,
       price: parseFloat(fd.get('price') as string) || null,
+      stripe_price_id: fd.get('stripe_price_id') as string || null,
       max_participants: parseInt(fd.get('max_participants') as string) || null,
       image_url: fd.get('image_url') as string || null,
       what_you_learn: (fd.get('what_you_learn') as string).split('\n').map(s => s.trim()).filter(Boolean),
@@ -75,18 +76,24 @@ export default function EditProgramPage() {
               <Label htmlFor="description_en">Description (English)</Label>
               <Textarea id="description_en" name="description_en" rows={4} defaultValue={program.description_en || ''} />
             </div>
-            <div className="grid gap-4 sm:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="duration">Duration</Label>
                 <Input id="duration" name="duration" defaultValue={program.duration || ''} placeholder="e.g. 6 months" />
               </div>
               <div className="space-y-2">
+                <Label htmlFor="max_participants">Max Participants</Label>
+                <Input id="max_participants" name="max_participants" type="number" defaultValue={program.max_participants || ''} />
+              </div>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
                 <Label htmlFor="price">Price (CHF)</Label>
                 <Input id="price" name="price" type="number" step="0.01" defaultValue={program.price || ''} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="max_participants">Max Participants</Label>
-                <Input id="max_participants" name="max_participants" type="number" defaultValue={program.max_participants || ''} />
+                <Label htmlFor="stripe_price_id">Stripe Price ID</Label>
+                <Input id="stripe_price_id" name="stripe_price_id" placeholder="price_..." defaultValue={program.stripe_price_id || ''} />
               </div>
             </div>
             <div className="space-y-2">

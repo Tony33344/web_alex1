@@ -67,12 +67,19 @@ export function CheckoutDialog({ open, onOpenChange, title, price, currency, onC
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Bank Transfer Details</DialogTitle>
+            <DialogTitle className="flex items-center gap-2 text-green-600">
+              <CheckCircle className="h-5 w-5" />
+              Registration Confirmed
+            </DialogTitle>
             <DialogDescription>
-              Complete the transfer using the details below. Your spot is reserved for 48 hours.
+              Your spot is reserved! Complete the bank transfer within 48 hours to confirm.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
+            <div className="rounded-lg bg-green-50 p-3 text-sm text-green-800 dark:bg-green-900/20 dark:text-green-200">
+              <p className="font-medium">✓ Successfully registered</p>
+              <p className="text-xs opacity-90">Reference: {bankReference}</p>
+            </div>
             <BankTransferQR amount={price} currency={currency} reference={bankReference} />
             <div className="rounded-lg border p-3 space-y-2 text-sm">
               <div className="flex justify-between">

@@ -12,15 +12,31 @@
 DO $patch$
 BEGIN
 
-  -- teachers
+  -- teachers (full patch)
   IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'teachers') THEN
+    ALTER TABLE teachers ADD COLUMN IF NOT EXISTS slug TEXT UNIQUE;
+    ALTER TABLE teachers ADD COLUMN IF NOT EXISTS name TEXT;
+    ALTER TABLE teachers ADD COLUMN IF NOT EXISTS title_en TEXT;
+    ALTER TABLE teachers ADD COLUMN IF NOT EXISTS bio_en TEXT;
+    ALTER TABLE teachers ADD COLUMN IF NOT EXISTS short_bio_en TEXT;
+    ALTER TABLE teachers ADD COLUMN IF NOT EXISTS photo_url TEXT;
+    ALTER TABLE teachers ADD COLUMN IF NOT EXISTS cover_image_url TEXT;
+    ALTER TABLE teachers ADD COLUMN IF NOT EXISTS specialties TEXT[] NOT NULL DEFAULT '{}';
+    ALTER TABLE teachers ADD COLUMN IF NOT EXISTS social_links JSONB NOT NULL DEFAULT '{}';
     ALTER TABLE teachers ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
     ALTER TABLE teachers ADD COLUMN IF NOT EXISTS display_order INT NOT NULL DEFAULT 0;
     ALTER TABLE teachers ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
   END IF;
 
-  -- health_categories
+  -- health_categories (full patch)
   IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'health_categories') THEN
+    ALTER TABLE health_categories ADD COLUMN IF NOT EXISTS slug TEXT UNIQUE;
+    ALTER TABLE health_categories ADD COLUMN IF NOT EXISTS name_en TEXT;
+    ALTER TABLE health_categories ADD COLUMN IF NOT EXISTS description_en TEXT;
+    ALTER TABLE health_categories ADD COLUMN IF NOT EXISTS long_content_en TEXT;
+    ALTER TABLE health_categories ADD COLUMN IF NOT EXISTS icon_name TEXT;
+    ALTER TABLE health_categories ADD COLUMN IF NOT EXISTS image_url TEXT;
+    ALTER TABLE health_categories ADD COLUMN IF NOT EXISTS cover_image_url TEXT;
     ALTER TABLE health_categories ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
     ALTER TABLE health_categories ADD COLUMN IF NOT EXISTS display_order INT NOT NULL DEFAULT 0;
     ALTER TABLE health_categories ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
@@ -28,26 +44,62 @@ BEGIN
 
   -- programs
   IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'programs') THEN
-    ALTER TABLE programs ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
-    ALTER TABLE programs ADD COLUMN IF NOT EXISTS is_featured BOOLEAN NOT NULL DEFAULT false;
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS slug TEXT UNIQUE;
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS name_en TEXT;
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS description_en TEXT;
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS long_content_en TEXT;
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS duration TEXT;
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS price DECIMAL(10,2);
     ALTER TABLE programs ADD COLUMN IF NOT EXISTS currency TEXT NOT NULL DEFAULT 'CHF';
     ALTER TABLE programs ADD COLUMN IF NOT EXISTS stripe_price_id TEXT;
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS max_participants INT;
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS image_url TEXT;
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS cover_image_url TEXT;
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS is_featured BOOLEAN NOT NULL DEFAULT false;
     ALTER TABLE programs ADD COLUMN IF NOT EXISTS display_order INT NOT NULL DEFAULT 0;
     ALTER TABLE programs ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS teacher_id UUID;
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS prerequisites TEXT[] NOT NULL DEFAULT '{}';
+    ALTER TABLE programs ADD COLUMN IF NOT EXISTS what_you_learn TEXT[] NOT NULL DEFAULT '{}';
   END IF;
 
-  -- events
+  -- events (full patch)
   IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'events') THEN
-    ALTER TABLE events ADD COLUMN IF NOT EXISTS is_published BOOLEAN NOT NULL DEFAULT false;
-    ALTER TABLE events ADD COLUMN IF NOT EXISTS is_featured BOOLEAN NOT NULL DEFAULT false;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS slug TEXT UNIQUE;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS title_en TEXT;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS description_en TEXT;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS long_content_en TEXT;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS start_date TIMESTAMPTZ;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS end_date TIMESTAMPTZ;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS location TEXT;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS location_address TEXT;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS location_map_url TEXT;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS is_online BOOLEAN NOT NULL DEFAULT false;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS online_link TEXT;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS price DECIMAL(10,2);
     ALTER TABLE events ADD COLUMN IF NOT EXISTS currency TEXT NOT NULL DEFAULT 'CHF';
     ALTER TABLE events ADD COLUMN IF NOT EXISTS stripe_price_id TEXT;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS max_attendees INT;
     ALTER TABLE events ADD COLUMN IF NOT EXISTS current_attendees INT NOT NULL DEFAULT 0;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS image_url TEXT;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS cover_image_url TEXT;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS is_published BOOLEAN NOT NULL DEFAULT false;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS is_featured BOOLEAN NOT NULL DEFAULT false;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS registration_deadline TIMESTAMPTZ;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS tags TEXT[] NOT NULL DEFAULT '{}';
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS teacher_id UUID;
+    ALTER TABLE events ADD COLUMN IF NOT EXISTS program_id UUID;
     ALTER TABLE events ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
   END IF;
 
-  -- pages
+  -- pages (full patch)
   IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'pages') THEN
+    ALTER TABLE pages ADD COLUMN IF NOT EXISTS slug TEXT UNIQUE;
+    ALTER TABLE pages ADD COLUMN IF NOT EXISTS title_en TEXT;
+    ALTER TABLE pages ADD COLUMN IF NOT EXISTS content_en TEXT;
+    ALTER TABLE pages ADD COLUMN IF NOT EXISTS meta_description_en TEXT;
+    ALTER TABLE pages ADD COLUMN IF NOT EXISTS hero_image_url TEXT;
     ALTER TABLE pages ADD COLUMN IF NOT EXISTS is_published BOOLEAN NOT NULL DEFAULT false;
     ALTER TABLE pages ADD COLUMN IF NOT EXISTS page_order INT NOT NULL DEFAULT 0;
     ALTER TABLE pages ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
@@ -59,32 +111,64 @@ BEGIN
     ALTER TABLE sections ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
   END IF;
 
-  -- testimonials
+  -- testimonials (full patch)
   IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'testimonials') THEN
-    ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS is_published BOOLEAN NOT NULL DEFAULT true;
+    ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS author_name TEXT;
+    ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS author_title TEXT;
+    ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS author_photo_url TEXT;
+    ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS teacher_id UUID;
+    ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS content_en TEXT;
+    ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS rating INT;
     ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS is_featured BOOLEAN NOT NULL DEFAULT false;
+    ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS is_published BOOLEAN NOT NULL DEFAULT true;
     ALTER TABLE testimonials ADD COLUMN IF NOT EXISTS display_order INT NOT NULL DEFAULT 0;
   END IF;
 
-  -- membership_plans
+  -- membership_plans (full patch)
   IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'membership_plans') THEN
+    ALTER TABLE membership_plans ADD COLUMN IF NOT EXISTS name_en TEXT;
+    ALTER TABLE membership_plans ADD COLUMN IF NOT EXISTS description_en TEXT;
+    ALTER TABLE membership_plans ADD COLUMN IF NOT EXISTS plan_type TEXT;
+    ALTER TABLE membership_plans ADD COLUMN IF NOT EXISTS price DECIMAL(10,2);
+    ALTER TABLE membership_plans ADD COLUMN IF NOT EXISTS currency TEXT NOT NULL DEFAULT 'CHF';
+    ALTER TABLE membership_plans ADD COLUMN IF NOT EXISTS stripe_price_id TEXT;
+    ALTER TABLE membership_plans ADD COLUMN IF NOT EXISTS features TEXT[] NOT NULL DEFAULT '{}';
     ALTER TABLE membership_plans ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
     ALTER TABLE membership_plans ADD COLUMN IF NOT EXISTS is_popular BOOLEAN NOT NULL DEFAULT false;
     ALTER TABLE membership_plans ADD COLUMN IF NOT EXISTS display_order INT NOT NULL DEFAULT 0;
     ALTER TABLE membership_plans ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
   END IF;
 
-  -- blog_posts
+  -- blog_posts (full patch)
   IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'blog_posts') THEN
+    ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS slug TEXT UNIQUE;
+    ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS title_en TEXT;
+    ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS excerpt_en TEXT;
+    ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS content_en TEXT;
+    ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS featured_image_url TEXT;
+    ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS author_id UUID;
+    ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS teacher_id UUID;
+    ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS category TEXT;
+    ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS tags TEXT[] NOT NULL DEFAULT '{}';
     ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS is_published BOOLEAN NOT NULL DEFAULT false;
     ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS is_featured BOOLEAN NOT NULL DEFAULT false;
     ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS is_members_only BOOLEAN NOT NULL DEFAULT false;
+    ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS published_at TIMESTAMPTZ;
+    ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS views_count INT NOT NULL DEFAULT 0;
+    ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS reading_time_minutes INT NOT NULL DEFAULT 5;
     ALTER TABLE blog_posts ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW();
   END IF;
 
-  -- case_studies
+  -- case_studies (full patch)
   IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'case_studies') THEN
+    ALTER TABLE case_studies ADD COLUMN IF NOT EXISTS slug TEXT UNIQUE;
+    ALTER TABLE case_studies ADD COLUMN IF NOT EXISTS title_en TEXT;
+    ALTER TABLE case_studies ADD COLUMN IF NOT EXISTS content_en TEXT;
+    ALTER TABLE case_studies ADD COLUMN IF NOT EXISTS image_url TEXT;
+    ALTER TABLE case_studies ADD COLUMN IF NOT EXISTS client_name TEXT;
+    ALTER TABLE case_studies ADD COLUMN IF NOT EXISTS result_summary_en TEXT;
     ALTER TABLE case_studies ADD COLUMN IF NOT EXISTS is_published BOOLEAN NOT NULL DEFAULT false;
+    ALTER TABLE case_studies ADD COLUMN IF NOT EXISTS display_order INT NOT NULL DEFAULT 0;
   END IF;
 
   -- newsletter_subscribers

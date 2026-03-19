@@ -6,7 +6,6 @@ import { Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { createClient } from '@/lib/supabase/client';
 import type { HealthCategory } from '@/types/database';
 
 export default function AdminHealthPage() {
@@ -14,25 +13,19 @@ export default function AdminHealthPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-      const { data } = await supabase.from('health_categories').select('*').order('display_order');
-      setItems((data as HealthCategory[]) ?? []);
-      setLoading(false);
-    }
-    load();
+    fetch('/api/admin/data?table=health_categories&orderBy=display_order&orderDir=asc')
+      .then(r => r.json()).then(d => { setItems(Array.isArray(d) ? d : []); setLoading(false); })
+      .catch(() => setLoading(false));
   }, []);
 
   async function toggleActive(id: string, current: boolean) {
-    const supabase = createClient();
-    await supabase.from('health_categories').update({ is_active: !current }).eq('id', id);
+    await fetch('/api/admin/data', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ table: 'health_categories', id, data: { is_active: !current } }) });
     setItems(items.map(i => i.id === id ? { ...i, is_active: !current } : i));
   }
 
   async function deleteItem(id: string) {
     if (!confirm('Delete this health category?')) return;
-    const supabase = createClient();
-    await supabase.from('health_categories').delete().eq('id', id);
+    await fetch('/api/admin/data', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ table: 'health_categories', id }) });
     setItems(items.filter(i => i.id !== id));
   }
 

@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { createClient } from '@/lib/supabase/client';
 import { BLOG_CATEGORIES } from '@/lib/constants';
 import type { BlogPost } from '@/types/database';
 
@@ -20,13 +19,9 @@ export default function EditBlogPostPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-      const { data } = await supabase.from('blog_posts').select('*').eq('id', id).single();
-      setPost(data as BlogPost | null);
-      setLoading(false);
-    }
-    load();
+    fetch(`/api/admin/data?table=blog_posts&id=${id}`)
+      .then(r => r.json()).then(d => { setPost(d as BlogPost | null); setLoading(false); })
+      .catch(() => setLoading(false));
   }, [id]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -34,22 +29,20 @@ export default function EditBlogPostPage() {
     setSaving(true);
     const fd = new FormData(e.currentTarget);
 
-    const supabase = createClient();
-    const { error } = await supabase.from('blog_posts').update({
-      title_en: fd.get('title_en') as string,
-      title_de: fd.get('title_de') as string || null,
-      excerpt_en: fd.get('excerpt_en') as string || null,
-      content_en: fd.get('content_en') as string || null,
-      category: fd.get('category') as string || null,
-      featured_image_url: fd.get('featured_image_url') as string || null,
-      is_published: fd.get('is_published') === 'on',
-      is_members_only: fd.get('is_members_only') === 'on',
-      is_featured: fd.get('is_featured') === 'on',
-      reading_time_minutes: parseInt(fd.get('reading_time') as string) || 5,
-      published_at: fd.get('is_published') === 'on' && !post?.published_at ? new Date().toISOString() : post?.published_at,
-    }).eq('id', id);
-
-    if (!error) router.push('/admin/blog');
+    const res = await fetch('/api/admin/data', {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'blog_posts', id, data: {
+        title_en: fd.get('title_en'), title_de: fd.get('title_de') || null,
+        excerpt_en: fd.get('excerpt_en') || null, content_en: fd.get('content_en') || null,
+        category: fd.get('category') || null, featured_image_url: fd.get('featured_image_url') || null,
+        is_published: fd.get('is_published') === 'on',
+        is_members_only: fd.get('is_members_only') === 'on',
+        is_featured: fd.get('is_featured') === 'on',
+        reading_time_minutes: parseInt(fd.get('reading_time') as string) || 5,
+        published_at: fd.get('is_published') === 'on' && !post?.published_at ? new Date().toISOString() : post?.published_at,
+      }}),
+    });
+    if (res.ok) router.push('/admin/blog');
     setSaving(false);
   }
 

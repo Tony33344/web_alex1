@@ -6,8 +6,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { createClient } from '@/lib/supabase/client';
-
 interface Setting {
   id: string;
   key: string;
@@ -22,20 +20,20 @@ export default function AdminSettingsPage() {
   const [message, setMessage] = useState('');
 
   useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-      const { data } = await supabase.from('site_settings').select('*').order('key');
-      setSettings(
-        (data ?? []).map((s: Record<string, unknown>) => ({
-          id: s.id as string,
-          key: s.key as string,
-          value: typeof s.value === 'string' ? s.value : JSON.stringify(s.value).replace(/^"|"$/g, ''),
-          description: s.description as string | null,
-        }))
-      );
-      setLoading(false);
-    }
-    load();
+    fetch('/api/admin/settings')
+      .then(r => r.json())
+      .then(data => {
+        setSettings(
+          (Array.isArray(data) ? data : []).map((s: Record<string, unknown>) => ({
+            id: s.id as string,
+            key: s.key as string,
+            value: typeof s.value === 'string' ? s.value.replace(/^"|"$/g, '') : JSON.stringify(s.value).replace(/^"|"$/g, ''),
+            description: s.description as string | null,
+          }))
+        );
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
   }, []);
 
   function updateValue(key: string, value: string) {
@@ -45,15 +43,13 @@ export default function AdminSettingsPage() {
   async function handleSave() {
     setSaving(true);
     setMessage('');
-    const supabase = createClient();
-
-    for (const setting of settings) {
-      await supabase
-        .from('site_settings')
-        .update({ value: JSON.stringify(setting.value), updated_at: new Date().toISOString() })
-        .eq('id', setting.id);
-    }
-
+    await Promise.all(settings.map(s =>
+      fetch('/api/admin/settings', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: s.id, value: JSON.stringify(s.value) }),
+      })
+    ));
     setMessage('Settings saved successfully!');
     setSaving(false);
     setTimeout(() => setMessage(''), 3000);

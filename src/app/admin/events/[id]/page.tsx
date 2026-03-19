@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { createClient } from '@/lib/supabase/client';
 import type { Event } from '@/types/database';
 
 export default function EditEventPage() {
@@ -19,13 +18,9 @@ export default function EditEventPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-      const { data } = await supabase.from('events').select('*').eq('id', id).single();
-      setEvent(data as Event | null);
-      setLoading(false);
-    }
-    load();
+    fetch(`/api/admin/data?table=events&id=${id}`)
+      .then(r => r.json()).then(d => { setEvent(d as Event | null); setLoading(false); })
+      .catch(() => setLoading(false));
   }, [id]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -33,24 +28,22 @@ export default function EditEventPage() {
     setSaving(true);
     const fd = new FormData(e.currentTarget);
 
-    const supabase = createClient();
-    const { error } = await supabase.from('events').update({
-      title_en: fd.get('title_en') as string,
-      title_de: fd.get('title_de') as string || null,
-      description_en: fd.get('description_en') as string || null,
-      start_date: fd.get('start_date') as string,
-      end_date: fd.get('end_date') as string || null,
-      location: fd.get('location') as string || null,
-      image_url: fd.get('image_url') as string || null,
-      is_online: fd.get('is_online') === 'on',
-      price: parseFloat(fd.get('price') as string) || null,
-      stripe_price_id: fd.get('stripe_price_id') as string || null,
-      max_attendees: parseInt(fd.get('max_attendees') as string) || null,
-      is_published: fd.get('is_published') === 'on',
-      is_featured: fd.get('is_featured') === 'on',
-    }).eq('id', id);
-
-    if (!error) router.push('/admin/events');
+    const res = await fetch('/api/admin/data', {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'events', id, data: {
+        title_en: fd.get('title_en'), title_de: fd.get('title_de') || null,
+        description_en: fd.get('description_en') || null,
+        start_date: fd.get('start_date') || null, end_date: fd.get('end_date') || null,
+        location: fd.get('location') || null, image_url: fd.get('image_url') || null,
+        is_online: fd.get('is_online') === 'on',
+        price: parseFloat(fd.get('price') as string) || null,
+        stripe_price_id: fd.get('stripe_price_id') || null,
+        max_attendees: parseInt(fd.get('max_attendees') as string) || null,
+        is_published: fd.get('is_published') === 'on',
+        is_featured: fd.get('is_featured') === 'on',
+      }}),
+    });
+    if (res.ok) router.push('/admin/events');
     setSaving(false);
   }
 

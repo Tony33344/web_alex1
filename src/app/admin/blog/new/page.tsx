@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { createClient } from '@/lib/supabase/client';
 import { BLOG_CATEGORIES } from '@/lib/constants';
 
 export default function NewBlogPostPage() {
@@ -22,23 +21,21 @@ export default function NewBlogPostPage() {
 
     const slug = (fd.get('title_en') as string).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-    const supabase = createClient();
-    const { error } = await supabase.from('blog_posts').insert({
-      slug,
-      title_en: fd.get('title_en') as string,
-      title_de: fd.get('title_de') as string || null,
-      excerpt_en: fd.get('excerpt_en') as string || null,
-      content_en: fd.get('content_en') as string || null,
-      category: fd.get('category') as string || null,
-      is_published: fd.get('is_published') === 'on',
-      is_members_only: fd.get('is_members_only') === 'on',
-      is_featured: fd.get('is_featured') === 'on',
-      reading_time_minutes: parseInt(fd.get('reading_time') as string) || 5,
+    const res = await fetch('/api/admin/data', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'blog_posts', data: {
+        slug,
+        title_en: fd.get('title_en'), title_de: fd.get('title_de') || null,
+        excerpt_en: fd.get('excerpt_en') || null, content_en: fd.get('content_en') || null,
+        category: fd.get('category') || null,
+        is_published: fd.get('is_published') === 'on',
+        is_members_only: fd.get('is_members_only') === 'on',
+        is_featured: fd.get('is_featured') === 'on',
+        reading_time_minutes: parseInt(fd.get('reading_time') as string) || 5,
+        published_at: fd.get('is_published') === 'on' ? new Date().toISOString() : null,
+      }}),
     });
-
-    if (!error) {
-      router.push('/admin/blog');
-    }
+    if (res.ok) router.push('/admin/blog');
     setSaving(false);
   }
 

@@ -6,7 +6,6 @@ import { Plus, Edit, Trash2, Eye, EyeOff, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { createClient } from '@/lib/supabase/client';
 import type { Event } from '@/types/database';
 
 export default function AdminEventsPage() {
@@ -14,25 +13,19 @@ export default function AdminEventsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-      const { data } = await supabase.from('events').select('*').order('start_date', { ascending: false });
-      setEvents((data as Event[]) ?? []);
-      setLoading(false);
-    }
-    load();
+    fetch('/api/admin/data?table=events&orderBy=start_date')
+      .then(r => r.json()).then(d => { setEvents(Array.isArray(d) ? d : []); setLoading(false); })
+      .catch(() => setLoading(false));
   }, []);
 
   async function togglePublish(id: string, current: boolean) {
-    const supabase = createClient();
-    await supabase.from('events').update({ is_published: !current }).eq('id', id);
+    await fetch('/api/admin/data', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ table: 'events', id, data: { is_published: !current } }) });
     setEvents(events.map(e => e.id === id ? { ...e, is_published: !current } : e));
   }
 
   async function deleteEvent(id: string) {
     if (!confirm('Delete this event?')) return;
-    const supabase = createClient();
-    await supabase.from('events').delete().eq('id', id);
+    await fetch('/api/admin/data', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ table: 'events', id }) });
     setEvents(events.filter(e => e.id !== id));
   }
 

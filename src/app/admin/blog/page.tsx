@@ -6,7 +6,6 @@ import { Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { createClient } from '@/lib/supabase/client';
 import type { BlogPost } from '@/types/database';
 
 export default function AdminBlogPage() {
@@ -14,25 +13,19 @@ export default function AdminBlogPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-      const { data } = await supabase.from('blog_posts').select('*').order('created_at', { ascending: false });
-      setPosts((data as BlogPost[]) ?? []);
-      setLoading(false);
-    }
-    load();
+    fetch('/api/admin/data?table=blog_posts')
+      .then(r => r.json()).then(d => { setPosts(Array.isArray(d) ? d : []); setLoading(false); })
+      .catch(() => setLoading(false));
   }, []);
 
   async function togglePublish(id: string, current: boolean) {
-    const supabase = createClient();
-    await supabase.from('blog_posts').update({ is_published: !current }).eq('id', id);
+    await fetch('/api/admin/data', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ table: 'blog_posts', id, data: { is_published: !current } }) });
     setPosts(posts.map(p => p.id === id ? { ...p, is_published: !current } : p));
   }
 
   async function deletePost(id: string) {
     if (!confirm('Delete this post?')) return;
-    const supabase = createClient();
-    await supabase.from('blog_posts').delete().eq('id', id);
+    await fetch('/api/admin/data', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ table: 'blog_posts', id }) });
     setPosts(posts.filter(p => p.id !== id));
   }
 

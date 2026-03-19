@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { createClient } from '@/lib/supabase/client';
 
 export default function NewProgramPage() {
   const router = useRouter();
@@ -20,23 +19,22 @@ export default function NewProgramPage() {
     const fd = new FormData(e.currentTarget);
     const slug = (fd.get('name_en') as string).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-    const supabase = createClient();
-    const { error } = await supabase.from('programs').insert({
-      slug,
-      name_en: fd.get('name_en') as string,
-      name_de: fd.get('name_de') as string || null,
-      description_en: fd.get('description_en') as string || null,
-      duration: fd.get('duration') as string || null,
-      price: parseFloat(fd.get('price') as string) || null,
-      stripe_price_id: fd.get('stripe_price_id') as string || null,
-      max_participants: parseInt(fd.get('max_participants') as string) || null,
-      what_you_learn: (fd.get('what_you_learn') as string).split('\n').map(s => s.trim()).filter(Boolean),
-      prerequisites: (fd.get('prerequisites') as string).split('\n').map(s => s.trim()).filter(Boolean),
-      is_active: fd.get('is_active') === 'on',
-      is_featured: fd.get('is_featured') === 'on',
+    const res = await fetch('/api/admin/data', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'programs', data: {
+        slug, name_en: fd.get('name_en'), name_de: fd.get('name_de') || null,
+        description_en: fd.get('description_en') || null,
+        duration: fd.get('duration') || null,
+        price: parseFloat(fd.get('price') as string) || null,
+        stripe_price_id: fd.get('stripe_price_id') || null,
+        max_participants: parseInt(fd.get('max_participants') as string) || null,
+        what_you_learn: (fd.get('what_you_learn') as string).split('\n').map((s: string) => s.trim()).filter(Boolean),
+        prerequisites: (fd.get('prerequisites') as string).split('\n').map((s: string) => s.trim()).filter(Boolean),
+        is_active: fd.get('is_active') === 'on',
+        is_featured: fd.get('is_featured') === 'on',
+      }}),
     });
-
-    if (!error) router.push('/admin/programs');
+    if (res.ok) router.push('/admin/programs');
     setSaving(false);
   }
 

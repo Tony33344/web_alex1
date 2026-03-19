@@ -6,7 +6,6 @@ import { Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { createClient } from '@/lib/supabase/client';
 import type { Teacher } from '@/types/database';
 
 export default function AdminTeachersPage() {
@@ -14,25 +13,19 @@ export default function AdminTeachersPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-      const { data } = await supabase.from('teachers').select('*').order('display_order');
-      setTeachers((data as Teacher[]) ?? []);
-      setLoading(false);
-    }
-    load();
+    fetch('/api/admin/data?table=teachers&orderBy=display_order&orderDir=asc')
+      .then(r => r.json()).then(d => { setTeachers(Array.isArray(d) ? d : []); setLoading(false); })
+      .catch(() => setLoading(false));
   }, []);
 
   async function toggleActive(id: string, current: boolean) {
-    const supabase = createClient();
-    await supabase.from('teachers').update({ is_active: !current }).eq('id', id);
+    await fetch('/api/admin/data', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ table: 'teachers', id, data: { is_active: !current } }) });
     setTeachers(teachers.map(t => t.id === id ? { ...t, is_active: !current } : t));
   }
 
   async function deleteTeacher(id: string) {
     if (!confirm('Delete this teacher?')) return;
-    const supabase = createClient();
-    await supabase.from('teachers').delete().eq('id', id);
+    await fetch('/api/admin/data', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ table: 'teachers', id }) });
     setTeachers(teachers.filter(t => t.id !== id));
   }
 

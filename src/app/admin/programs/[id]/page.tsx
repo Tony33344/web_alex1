@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { createClient } from '@/lib/supabase/client';
 import type { Program } from '@/types/database';
 
 export default function EditProgramPage() {
@@ -19,13 +18,9 @@ export default function EditProgramPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-      const { data } = await supabase.from('programs').select('*').eq('id', id).single();
-      setProgram(data as Program | null);
-      setLoading(false);
-    }
-    load();
+    fetch(`/api/admin/data?table=programs&id=${id}`)
+      .then(r => r.json()).then(d => { setProgram(d as Program | null); setLoading(false); })
+      .catch(() => setLoading(false));
   }, [id]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -33,23 +28,23 @@ export default function EditProgramPage() {
     setSaving(true);
     const fd = new FormData(e.currentTarget);
 
-    const supabase = createClient();
-    const { error } = await supabase.from('programs').update({
-      name_en: fd.get('name_en') as string,
-      name_de: fd.get('name_de') as string || null,
-      description_en: fd.get('description_en') as string || null,
-      duration: fd.get('duration') as string || null,
-      price: parseFloat(fd.get('price') as string) || null,
-      stripe_price_id: fd.get('stripe_price_id') as string || null,
-      max_participants: parseInt(fd.get('max_participants') as string) || null,
-      image_url: fd.get('image_url') as string || null,
-      what_you_learn: (fd.get('what_you_learn') as string).split('\n').map(s => s.trim()).filter(Boolean),
-      prerequisites: (fd.get('prerequisites') as string).split('\n').map(s => s.trim()).filter(Boolean),
-      is_active: fd.get('is_active') === 'on',
-      is_featured: fd.get('is_featured') === 'on',
-    }).eq('id', id);
-
-    if (!error) router.push('/admin/programs');
+    const res = await fetch('/api/admin/data', {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'programs', id, data: {
+        name_en: fd.get('name_en'), name_de: fd.get('name_de') || null,
+        description_en: fd.get('description_en') || null,
+        duration: fd.get('duration') || null,
+        price: parseFloat(fd.get('price') as string) || null,
+        stripe_price_id: fd.get('stripe_price_id') || null,
+        max_participants: parseInt(fd.get('max_participants') as string) || null,
+        image_url: fd.get('image_url') || null,
+        what_you_learn: (fd.get('what_you_learn') as string).split('\n').map((s: string) => s.trim()).filter(Boolean),
+        prerequisites: (fd.get('prerequisites') as string).split('\n').map((s: string) => s.trim()).filter(Boolean),
+        is_active: fd.get('is_active') === 'on',
+        is_featured: fd.get('is_featured') === 'on',
+      }}),
+    });
+    if (res.ok) router.push('/admin/programs');
     setSaving(false);
   }
 

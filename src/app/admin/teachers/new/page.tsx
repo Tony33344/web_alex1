@@ -8,8 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { createClient } from '@/lib/supabase/client';
-
 export default function NewTeacherPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
@@ -20,18 +18,16 @@ export default function NewTeacherPage() {
     const fd = new FormData(e.currentTarget);
     const slug = (fd.get('name') as string).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-    const supabase = createClient();
-    const { error } = await supabase.from('teachers').insert({
-      slug,
-      name: fd.get('name') as string,
-      title_en: fd.get('title_en') as string || null,
-      short_bio_en: fd.get('short_bio_en') as string || null,
-      bio_en: fd.get('bio_en') as string || null,
-      specialties: (fd.get('specialties') as string).split(',').map(s => s.trim()).filter(Boolean),
-      is_active: fd.get('is_active') === 'on',
+    const res = await fetch('/api/admin/data', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'teachers', data: {
+        slug, name: fd.get('name'), title_en: fd.get('title_en') || null,
+        short_bio_en: fd.get('short_bio_en') || null, bio_en: fd.get('bio_en') || null,
+        specialties: (fd.get('specialties') as string).split(',').map((s: string) => s.trim()).filter(Boolean),
+        is_active: fd.get('is_active') === 'on',
+      }}),
     });
-
-    if (!error) router.push('/admin/teachers');
+    if (res.ok) router.push('/admin/teachers');
     setSaving(false);
   }
 

@@ -6,7 +6,6 @@ import { Plus, Edit, Trash2, Eye, EyeOff, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { createClient } from '@/lib/supabase/client';
 import type { Testimonial } from '@/types/database';
 
 export default function AdminTestimonialsPage() {
@@ -14,25 +13,19 @@ export default function AdminTestimonialsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-      const { data } = await supabase.from('testimonials').select('*').order('display_order');
-      setItems((data as Testimonial[]) ?? []);
-      setLoading(false);
-    }
-    load();
+    fetch('/api/admin/data?table=testimonials&orderBy=display_order&orderDir=asc')
+      .then(r => r.json()).then(d => { setItems(Array.isArray(d) ? d : []); setLoading(false); })
+      .catch(() => setLoading(false));
   }, []);
 
   async function togglePublish(id: string, current: boolean) {
-    const supabase = createClient();
-    await supabase.from('testimonials').update({ is_published: !current }).eq('id', id);
+    await fetch('/api/admin/data', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ table: 'testimonials', id, data: { is_published: !current } }) });
     setItems(items.map(i => i.id === id ? { ...i, is_published: !current } : i));
   }
 
   async function deleteItem(id: string) {
     if (!confirm('Delete this testimonial?')) return;
-    const supabase = createClient();
-    await supabase.from('testimonials').delete().eq('id', id);
+    await fetch('/api/admin/data', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ table: 'testimonials', id }) });
     setItems(items.filter(i => i.id !== id));
   }
 

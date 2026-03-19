@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { createClient } from '@/lib/supabase/client';
 
 export default function NewEventPage() {
   const router = useRouter();
@@ -20,23 +19,24 @@ export default function NewEventPage() {
     const fd = new FormData(e.currentTarget);
     const slug = (fd.get('title_en') as string).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
-    const supabase = createClient();
-    const { error } = await supabase.from('events').insert({
-      slug,
-      title_en: fd.get('title_en') as string,
-      description_en: fd.get('description_en') as string || null,
-      start_date: fd.get('start_date') as string,
-      end_date: fd.get('end_date') as string || null,
-      location: fd.get('location') as string || null,
-      is_online: fd.get('is_online') === 'on',
-      price: parseFloat(fd.get('price') as string) || null,
-      stripe_price_id: fd.get('stripe_price_id') as string || null,
-      max_attendees: parseInt(fd.get('max_attendees') as string) || null,
-      is_published: fd.get('is_published') === 'on',
-      is_featured: fd.get('is_featured') === 'on',
+    const res = await fetch('/api/admin/data', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'events', data: {
+        slug, title_en: fd.get('title_en'),
+        description_en: fd.get('description_en') || null,
+        start_date: fd.get('start_date') || null,
+        end_date: fd.get('end_date') || null,
+        location: fd.get('location') || null,
+        image_url: fd.get('image_url') || null,
+        is_online: fd.get('is_online') === 'on',
+        price: parseFloat(fd.get('price') as string) || null,
+        stripe_price_id: fd.get('stripe_price_id') || null,
+        max_attendees: parseInt(fd.get('max_attendees') as string) || null,
+        is_published: fd.get('is_published') === 'on',
+        is_featured: fd.get('is_featured') === 'on',
+      }}),
     });
-
-    if (!error) router.push('/admin/events');
+    if (res.ok) router.push('/admin/events');
     setSaving(false);
   }
 

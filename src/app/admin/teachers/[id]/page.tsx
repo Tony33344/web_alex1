@@ -8,7 +8,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
-import { createClient } from '@/lib/supabase/client';
 import type { Teacher } from '@/types/database';
 
 export default function EditTeacherPage() {
@@ -19,13 +18,9 @@ export default function EditTeacherPage() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-      const { data } = await supabase.from('teachers').select('*').eq('id', id).single();
-      setTeacher(data as Teacher | null);
-      setLoading(false);
-    }
-    load();
+    fetch(`/api/admin/data?table=teachers&id=${id}`)
+      .then(r => r.json()).then(d => { setTeacher(d as Teacher | null); setLoading(false); })
+      .catch(() => setLoading(false));
   }, [id]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -33,19 +28,16 @@ export default function EditTeacherPage() {
     setSaving(true);
     const fd = new FormData(e.currentTarget);
 
-    const supabase = createClient();
-    const { error } = await supabase.from('teachers').update({
-      name: fd.get('name') as string,
-      title_en: fd.get('title_en') as string || null,
-      title_de: fd.get('title_de') as string || null,
-      short_bio_en: fd.get('short_bio_en') as string || null,
-      bio_en: fd.get('bio_en') as string || null,
-      specialties: (fd.get('specialties') as string).split(',').map(s => s.trim()).filter(Boolean),
-      photo_url: fd.get('photo_url') as string || null,
-      is_active: fd.get('is_active') === 'on',
-    }).eq('id', id);
-
-    if (!error) router.push('/admin/teachers');
+    const res = await fetch('/api/admin/data', {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'teachers', id, data: {
+        name: fd.get('name'), title_en: fd.get('title_en') || null, title_de: fd.get('title_de') || null,
+        short_bio_en: fd.get('short_bio_en') || null, bio_en: fd.get('bio_en') || null,
+        specialties: (fd.get('specialties') as string).split(',').map((s: string) => s.trim()).filter(Boolean),
+        photo_url: fd.get('photo_url') || null, is_active: fd.get('is_active') === 'on',
+      }}),
+    });
+    if (res.ok) router.push('/admin/teachers');
     setSaving(false);
   }
 

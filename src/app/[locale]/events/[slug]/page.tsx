@@ -3,12 +3,12 @@ import { getTranslations } from 'next-intl/server';
 import { Calendar, MapPin, Users, Clock, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 import { getEvent } from '@/lib/queries/events';
 import { getLocalizedField } from '@/lib/localization';
+import { EventRegisterButton } from '@/components/sections/EventRegisterButton';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
@@ -77,7 +77,13 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
               <div className="border-t pt-4">
                 <div className="text-2xl font-bold text-primary">{priceLabel}</div>
               </div>
-              <Button className="w-full" size="lg">{t('common.registerNow')}</Button>
+              <EventRegisterButton
+                eventId={event.id}
+                locale={locale}
+                label={t('common.registerNow')}
+                isFree={!event.price || event.price <= 0}
+                isFull={!!(event.max_attendees && event.current_attendees >= event.max_attendees)}
+              />
             </CardContent>
           </Card>
           <Link href={`/${locale}/events`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">

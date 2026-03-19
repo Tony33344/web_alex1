@@ -12,6 +12,7 @@ import { getTestimonials } from '@/lib/queries/testimonials';
 import { getFeaturedEvent } from '@/lib/queries/events';
 import { getHealthCategories } from '@/lib/queries/health';
 import { getLocalizedField } from '@/lib/localization';
+import { NewsletterSection } from '@/components/sections/NewsletterSection';
 
 const healthIconMap: Record<string, LucideIcon> = { Leaf, Sun, Heart, Brain, Dumbbell, Hand };
 
@@ -362,22 +363,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </section>
 
       {/* Section 10: Newsletter */}
-      <section className="bg-muted/50 py-16">
-        <div className="mx-auto max-w-xl px-4 text-center sm:px-6">
-          <h2 className="text-2xl font-bold tracking-tight">{t('home.newsletter')}</h2>
-          <p className="mt-2 text-muted-foreground">Stay updated with our latest news, events, and wellness tips</p>
-          <form className="mt-6 flex gap-2" action="/api/newsletter" method="POST">
-            <input
-              type="email"
-              name="email"
-              placeholder={t('home.newsletterPlaceholder')}
-              className="flex-1 rounded-md border bg-background px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-              required
-            />
-            <Button type="submit">{t('home.subscribe')}</Button>
-          </form>
-        </div>
-      </section>
+      <NewsletterSection
+        title={t('home.newsletter')}
+        placeholder={t('home.newsletterPlaceholder')}
+        buttonLabel={t('home.subscribe')}
+      />
 
       {/* Section 11: Contact CTA */}
       <section className="bg-background py-16">

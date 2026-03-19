@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { createCheckoutSession, createOrRetrieveCustomer } from '@/lib/stripe/helpers';
 
 export async function POST(request: Request) {
   try {
@@ -21,7 +22,7 @@ export async function POST(request: Request) {
 
     const { data: event } = await adminSupabase
       .from('events')
-      .select('id, max_attendees, current_attendees, price')
+      .select('id, title_en, max_attendees, current_attendees, price, currency, stripe_price_id')
       .eq('id', eventId)
       .single();
 
@@ -41,9 +42,11 @@ export async function POST(request: Request) {
     }
 
     const isFull = event.max_attendees && event.current_attendees >= event.max_attendees;
+    const isFree = !event.price || event.price <= 0;
     const status = isFull ? 'waitlisted' : 'registered';
-    const paymentStatus = (!event.price || event.price === 0) ? 'free' : 'pending';
+    const paymentStatus = isFree ? 'free' : 'pending';
 
+    // Insert registration
     const { error } = await adminSupabase.from('event_registrations').insert({
       event_id: eventId,
       user_id: user.id,
@@ -62,8 +65,46 @@ export async function POST(request: Request) {
         .eq('id', eventId);
     }
 
+    // For paid events, create Stripe checkout session
+    if (!isFree && !isFull) {
+      const { data: profile } = await adminSupabase
+        .from('profiles')
+        .select('stripe_customer_id, full_name')
+        .eq('id', user.id)
+        .single();
+
+      let customerId = profile?.stripe_customer_id;
+      if (!customerId) {
+        const customer = await createOrRetrieveCustomer({
+          email: user.email!,
+          name: profile?.full_name || '',
+          supabaseId: user.id,
+        });
+        customerId = customer.id;
+        await adminSupabase.from('profiles').update({ stripe_customer_id: customerId }).eq('id', user.id);
+      }
+
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
+      if (event.stripe_price_id) {
+        const session = await createCheckoutSession({
+          customerId,
+          priceId: event.stripe_price_id,
+          mode: 'payment',
+          successUrl: `${appUrl}/en/events?payment=success`,
+          cancelUrl: `${appUrl}/en/events?payment=cancelled`,
+          metadata: { user_id: user.id, event_id: eventId, type: 'event' },
+        });
+        return NextResponse.json({ success: true, status, checkoutUrl: session.url });
+      }
+
+      // No stripe_price_id set — return pending status, admin can handle manually
+      return NextResponse.json({ success: true, status, paymentPending: true });
+    }
+
     return NextResponse.json({ success: true, status });
-  } catch {
+  } catch (err) {
+    console.error('Event registration error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

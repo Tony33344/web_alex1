@@ -3,11 +3,11 @@ import { ArrowLeft, Clock, Users, Award, Check } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
-import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 import { getProgram } from '@/lib/queries/programs';
 import { getLocalizedField } from '@/lib/localization';
+import { EnrollButton } from '@/components/sections/EnrollButton';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
@@ -89,7 +89,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
                 )}
                 <div className="flex items-center gap-3"><Award className="h-4 w-4 text-primary" />Certificate included</div>
               </div>
-              <Button className="w-full" size="lg">{t('common.enrollNow')}</Button>
+              <EnrollButton locale={locale} programSlug={slug} label={t('common.enrollNow')} stripepriceId={program.stripe_price_id} />
               <p className="text-xs text-center text-muted-foreground">Secure your spot — limited availability</p>
             </CardContent>
           </Card>

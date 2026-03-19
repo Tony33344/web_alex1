@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { Menu, X, ChevronDown, User, LogOut, LayoutDashboard } from 'lucide-react';
 import { Logo } from './Logo';
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -302,7 +302,6 @@ function NavDropdown({
   active: boolean;
   items: { label: string; href: string }[];
 }) {
-  const router = useRouter();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
@@ -315,7 +314,7 @@ function NavDropdown({
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" className="min-w-[200px]">
         {items.map((item) => (
-          <DropdownMenuItem key={item.href} onClick={() => router.push(item.href)}>
+          <DropdownMenuItem key={item.href} render={<Link href={item.href} />}>
             {item.label}
           </DropdownMenuItem>
         ))}

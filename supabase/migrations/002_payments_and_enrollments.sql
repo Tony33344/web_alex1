@@ -797,3 +797,11 @@ INSERT INTO site_settings (key, value, description) VALUES
   ('bank_transfer_enabled', 'true', 'Enable bank transfer as payment method'),
   ('bank_account_holder', '"AMS4EVER AG"', 'Account holder name for bank transfers')
 ON CONFLICT (key) DO NOTHING;
+
+-- ============================================
+-- REFRESH POSTGREST SCHEMA CACHE
+-- This ensures new columns are immediately available
+-- ============================================
+SELECT pg_notify('pgrst', 'reload schema');
+
+-- Alternative: comment out line above and restart Supabase project if issues persist

@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { useUser } from '@/hooks/useUser';
+import { CheckoutDialog } from '@/components/checkout/CheckoutDialog';
 
 export default function MembershipPage() {
   const t = useTranslations();
@@ -17,6 +18,7 @@ export default function MembershipPage() {
   const router = useRouter();
   const { user, profile } = useUser();
   const [billing, setBilling] = useState<'monthly' | 'yearly'>('yearly');
+  const [showCheckout, setShowCheckout] = useState(false);
 
   const plans = {
     monthly: { price: 29, period: t('common.perMonth'), stripePriceId: process.env.NEXT_PUBLIC_STRIPE_MONTHLY_PRICE_ID },
@@ -39,17 +41,31 @@ export default function MembershipPage() {
       router.push(`/${locale}/login?redirect=/${locale}/membership`);
       return;
     }
+    setShowCheckout(true);
+  }
 
+  async function processPayment(paymentMethod: 'stripe' | 'bank_transfer') {
+    if (paymentMethod === 'bank_transfer') {
+      // Create bank transfer subscription record
+      const res = await fetch('/api/membership/bank-transfer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ plan: billing }),
+      });
+      const data = await res.json();
+      if (!res.ok) return { error: data.error || 'Failed to create bank transfer request' };
+      return { reference: data.reference };
+    }
+    
+    // Stripe payment
     const res = await fetch('/api/stripe/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ plan: billing }),
     });
-
     const data = await res.json();
-    if (data.url) {
-      window.location.href = data.url;
-    }
+    if (data.url) return { checkoutUrl: data.url };
+    return { error: 'Could not create checkout session' };
   }
 
   return (
@@ -132,6 +148,15 @@ export default function MembershipPage() {
             {t('common.contactUs')}
           </Button>
         </div>
+
+        <CheckoutDialog
+          open={showCheckout}
+          onOpenChange={setShowCheckout}
+          title={`Infinity Membership (${billing})`}
+          price={plans[billing].price}
+          currency="CHF"
+          onCheckout={processPayment}
+        />
       </section>
     </>
   );

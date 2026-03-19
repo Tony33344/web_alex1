@@ -53,12 +53,9 @@ export default function LoginPage() {
     // Check if user is admin → redirect to admin dashboard
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single();
-      if (profile?.role === 'admin' || profile?.role === 'super_admin') {
+      const res = await fetch('/api/auth/role', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId: user.id }) });
+      const { role } = await res.json().catch(() => ({}));
+      if (role === 'admin' || role === 'super_admin') {
         router.push('/admin');
         router.refresh();
         return;

@@ -2,6 +2,7 @@ import createMiddleware from 'next-intl/middleware';
 import { NextResponse, type NextRequest } from 'next/server';
 import { updateSession } from '@/lib/supabase/middleware';
 import { routing } from '@/i18n/routing';
+import { createClient } from '@supabase/supabase-js';
 
 const intlMiddleware = createMiddleware(routing);
 
@@ -14,7 +15,7 @@ export async function proxy(request: NextRequest) {
   if (pathname.startsWith('/api') || pathname.startsWith('/admin')) {
     // For admin routes, check auth
     if (pathname.startsWith('/admin')) {
-      const { user, supabase, supabaseResponse } = await updateSession(request);
+      const { user, supabaseResponse } = await updateSession(request);
 
       if (!user) {
         const url = request.nextUrl.clone();
@@ -22,8 +23,13 @@ export async function proxy(request: NextRequest) {
         return NextResponse.redirect(url);
       }
 
-      // Check admin role
-      const { data: profile } = await supabase
+      // Use service role client to avoid RLS recursion when checking role
+      const adminClient = createClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!,
+        { auth: { autoRefreshToken: false, persistSession: false } }
+      );
+      const { data: profile } = await adminClient
         .from('profiles')
         .select('role')
         .eq('id', user.id)

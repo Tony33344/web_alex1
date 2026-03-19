@@ -44,6 +44,7 @@ export default function EditEventPage() {
       image_url: fd.get('image_url') as string || null,
       is_online: fd.get('is_online') === 'on',
       price: parseFloat(fd.get('price') as string) || null,
+      stripe_price_id: fd.get('stripe_price_id') as string || null,
       max_attendees: parseInt(fd.get('max_attendees') as string) || null,
       is_published: fd.get('is_published') === 'on',
       is_featured: fd.get('is_featured') === 'on',
@@ -96,10 +97,14 @@ export default function EditEventPage() {
                 <Input id="image_url" name="image_url" defaultValue={event.image_url || ''} />
               </div>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-3">
               <div className="space-y-2">
                 <Label htmlFor="price">Price (CHF)</Label>
                 <Input id="price" name="price" type="number" step="0.01" defaultValue={event.price || ''} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="stripe_price_id">Stripe Price ID</Label>
+                <Input id="stripe_price_id" name="stripe_price_id" placeholder="price_..." defaultValue={event.stripe_price_id || ''} />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="max_attendees">Max Attendees</Label>

@@ -30,6 +30,7 @@ export default function NewEventPage() {
       location: fd.get('location') as string || null,
       is_online: fd.get('is_online') === 'on',
       price: parseFloat(fd.get('price') as string) || null,
+      stripe_price_id: fd.get('stripe_price_id') as string || null,
       max_attendees: parseInt(fd.get('max_attendees') as string) || null,
       is_published: fd.get('is_published') === 'on',
       is_featured: fd.get('is_featured') === 'on',
@@ -68,15 +69,23 @@ export default function NewEventPage() {
                 <Label htmlFor="location">Location</Label>
                 <Input id="location" name="location" />
               </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="price">Price (CHF)</Label>
-                  <Input id="price" name="price" type="number" step="0.01" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="max_attendees">Max Attendees</Label>
-                  <Input id="max_attendees" name="max_attendees" type="number" />
-                </div>
+              <div className="space-y-2">
+                <Label htmlFor="image_url">Image URL</Label>
+                <Input id="image_url" name="image_url" placeholder="https://..." />
+              </div>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div className="space-y-2">
+                <Label htmlFor="price">Price (CHF)</Label>
+                <Input id="price" name="price" type="number" step="0.01" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="stripe_price_id">Stripe Price ID</Label>
+                <Input id="stripe_price_id" name="stripe_price_id" placeholder="price_..." />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="max_attendees">Max Attendees</Label>
+                <Input id="max_attendees" name="max_attendees" type="number" />
               </div>
             </div>
             <div className="flex flex-wrap gap-6">

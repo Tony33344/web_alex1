@@ -241,9 +241,38 @@ export interface EventRegistration {
   user_id: string;
   status: 'registered' | 'confirmed' | 'cancelled' | 'attended' | 'waitlisted';
   payment_status: 'pending' | 'paid' | 'refunded' | 'free';
+  payment_method: 'stripe' | 'bank_transfer' | 'free';
   stripe_payment_intent_id: string | null;
+  amount: number | null;
+  currency: string;
+  bank_transfer_reference: string | null;
+  confirmed_by: string | null;
+  confirmed_at: string | null;
   notes: string | null;
   created_at: string;
+  // Joined fields
+  event?: Event;
+  profile?: Pick<Profile, 'email' | 'full_name'>;
+}
+
+export interface ProgramEnrollment {
+  id: string;
+  program_id: string;
+  user_id: string;
+  status: 'enrolled' | 'confirmed' | 'cancelled' | 'completed';
+  payment_status: 'pending' | 'paid' | 'refunded' | 'free';
+  payment_method: 'stripe' | 'bank_transfer' | 'free';
+  stripe_payment_intent_id: string | null;
+  amount: number | null;
+  currency: string;
+  bank_transfer_reference: string | null;
+  confirmed_by: string | null;
+  confirmed_at: string | null;
+  notes: string | null;
+  created_at: string;
+  // Joined fields
+  program?: Program;
+  profile?: Pick<Profile, 'email' | 'full_name'>;
 }
 
 export interface BlogPost {

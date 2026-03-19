@@ -3,8 +3,6 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, BookOpen, Calendar, MessageSquare, Mail, CreditCard, FileText, Star } from 'lucide-react';
-import { createClient } from '@/lib/supabase/client';
-
 interface DashboardStats {
   users: number;
   blogPosts: number;

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, FileText, Users, Heart, GraduationCap, Calendar, BookOpen,
-  CreditCard, MessageSquare, Mail, Settings, Image, Globe, Star, BarChart3, Menu, X,
+  CreditCard, MessageSquare, Mail, Settings, Image, Globe, Star, BarChart3, Menu, X, ShoppingCart,
 } from 'lucide-react';
 import { useState } from 'react';
 import '@/app/globals.css';
@@ -17,6 +17,7 @@ const navItems = [
   { label: 'Health', href: '/admin/health', icon: Heart },
   { label: 'Programs', href: '/admin/programs', icon: GraduationCap },
   { label: 'Events', href: '/admin/events', icon: Calendar },
+  { label: 'Orders', href: '/admin/registrations', icon: ShoppingCart },
   { label: 'Blog', href: '/admin/blog', icon: BookOpen },
   { label: 'Membership', href: '/admin/membership', icon: CreditCard },
   { label: 'Contacts', href: '/admin/contacts', icon: MessageSquare },

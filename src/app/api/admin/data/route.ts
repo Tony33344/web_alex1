@@ -5,7 +5,7 @@ const ALLOWED_TABLES = [
   'teachers', 'blog_posts', 'events', 'programs', 'health_categories',
   'testimonials', 'pages', 'sections', 'media', 'translation_overrides',
   'case_studies', 'membership_plans', 'site_settings', 'contact_submissions',
-  'newsletter_subscribers', 'profiles', 'event_registrations',
+  'newsletter_subscribers', 'profiles', 'event_registrations', 'program_enrollments',
 ];
 
 function isAllowed(table: string): boolean {

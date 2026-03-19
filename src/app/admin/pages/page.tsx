@@ -6,7 +6,6 @@ import { Plus, Edit, Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { createClient } from '@/lib/supabase/client';
 import type { Page } from '@/types/database';
 
 export default function AdminPagesPage() {
@@ -14,18 +13,13 @@ export default function AdminPagesPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-      const { data } = await supabase.from('pages').select('*').order('page_order');
-      setPages((data as Page[]) ?? []);
-      setLoading(false);
-    }
-    load();
+    fetch('/api/admin/data?table=pages&orderBy=page_order&orderDir=asc')
+      .then(r => r.json()).then(d => { setPages(Array.isArray(d) ? d : []); setLoading(false); })
+      .catch(() => setLoading(false));
   }, []);
 
   async function togglePublish(id: string, current: boolean) {
-    const supabase = createClient();
-    await supabase.from('pages').update({ is_published: !current }).eq('id', id);
+    await fetch('/api/admin/data', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ table: 'pages', id, data: { is_published: !current } }) });
     setPages(pages.map(p => p.id === id ? { ...p, is_published: !current } : p));
   }
 

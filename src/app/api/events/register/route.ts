@@ -12,7 +12,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { eventId } = await request.json();
+    const { eventId, paymentMethod } = await request.json();
 
     if (!eventId) {
       return NextResponse.json({ error: 'Missing eventId' }, { status: 400 });
@@ -45,6 +45,12 @@ export async function POST(request: Request) {
     const isFree = !event.price || event.price <= 0;
     const status = isFull ? 'waitlisted' : 'registered';
     const paymentStatus = isFree ? 'free' : 'pending';
+    const method = isFree ? 'free' : (paymentMethod || 'stripe');
+
+    // Generate bank transfer reference if needed
+    const bankRef = method === 'bank_transfer'
+      ? `EVT-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`
+      : null;
 
     // Insert registration
     const { error } = await adminSupabase.from('event_registrations').insert({
@@ -52,6 +58,10 @@ export async function POST(request: Request) {
       user_id: user.id,
       status,
       payment_status: paymentStatus,
+      payment_method: method,
+      amount: event.price || 0,
+      currency: event.currency || 'EUR',
+      bank_transfer_reference: bankRef,
     });
 
     if (error) {
@@ -65,8 +75,18 @@ export async function POST(request: Request) {
         .eq('id', eventId);
     }
 
-    // For paid events, create Stripe checkout session
-    if (!isFree && !isFull) {
+    // Free events — done
+    if (isFree) {
+      return NextResponse.json({ success: true, status });
+    }
+
+    // Bank transfer — return reference
+    if (method === 'bank_transfer') {
+      return NextResponse.json({ success: true, status, reference: bankRef });
+    }
+
+    // Stripe payment
+    if (!isFull) {
       const { data: profile } = await adminSupabase
         .from('profiles')
         .select('stripe_customer_id, full_name')
@@ -98,7 +118,6 @@ export async function POST(request: Request) {
         return NextResponse.json({ success: true, status, checkoutUrl: session.url });
       }
 
-      // No stripe_price_id set — return pending status, admin can handle manually
       return NextResponse.json({ success: true, status, paymentPending: true });
     }
 

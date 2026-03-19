@@ -29,7 +29,11 @@ export async function POST(request: Request) {
       const session = event.data.object as Stripe.Checkout.Session;
       const userId = session.metadata?.user_id;
       const plan = session.metadata?.plan;
+      const type = session.metadata?.type;
+      const eventId = session.metadata?.event_id;
+      const programId = session.metadata?.program_id;
 
+      // Subscription payment (membership)
       if (userId && session.subscription) {
         const subResponse = await stripe.subscriptions.retrieve(session.subscription as string);
         const sub = subResponse as unknown as { current_period_end: number };
@@ -43,6 +47,35 @@ export async function POST(request: Request) {
           })
           .eq('id', userId);
       }
+
+      // One-time event payment
+      if (type === 'event' && userId && eventId) {
+        await supabase
+          .from('event_registrations')
+          .update({
+            payment_status: 'paid',
+            status: 'confirmed',
+            stripe_payment_intent_id: session.payment_intent as string || null,
+            confirmed_at: new Date().toISOString(),
+          })
+          .eq('event_id', eventId)
+          .eq('user_id', userId);
+      }
+
+      // One-time program payment
+      if (type === 'program' && userId && programId) {
+        await supabase
+          .from('program_enrollments')
+          .update({
+            payment_status: 'paid',
+            status: 'confirmed',
+            stripe_payment_intent_id: session.payment_intent as string || null,
+            confirmed_at: new Date().toISOString(),
+          })
+          .eq('program_id', programId)
+          .eq('user_id', userId);
+      }
+
       break;
     }
 

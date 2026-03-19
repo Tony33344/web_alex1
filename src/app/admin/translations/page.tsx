@@ -5,7 +5,6 @@ import { Plus, Save, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { createClient } from '@/lib/supabase/client';
 import type { TranslationOverride } from '@/types/database';
 import { LOCALES } from '@/lib/constants';
 
@@ -17,33 +16,26 @@ export default function AdminTranslationsPage() {
   const [newValue, setNewValue] = useState('');
 
   useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-      const { data } = await supabase.from('translation_overrides').select('*').order('translation_key');
-      setItems((data as TranslationOverride[]) ?? []);
-      setLoading(false);
-    }
-    load();
+    fetch('/api/admin/data?table=translation_overrides&orderBy=translation_key&orderDir=asc')
+      .then(r => r.json()).then(d => { setItems(Array.isArray(d) ? d : []); setLoading(false); })
+      .catch(() => setLoading(false));
   }, []);
 
   async function addOverride() {
     if (!newKey || !newValue) return;
-    const supabase = createClient();
-    const { data, error } = await supabase.from('translation_overrides').upsert({
-      translation_key: newKey,
-      locale: newLocale,
-      value: newValue,
-    }, { onConflict: 'translation_key,locale' }).select().single();
-
-    if (data && !error) {
+    const res = await fetch('/api/admin/data', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'translation_overrides', data: { translation_key: newKey, locale: newLocale, value: newValue } }),
+    });
+    if (res.ok) {
+      const data = await res.json();
       setItems([...items.filter(i => !(i.translation_key === newKey && i.locale === newLocale)), data as TranslationOverride]);
       setNewKey(''); setNewValue('');
     }
   }
 
   async function deleteOverride(id: string) {
-    const supabase = createClient();
-    await supabase.from('translation_overrides').delete().eq('id', id);
+    await fetch('/api/admin/data', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ table: 'translation_overrides', id }) });
     setItems(items.filter(i => i.id !== id));
   }
 

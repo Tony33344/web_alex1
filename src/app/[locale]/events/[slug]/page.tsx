@@ -83,6 +83,9 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
                 label={t('common.registerNow')}
                 isFree={!event.price || event.price <= 0}
                 isFull={!!(event.max_attendees && event.current_attendees >= event.max_attendees)}
+                price={event.price}
+                currency={event.currency}
+                eventTitle={title}
               />
             </CardContent>
           </Card>

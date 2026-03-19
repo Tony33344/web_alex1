@@ -12,13 +12,9 @@ export default function AdminMediaPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function load() {
-      const supabase = createClient();
-      const { data } = await supabase.from('media').select('*').order('created_at', { ascending: false });
-      setItems((data as Media[]) ?? []);
-      setLoading(false);
-    }
-    load();
+    fetch('/api/admin/data?table=media')
+      .then(r => r.json()).then(d => { setItems(Array.isArray(d) ? d : []); setLoading(false); })
+      .catch(() => setLoading(false));
   }, []);
 
   async function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -27,29 +23,27 @@ export default function AdminMediaPage() {
 
     const supabase = createClient();
     const fileName = `${Date.now()}-${file.name}`;
-    const { data: uploadData, error: uploadError } = await supabase.storage
-      .from('media')
-      .upload(fileName, file);
-
+    const { error: uploadError } = await supabase.storage.from('media').upload(fileName, file);
     if (uploadError) { alert('Upload failed'); return; }
 
     const { data: { publicUrl } } = supabase.storage.from('media').getPublicUrl(fileName);
 
-    const { data: record } = await supabase.from('media').insert({
-      file_name: file.name,
-      file_url: publicUrl,
-      file_type: file.type,
-      file_size: file.size,
-      folder: 'general',
-    }).select().single();
-
-    if (record) setItems([record as Media, ...items]);
+    const res = await fetch('/api/admin/data', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'media', data: {
+        file_name: file.name, file_url: publicUrl,
+        file_type: file.type, file_size: file.size, folder: 'general',
+      }}),
+    });
+    if (res.ok) {
+      const record = await res.json();
+      setItems([record as Media, ...items]);
+    }
   }
 
-  async function deleteMedia(id: string, fileName: string) {
+  async function deleteMedia(id: string) {
     if (!confirm('Delete this file?')) return;
-    const supabase = createClient();
-    await supabase.from('media').delete().eq('id', id);
+    await fetch('/api/admin/data', { method: 'DELETE', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ table: 'media', id }) });
     setItems(items.filter(i => i.id !== id));
   }
 
@@ -79,7 +73,7 @@ export default function AdminMediaPage() {
                   variant="destructive"
                   size="sm"
                   className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                  onClick={() => deleteMedia(item.id, item.file_name)}
+                  onClick={() => deleteMedia(item.id)}
                 >
                   <Trash2 className="h-3 w-3" />
                 </Button>

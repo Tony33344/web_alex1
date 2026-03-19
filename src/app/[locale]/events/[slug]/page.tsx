@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { Calendar, MapPin, Users, Clock, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -8,6 +9,19 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 import { getEvent } from '@/lib/queries/events';
 import { getLocalizedField } from '@/lib/localization';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const { locale, slug } = await params;
+  const event = await getEvent(slug);
+  if (!event) return { title: 'Event Not Found' };
+  const title = getLocalizedField(event, 'title', locale) || event.title_en;
+  const description = getLocalizedField(event, 'description', locale) || '';
+  return {
+    title,
+    description: description.slice(0, 160),
+    openGraph: { title, description: description.slice(0, 160), images: event.image_url ? [event.image_url] : [] },
+  };
+}
 
 export default async function EventDetailPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params;

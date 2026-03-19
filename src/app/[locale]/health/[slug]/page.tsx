@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -5,6 +6,19 @@ import { getTranslations } from 'next-intl/server';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 import { getHealthCategory } from '@/lib/queries/health';
 import { getLocalizedField } from '@/lib/localization';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const { locale, slug } = await params;
+  const category = await getHealthCategory(slug);
+  if (!category) return { title: 'Category Not Found' };
+  const name = getLocalizedField(category, 'name', locale) || category.name_en;
+  const description = getLocalizedField(category, 'description', locale) || '';
+  return {
+    title: `${name} | Health`,
+    description: description.slice(0, 160),
+    openGraph: { title: name, description: description.slice(0, 160), images: category.cover_image_url ? [category.cover_image_url] : [] },
+  };
+}
 
 export default async function HealthCategoryPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params;

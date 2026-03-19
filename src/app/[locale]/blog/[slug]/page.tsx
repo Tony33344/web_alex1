@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
@@ -7,6 +8,19 @@ import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 import { getBlogPost } from '@/lib/queries/blog';
 import { getLocalizedField } from '@/lib/localization';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const { locale, slug } = await params;
+  const post = await getBlogPost(slug);
+  if (!post) return { title: 'Post Not Found' };
+  const title = getLocalizedField(post, 'title', locale) || post.title_en;
+  const excerpt = getLocalizedField(post, 'excerpt', locale) || '';
+  return {
+    title,
+    description: excerpt.slice(0, 160),
+    openGraph: { title, description: excerpt.slice(0, 160), images: post.featured_image_url ? [post.featured_image_url] : [] },
+  };
+}
 
 export default async function BlogPostPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params;

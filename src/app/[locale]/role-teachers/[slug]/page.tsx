@@ -1,10 +1,25 @@
 import { ArrowLeft } from 'lucide-react';
-import Link from 'next/link';
+import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 import { getTeacher } from '@/lib/queries/teachers';
 import { getLocalizedField } from '@/lib/localization';
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
+  const { locale, slug } = await params;
+  const teacher = await getTeacher(slug);
+  if (!teacher) return { title: 'Teacher Not Found' };
+  const title = teacher.name;
+  const bio = getLocalizedField(teacher, 'short_bio', locale) || '';
+  return {
+    title: `${title} | Role Teacher`,
+    description: bio.slice(0, 160),
+    openGraph: { title, description: bio.slice(0, 160), images: teacher.photo_url ? [teacher.photo_url] : [] },
+  };
+}
 
 export default async function TeacherDetailPage({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params;

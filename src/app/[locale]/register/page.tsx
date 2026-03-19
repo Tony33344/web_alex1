@@ -43,7 +43,7 @@ export default function RegisterPage() {
     setError('');
 
     const supabase = createClient();
-    const { error: authError } = await supabase.auth.signUp({
+    const { data: authData, error: authError } = await supabase.auth.signUp({
       email: data.email,
       password: data.password,
       options: {
@@ -61,6 +61,24 @@ export default function RegisterPage() {
       return;
     }
 
+    // Auto-confirm email via admin API so users can log in immediately
+    if (authData?.user?.id) {
+      await fetch('/api/auth/confirm-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: authData.user.id }),
+      });
+    }
+
+    // Subscribe to newsletter if opted in
+    if (data.subscribe_newsletter) {
+      fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: data.email, name: data.full_name }),
+      }).catch(() => {});
+    }
+
     setSuccess(true);
     setLoading(false);
   }
@@ -73,12 +91,12 @@ export default function RegisterPage() {
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
               <Mail className="h-8 w-8 text-primary" />
             </div>
-            <h2 className="text-xl font-bold">{t('checkEmail')}</h2>
+            <h2 className="text-xl font-bold">Account Created!</h2>
             <p className="text-sm text-muted-foreground">
-              We&apos;ve sent a confirmation link to your email. Please click it to activate your account.
+              Your account is ready. You can now log in with your email and password.
             </p>
             <Link href={`/${locale}/login`}>
-              <Button variant="outline" className="mt-4">{t('signIn')}</Button>
+              <Button className="mt-4">{t('signIn')}</Button>
             </Link>
           </CardContent>
         </Card>

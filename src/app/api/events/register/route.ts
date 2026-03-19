@@ -65,8 +65,6 @@ export async function POST(request: Request) {
       status,
       payment_status: paymentStatus,
       payment_method: method,
-      amount: event.price || 0,
-      currency: event.currency || 'EUR',
       bank_transfer_reference: bankRef,
     });
 

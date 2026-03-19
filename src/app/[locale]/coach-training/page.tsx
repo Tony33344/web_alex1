@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
-import { ArrowRight, Clock, Users, Award } from 'lucide-react';
+import { ArrowRight, Clock, Users, Award, CheckCircle, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -8,14 +8,44 @@ import { PageHeader } from '@/components/shared/PageHeader';
 import { getPrograms } from '@/lib/queries/programs';
 import { getLocalizedField } from '@/lib/localization';
 
-export default async function CoachTrainingPage({ params }: { params: Promise<{ locale: string }> }) {
+interface CoachTrainingPageProps {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ payment?: string }>;
+}
+
+export default async function CoachTrainingPage({ params, searchParams }: CoachTrainingPageProps) {
   const { locale } = await params;
+  const { payment } = await searchParams;
   const t = await getTranslations();
   const programs = await getPrograms();
 
   return (
     <>
       <PageHeader title={t('navigation.coachTraining')} subtitle="Become a certified wellness coach with our transformative programs" />
+
+      {/* Payment Status Banner */}
+      {payment === 'success' && (
+        <div className="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3 rounded-lg bg-green-50 p-4 text-green-800 dark:bg-green-900/20 dark:text-green-200">
+            <CheckCircle className="h-5 w-5 shrink-0" />
+            <div>
+              <p className="font-medium">Enrollment successful!</p>
+              <p className="text-sm opacity-90">You&apos;re enrolled in the program. Check your email for next steps.</p>
+            </div>
+          </div>
+        </div>
+      )}
+      {payment === 'cancelled' && (
+        <div className="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3 rounded-lg bg-amber-50 p-4 text-amber-800 dark:bg-amber-900/20 dark:text-amber-200">
+            <XCircle className="h-5 w-5 shrink-0" />
+            <div>
+              <p className="font-medium">Payment cancelled</p>
+              <p className="text-sm opacity-90">No worries — you can enroll again anytime.</p>
+            </div>
+          </div>
+        </div>
+      )}
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         {programs.length === 0 ? (

@@ -6,9 +6,8 @@ import { routing } from '@/i18n/routing';
 const intlMiddleware = createMiddleware(routing);
 
 const protectedRoutes = ['/profile', '/membership/checkout'];
-const adminRoutes = ['/admin'];
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Skip i18n for API routes and admin routes

@@ -57,18 +57,31 @@ export function EventRegisterButton({ eventId, locale, label, isFree, isFull, pr
   }
 
   async function handleCheckout(paymentMethod: 'stripe' | 'bank_transfer') {
-    const res = await fetch('/api/events/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ eventId, paymentMethod }),
-    });
-    const data = await res.json();
-    if (!res.ok) return { error: data.error || 'Registration failed' };
-    if (data.checkoutUrl) return { checkoutUrl: data.checkoutUrl };
-    if (data.reference) return { reference: data.reference };
-    setRegistered(true);
-    setShowCheckout(false);
-    return {};
+    try {
+      const res = await fetch('/api/events/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eventId, paymentMethod }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        const errorMsg = data.error || 'Registration failed';
+        setError(errorMsg);
+        return { error: errorMsg };
+      }
+      if (data.checkoutUrl) return { checkoutUrl: data.checkoutUrl };
+      if (data.reference) {
+        setRegistered(true);
+        return { reference: data.reference };
+      }
+      setRegistered(true);
+      setShowCheckout(false);
+      return {};
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Network error. Please try again.';
+      setError(errorMsg);
+      return { error: errorMsg };
+    }
   }
 
   if (registered) {

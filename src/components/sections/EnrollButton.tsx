@@ -58,18 +58,30 @@ export function EnrollButton({ locale, programSlug, label, price, currency, prog
   }
 
   async function handleCheckout(paymentMethod: 'stripe' | 'bank_transfer') {
-    const res = await fetch('/api/programs/enroll', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ programSlug, paymentMethod }),
-    });
-    const data = await res.json();
-    if (!res.ok) return { error: data.error || 'Enrollment failed' };
-    if (data.checkoutUrl) return { checkoutUrl: data.checkoutUrl };
-    if (data.reference) return { reference: data.reference };
-    setEnrolled(true);
-    setShowCheckout(false);
-    return {};
+    try {
+      const res = await fetch('/api/programs/enroll', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ programSlug, paymentMethod }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        const errorMsg = data.error || 'Enrollment failed';
+        setError(errorMsg);
+        return { error: errorMsg };
+      }
+      if (data.checkoutUrl) return { checkoutUrl: data.checkoutUrl };
+      if (data.reference) {
+        return { reference: data.reference };
+      }
+      setEnrolled(true);
+      setShowCheckout(false);
+      return {};
+    } catch (err) {
+      const errorMsg = err instanceof Error ? err.message : 'Network error. Please try again.';
+      setError(errorMsg);
+      return { error: errorMsg };
+    }
   }
 
   if (enrolled) {
@@ -94,7 +106,10 @@ export function EnrollButton({ locale, programSlug, label, price, currency, prog
       {!isFree && (
         <CheckoutDialog
           open={showCheckout}
-          onOpenChange={setShowCheckout}
+          onOpenChange={(open) => {
+            setShowCheckout(open);
+            if (!open && !error) setEnrolled(true);
+          }}
           title={programName || 'Program Enrollment'}
           price={price!}
           currency={currency || 'EUR'}

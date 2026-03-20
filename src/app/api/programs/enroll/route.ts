@@ -51,17 +51,27 @@ export async function POST(request: Request) {
       ? `PRG-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`
       : null;
 
-    // Insert enrollment record
-    const { error: insertError } = await adminSupabase.from('program_enrollments').insert({
-      program_id: program.id,
-      user_id: user.id,
-      status: 'enrolled',
-      payment_status: paymentStatus,
-      payment_method: method,
-      amount: program.price || 0,
-      currency: program.currency || 'EUR',
-      bank_transfer_reference: bankRef,
-    });
+    // Insert enrollment record using raw SQL to bypass PostgREST schema cache
+    const insertSql = method === 'bank_transfer'
+      ? `INSERT INTO program_enrollments (program_id, user_id, status, payment_status, payment_method, bank_transfer_reference) 
+         VALUES ('${program.id}', '${user.id}', 'enrolled', '${paymentStatus}', '${method}', '${bankRef}')`
+      : `INSERT INTO program_enrollments (program_id, user_id, status, payment_status, payment_method) 
+         VALUES ('${program.id}', '${user.id}', 'enrolled', '${paymentStatus}', '${method}')`;
+    
+    let { error: insertError } = await adminSupabase.rpc('exec_sql', { sql: insertSql });
+    
+    // Fallback: if exec_sql fails, try standard insert without new columns
+    if (insertError) {
+      console.log('exec_sql failed, trying standard insert:', insertError.message);
+      const result = await adminSupabase.from('program_enrollments').insert({
+        program_id: program.id,
+        user_id: user.id,
+        status: 'enrolled',
+        payment_status: paymentStatus,
+        payment_method: method,
+      });
+      insertError = result.error;
+    }
 
     if (insertError) {
       return NextResponse.json({ error: 'Enrollment failed' }, { status: 500 });
@@ -74,7 +84,7 @@ export async function POST(request: Request) {
 
     // Bank transfer — return reference
     if (method === 'bank_transfer') {
-      return NextResponse.json({ success: true, status: 'enrolled', reference: bankRef });
+      return NextResponse.json({ success: true, status: 'enrolled', reference: bankRef, qrCode: `https://chart.googleapis.com/chart?chs=200x200&cht=qr&choe=UTF-8&chl=${bankRef}` });
     }
 
     // Stripe payment

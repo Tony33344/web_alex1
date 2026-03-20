@@ -24,7 +24,14 @@ export async function POST(request: Request) {
       [programSlug]
     );
 
-    if (programError || !program || program.length === 0) {
+    if (programError) {
+      console.error('Program query error:', programError);
+      return NextResponse.json({ 
+        error: 'Database connection failed: ' + (programError instanceof Error ? programError.message : 'Unknown error') 
+      }, { status: 500 });
+    }
+    
+    if (!program || program.length === 0) {
       return NextResponse.json({ error: 'Program not found' }, { status: 404 });
     }
 

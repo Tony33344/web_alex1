@@ -24,6 +24,7 @@ export function EnrollButton({ locale, programSlug, label, price, currency, prog
   const [enrolled, setEnrolled] = useState(false);
   const [error, setError] = useState('');
   const [showCheckout, setShowCheckout] = useState(false);
+  const [hasReference, setHasReference] = useState(false);
 
   const isFree = !price || price <= 0;
 
@@ -72,6 +73,7 @@ export function EnrollButton({ locale, programSlug, label, price, currency, prog
       }
       if (data.checkoutUrl) return { checkoutUrl: data.checkoutUrl };
       if (data.reference) {
+        setHasReference(true);
         return { reference: data.reference };
       }
       setEnrolled(true);
@@ -108,7 +110,7 @@ export function EnrollButton({ locale, programSlug, label, price, currency, prog
           open={showCheckout}
           onOpenChange={(open) => {
             setShowCheckout(open);
-            if (!open && !error) setEnrolled(true);
+            if (!open && hasReference) setEnrolled(true);
           }}
           title={programName || 'Program Enrollment'}
           price={price!}

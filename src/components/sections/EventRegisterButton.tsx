@@ -25,6 +25,7 @@ export function EventRegisterButton({ eventId, locale, label, isFree, isFull, pr
   const [registered, setRegistered] = useState(false);
   const [error, setError] = useState('');
   const [showCheckout, setShowCheckout] = useState(false);
+  const [hasReference, setHasReference] = useState(false);
 
   async function handleClick() {
     if (!user) {
@@ -71,6 +72,7 @@ export function EventRegisterButton({ eventId, locale, label, isFree, isFull, pr
       }
       if (data.checkoutUrl) return { checkoutUrl: data.checkoutUrl };
       if (data.reference) {
+        setHasReference(true);
         return { reference: data.reference };
       }
       setRegistered(true);
@@ -107,7 +109,7 @@ export function EventRegisterButton({ eventId, locale, label, isFree, isFull, pr
           open={showCheckout}
           onOpenChange={(open) => {
             setShowCheckout(open);
-            if (!open && !error) setRegistered(true);
+            if (!open && hasReference) setRegistered(true);
           }}
           title={eventTitle || 'Event Registration'}
           price={price}

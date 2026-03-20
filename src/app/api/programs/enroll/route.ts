@@ -74,7 +74,8 @@ export async function POST(request: Request) {
     }
 
     if (insertError) {
-      return NextResponse.json({ error: 'Enrollment failed' }, { status: 500 });
+      console.error('Program enrollment insert error:', JSON.stringify(insertError, null, 2));
+      return NextResponse.json({ error: 'Enrollment failed: ' + insertError.message }, { status: 500 });
     }
 
     // Free program — done
@@ -121,7 +122,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ success: true, status: 'enrolled', paymentPending: true });
   } catch (err) {
-    console.error('Program enrollment error:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    console.error('Program enrollment error:', err instanceof Error ? err.message : String(err));
+    return NextResponse.json({ error: 'Internal server error: ' + (err instanceof Error ? err.message : 'Unknown error') }, { status: 500 });
   }
 }

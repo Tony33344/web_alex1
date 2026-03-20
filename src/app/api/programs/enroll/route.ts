@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import { queryDirect } from '@/lib/db/direct';
 import { createCheckoutSession, createOrRetrieveCustomer } from '@/lib/stripe/helpers';
+
+const escapeLiteral = (value: string | null) =>
+  value === null ? 'NULL' : `'${value.replace(/'/g, "''")}'`;
 
 export async function POST(request: Request) {
   try {
@@ -18,23 +22,30 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing programSlug' }, { status: 400 });
     }
 
+    const adminSupabase = createAdminClient();
+
     // Use direct SQL to bypass PostgREST schema cache
     const { data: program, error: programError } = await queryDirect(
       'SELECT id, name_en, price, currency, stripe_price_id FROM programs WHERE slug = $1',
       [programSlug]
     );
 
-    if (programError) {
-      console.error('Program query error:', programError);
-      return NextResponse.json({ error: 'Database error: ' + (programError instanceof Error ? programError.message : 'Unknown') }, { status: 500 });
-    }
-    
-    if (!program || program.length === 0) {
-      console.log('Program not found for slug:', programSlug);
-      return NextResponse.json({ error: 'Program not found: ' + programSlug }, { status: 404 });
+    let p = program?.[0];
+
+    if ((!p || programError) && process.env.NEXT_SUPABASE_SERVICE_KEY) {
+      const fallbackSql = `SELECT id, name_en, price, currency, stripe_price_id FROM programs WHERE slug = ${escapeLiteral(programSlug)} LIMIT 1;`;
+      const { data: fallbackData, error: fallbackError } = await adminSupabase.rpc('exec_sql', { sql: fallbackSql });
+      if (fallbackError) {
+        console.error('Program fallback query error:', fallbackError);
+      } else if (fallbackData && fallbackData.length > 0) {
+        p = fallbackData[0];
+      }
     }
 
-    const p = program[0];
+    if (!p) {
+      console.log('Program not found for slug:', programSlug, 'direct error:', programError);
+      return NextResponse.json({ error: 'Program not found: ' + programSlug }, { status: 404 });
+    }
 
     const isFree = !p.price || p.price <= 0;
     const method = isFree ? 'free' : (paymentMethod || 'stripe');
@@ -49,8 +60,16 @@ export async function POST(request: Request) {
       [p.id, user.id, 'enrolled', paymentStatus]
     );
 
-    if (insertError) {
-      const msg = (insertError as Error).message || '';
+    let insertionFailed = insertError;
+
+    if (insertError && process.env.NEXT_SUPABASE_SERVICE_KEY) {
+      const insertSql = `INSERT INTO program_enrollments (program_id, user_id, status, payment_status) VALUES (${escapeLiteral(p.id)}, ${escapeLiteral(user.id)}, 'enrolled', ${escapeLiteral(paymentStatus)});`;
+      const { error: fallbackInsertError } = await adminSupabase.rpc('exec_sql', { sql: insertSql });
+      insertionFailed = fallbackInsertError;
+    }
+
+    if (insertionFailed) {
+      const msg = (insertionFailed as Error).message || '';
       if (msg.includes('duplicate') || msg.includes('unique')) {
         return NextResponse.json({ error: 'Already enrolled' }, { status: 409 });
       }

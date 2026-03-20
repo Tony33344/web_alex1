@@ -1,12 +1,9 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { queryDirect } from '@/lib/db/direct';
 import { createCheckoutSession, createOrRetrieveCustomer } from '@/lib/stripe/helpers';
 
-const escapeLiteral = (value: string | null) =>
-  value === null ? 'NULL' : `'${value.replace(/'/g, "''")}'`;
-
+// Force redeploy - v2
 export async function POST(request: Request) {
   try {
     const supabase = await createClient();
@@ -24,57 +21,51 @@ export async function POST(request: Request) {
 
     const adminSupabase = createAdminClient();
 
-    // Use direct SQL to bypass PostgREST schema cache
-    const { data: program, error: programError } = await queryDirect(
-      'SELECT id, name_en, price, currency, stripe_price_id FROM programs WHERE slug = $1',
-      [programSlug]
-    );
+    const { data: program, error: programError } = await adminSupabase
+      .from('programs')
+      .select('id, name_en, price, currency, stripe_price_id')
+      .eq('slug', programSlug)
+      .single();
 
-    let p = program?.[0];
-
-    if ((!p || programError) && process.env.NEXT_SUPABASE_SERVICE_KEY) {
-      const fallbackSql = `SELECT id, name_en, price, currency, stripe_price_id FROM programs WHERE slug = ${escapeLiteral(programSlug)} LIMIT 1;`;
-      const { data: fallbackData, error: fallbackError } = await adminSupabase.rpc('exec_sql', { sql: fallbackSql });
-      if (fallbackError) {
-        console.error('Program fallback query error:', fallbackError);
-      } else if (fallbackData && fallbackData.length > 0) {
-        p = fallbackData[0];
-      }
+    if (programError || !program) {
+      console.error('Program lookup failed:', programError?.message);
+      return NextResponse.json({ error: 'Program not found' }, { status: 404 });
     }
 
-    if (!p) {
-      console.log('Program not found for slug:', programSlug, 'direct error:', programError);
-      return NextResponse.json({ error: 'Program not found: ' + programSlug }, { status: 404 });
-    }
-
-    const isFree = !p.price || p.price <= 0;
+    const isFree = !program.price || program.price <= 0;
     const method = isFree ? 'free' : (paymentMethod || 'stripe');
     const paymentStatus = isFree ? 'free' : 'pending';
     const bankRef = method === 'bank_transfer'
       ? `PRG-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`
       : null;
 
-    // Insert enrollment using direct SQL
-    const { error: insertError } = await queryDirect(
-      'INSERT INTO program_enrollments (program_id, user_id, status, payment_status) VALUES ($1, $2, $3, $4)',
-      [p.id, user.id, 'enrolled', paymentStatus]
-    );
+    // Insert enrollment using exec_sql to bypass schema cache
+    const insertSql = bankRef
+      ? `INSERT INTO program_enrollments (program_id, user_id, status, payment_status, payment_method, bank_transfer_reference)
+         VALUES ($$${program.id}$$, $$${user.id}$$, 'enrolled', $$${paymentStatus}$$, $$${method}$$, $$${bankRef}$$)`
+      : `INSERT INTO program_enrollments (program_id, user_id, status, payment_status, payment_method)
+         VALUES ($$${program.id}$$, $$${user.id}$$, 'enrolled', $$${paymentStatus}$$, $$${method}$$)`;
 
-    let insertionFailed = insertError;
+    let { error: insertError } = await adminSupabase.rpc('exec_sql', { sql: insertSql });
 
-    if (insertError && process.env.NEXT_SUPABASE_SERVICE_KEY) {
-      const insertSql = `INSERT INTO program_enrollments (program_id, user_id, status, payment_status) VALUES (${escapeLiteral(p.id)}, ${escapeLiteral(user.id)}, 'enrolled', ${escapeLiteral(paymentStatus)});`;
-      const { error: fallbackInsertError } = await adminSupabase.rpc('exec_sql', { sql: insertSql });
-      insertionFailed = fallbackInsertError;
+    if (insertError) {
+      console.log('exec_sql enrollment insert failed:', insertError.message);
+      const fallback = await adminSupabase.from('program_enrollments').insert({
+        program_id: program.id,
+        user_id: user.id,
+        status: 'enrolled',
+        payment_status: paymentStatus,
+        payment_method: method,
+      });
+      insertError = fallback.error;
     }
 
-    if (insertionFailed) {
-      const msg = (insertionFailed as Error).message || '';
-      if (msg.includes('duplicate') || msg.includes('unique')) {
+    if (insertError) {
+      if (insertError.message?.includes('duplicate') || insertError.message?.includes('unique')) {
         return NextResponse.json({ error: 'Already enrolled' }, { status: 409 });
       }
-      console.error('Enrollment insert error:', msg);
-      return NextResponse.json({ error: 'Enrollment failed: ' + msg }, { status: 500 });
+      console.error('Program enrollment insert error:', insertError.message);
+      return NextResponse.json({ error: 'Enrollment failed: ' + insertError.message }, { status: 500 });
     }
 
     // Free program
@@ -88,31 +79,29 @@ export async function POST(request: Request) {
     }
 
     // Stripe payment
-    const { data: profile } = await queryDirect(
-      'SELECT stripe_customer_id, full_name FROM profiles WHERE id = $1',
-      [user.id]
-    );
+    const { data: profile } = await adminSupabase
+      .from('profiles')
+      .select('stripe_customer_id, full_name')
+      .eq('id', user.id)
+      .maybeSingle();
 
-    let customerId = profile?.[0]?.stripe_customer_id;
+    let customerId = profile?.stripe_customer_id;
     if (!customerId) {
       const customer = await createOrRetrieveCustomer({
         email: user.email!,
-        name: profile?.[0]?.full_name || '',
+        name: profile?.full_name || '',
         supabaseId: user.id,
       });
       customerId = customer.id;
-      await queryDirect(
-        'UPDATE profiles SET stripe_customer_id = $1 WHERE id = $2',
-        [customerId, user.id]
-      );
+      await adminSupabase.from('profiles').update({ stripe_customer_id: customerId }).eq('id', user.id);
     }
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
-    if (p.stripe_price_id) {
+    if (program.stripe_price_id) {
       const session = await createCheckoutSession({
         customerId,
-        priceId: p.stripe_price_id,
+        priceId: program.stripe_price_id,
         mode: 'payment',
         successUrl: `${appUrl}/en/coach-training?payment=success`,
         cancelUrl: `${appUrl}/en/coach-training/${programSlug}?payment=cancelled`,

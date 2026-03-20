@@ -31,17 +31,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Program not found' }, { status: 404 });
     }
 
-    // Check existing enrollment
-    const { data: existing } = await adminSupabase
-      .from('program_enrollments')
-      .select('id')
-      .eq('program_id', program.id)
-      .eq('user_id', user.id)
-      .maybeSingle();
-
-    if (existing) {
-      return NextResponse.json({ error: 'Already enrolled' }, { status: 409 });
-    }
+    // Skip existing enrollment check - rely on UNIQUE constraint to catch duplicates
+    // This avoids SELECT query hitting PostgREST schema cache
 
     const isFree = !program.price || program.price <= 0;
     const method = isFree ? 'free' : (paymentMethod || 'stripe');
@@ -61,6 +52,10 @@ export async function POST(request: Request) {
       });
 
     if (insertError) {
+      // Handle duplicate enrollment gracefully
+      if (insertError.message?.includes('duplicate') || insertError.message?.includes('unique')) {
+        return NextResponse.json({ error: 'Already enrolled' }, { status: 409 });
+      }
       console.error('Enrollment insert error:', insertError.message);
       return NextResponse.json({ error: 'Enrollment failed: ' + insertError.message }, { status: 500 });
     }

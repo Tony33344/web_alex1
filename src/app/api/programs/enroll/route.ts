@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { createAdminClient } from '@/lib/supabase/admin';
+import { queryDirect } from '@/lib/db/direct';
 import { createCheckoutSession, createOrRetrieveCustomer } from '@/lib/stripe/helpers';
 
 export async function POST(request: Request) {
@@ -18,69 +18,91 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing programSlug' }, { status: 400 });
     }
 
-    const adminSupabase = createAdminClient();
+    // Use direct SQL to bypass PostgREST schema cache completely
+    const { data: program, error: programError } = await queryDirect(
+      'SELECT id, name_en, price, currency, stripe_price_id FROM programs WHERE slug = $1',
+      [programSlug]
+    );
 
-    // Use the SQL function to handle enrollment (bypasses PostgREST cache)
-    const { data: result, error: rpcError } = await adminSupabase.rpc('enroll_program', {
-      p_user_id: user.id,
-      p_program_slug: programSlug,
-      p_payment_method: paymentMethod || 'stripe'
-    });
-
-    if (rpcError) {
-      console.error('enroll_program RPC error:', rpcError);
-      return NextResponse.json({ error: 'Enrollment failed: ' + rpcError.message }, { status: 500 });
+    if (programError || !program || program.length === 0) {
+      return NextResponse.json({ error: 'Program not found' }, { status: 404 });
     }
 
-    // Handle SQL function result
-    if (!result || result.length === 0) {
-      return NextResponse.json({ error: 'Enrollment failed' }, { status: 500 });
+    const p = program[0];
+
+    // Check existing enrollment
+    const { data: existing, error: existingError } = await queryDirect(
+      'SELECT id FROM program_enrollments WHERE program_id = $1 AND user_id = $2',
+      [p.id, user.id]
+    );
+
+    if (existingError) {
+      console.error('Enrollment check error:', existingError);
     }
 
-    const { success, reference, checkout_url, error_message } = result[0];
-
-    if (!success) {
-      return NextResponse.json({ error: error_message || 'Enrollment failed' }, { status: 400 });
+    if (existing && existing.length > 0) {
+      return NextResponse.json({ error: 'Already enrolled' }, { status: 409 });
     }
 
-    if (error_message) {
-      return NextResponse.json({ error: error_message }, { status: 400 });
+    const isFree = !p.price || p.price <= 0;
+    const method = isFree ? 'free' : (paymentMethod || 'stripe');
+    const paymentStatus = isFree ? 'free' : 'pending';
+    const bankRef = method === 'bank_transfer'
+      ? `PRG-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`
+      : null;
+
+    // Insert enrollment with direct SQL
+    const { error: insertError } = await queryDirect(
+      `INSERT INTO program_enrollments (program_id, user_id, status, payment_status, payment_method, bank_transfer_reference)
+       VALUES ($1, $2, 'enrolled', $3, $4, $5)`,
+      [p.id, user.id, paymentStatus, method, bankRef]
+    );
+
+    if (insertError) {
+      console.error('Enrollment insert error:', insertError);
+      return NextResponse.json({ error: 'Enrollment failed: ' + (insertError as Error).message }, { status: 500 });
     }
 
     // Free program
-    if (!reference && !checkout_url) {
+    if (isFree) {
       return NextResponse.json({ success: true, status: 'enrolled' });
     }
 
-    // Bank transfer - return reference
-    if (reference) {
-      return NextResponse.json({ success: true, status: 'enrolled', reference });
+    // Bank transfer
+    if (method === 'bank_transfer') {
+      return NextResponse.json({ success: true, status: 'enrolled', reference: bankRef });
     }
 
-    // Stripe - create checkout session
-    if (checkout_url) {
-      const { data: profile } = await adminSupabase
-        .from('profiles')
-        .select('stripe_customer_id, full_name')
-        .eq('id', user.id)
-        .single();
+    // Stripe
+    const { data: profile, error: profileError } = await queryDirect(
+      'SELECT stripe_customer_id, full_name FROM profiles WHERE id = $1',
+      [user.id]
+    );
 
-      let customerId = profile?.stripe_customer_id;
-      if (!customerId) {
-        const customer = await createOrRetrieveCustomer({
-          email: user.email!,
-          name: profile?.full_name || '',
-          supabaseId: user.id,
-        });
-        customerId = customer.id;
-        await adminSupabase.from('profiles').update({ stripe_customer_id: customerId }).eq('id', user.id);
-      }
+    if (profileError) {
+      console.error('Profile fetch error:', profileError);
+    }
 
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    let customerId = profile?.[0]?.stripe_customer_id;
+    if (!customerId) {
+      const customer = await createOrRetrieveCustomer({
+        email: user.email!,
+        name: profile?.[0]?.full_name || '',
+        supabaseId: user.id,
+      });
+      customerId = customer.id;
+      await queryDirect(
+        'UPDATE profiles SET stripe_customer_id = $1 WHERE id = $2',
+        [customerId, user.id]
+      );
+    }
 
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+
+    if (p.stripe_price_id) {
       const session = await createCheckoutSession({
         customerId,
-        priceId: checkout_url, // This is actually the stripe_price_id
+        priceId: p.stripe_price_id,
         mode: 'payment',
         successUrl: `${appUrl}/en/coach-training?payment=success`,
         cancelUrl: `${appUrl}/en/coach-training/${programSlug}?payment=cancelled`,
@@ -89,9 +111,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, status: 'enrolled', checkoutUrl: session.url });
     }
 
-    return NextResponse.json({ success: true, status: 'enrolled' });
+    return NextResponse.json({ success: true, status: 'enrolled', paymentPending: true });
   } catch (err) {
     console.error('Program enrollment error:', err instanceof Error ? err.message : String(err));
-    return NextResponse.json({ error: 'Internal server error: ' + (err instanceof Error ? err.message : 'Unknown error') }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

@@ -24,8 +24,14 @@ export async function POST(request: Request) {
       [programSlug]
     );
 
-    if (programError || !program || program.length === 0) {
-      return NextResponse.json({ error: 'Program not found' }, { status: 404 });
+    if (programError) {
+      console.error('Program query error:', programError);
+      return NextResponse.json({ error: 'Database error: ' + (programError instanceof Error ? programError.message : 'Unknown') }, { status: 500 });
+    }
+    
+    if (!program || program.length === 0) {
+      console.log('Program not found for slug:', programSlug);
+      return NextResponse.json({ error: 'Program not found: ' + programSlug }, { status: 404 });
     }
 
     const p = program[0];

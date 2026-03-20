@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { createAdminClient } from '@/lib/supabase/admin';
+import { queryDirect } from '@/lib/db/direct';
 import { createCheckoutSession, createOrRetrieveCustomer } from '@/lib/stripe/helpers';
 
 export async function POST(request: Request) {
@@ -18,46 +18,38 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing programSlug' }, { status: 400 });
     }
 
-    const adminSupabase = createAdminClient();
+    // Use direct SQL to bypass PostgREST schema cache
+    const { data: program, error: programError } = await queryDirect(
+      'SELECT id, name_en, price, currency, stripe_price_id FROM programs WHERE slug = $1',
+      [programSlug]
+    );
 
-    // Get program details
-    const { data: program, error: programError } = await adminSupabase
-      .from('programs')
-      .select('id, name_en, price, currency, stripe_price_id')
-      .eq('slug', programSlug)
-      .single();
-
-    if (programError || !program) {
+    if (programError || !program || program.length === 0) {
       return NextResponse.json({ error: 'Program not found' }, { status: 404 });
     }
 
-    // Skip existing enrollment check - rely on UNIQUE constraint to catch duplicates
-    // This avoids SELECT query hitting PostgREST schema cache
+    const p = program[0];
 
-    const isFree = !program.price || program.price <= 0;
+    const isFree = !p.price || p.price <= 0;
     const method = isFree ? 'free' : (paymentMethod || 'stripe');
     const paymentStatus = isFree ? 'free' : 'pending';
     const bankRef = method === 'bank_transfer'
       ? `PRG-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`
       : null;
 
-    // Insert enrollment - use only columns that exist in original schema
-    const { error: insertError } = await adminSupabase
-      .from('program_enrollments')
-      .insert({
-        program_id: program.id,
-        user_id: user.id,
-        status: 'enrolled',
-        payment_status: paymentStatus,
-      });
+    // Insert enrollment using direct SQL
+    const { error: insertError } = await queryDirect(
+      'INSERT INTO program_enrollments (program_id, user_id, status, payment_status) VALUES ($1, $2, $3, $4)',
+      [p.id, user.id, 'enrolled', paymentStatus]
+    );
 
     if (insertError) {
-      // Handle duplicate enrollment gracefully
-      if (insertError.message?.includes('duplicate') || insertError.message?.includes('unique')) {
+      const msg = (insertError as Error).message || '';
+      if (msg.includes('duplicate') || msg.includes('unique')) {
         return NextResponse.json({ error: 'Already enrolled' }, { status: 409 });
       }
-      console.error('Enrollment insert error:', insertError.message);
-      return NextResponse.json({ error: 'Enrollment failed: ' + insertError.message }, { status: 500 });
+      console.error('Enrollment insert error:', msg);
+      return NextResponse.json({ error: 'Enrollment failed: ' + msg }, { status: 500 });
     }
 
     // Free program
@@ -71,29 +63,31 @@ export async function POST(request: Request) {
     }
 
     // Stripe payment
-    const { data: profile } = await adminSupabase
-      .from('profiles')
-      .select('stripe_customer_id, full_name')
-      .eq('id', user.id)
-      .maybeSingle();
+    const { data: profile } = await queryDirect(
+      'SELECT stripe_customer_id, full_name FROM profiles WHERE id = $1',
+      [user.id]
+    );
 
-    let customerId = profile?.stripe_customer_id;
+    let customerId = profile?.[0]?.stripe_customer_id;
     if (!customerId) {
       const customer = await createOrRetrieveCustomer({
         email: user.email!,
-        name: profile?.full_name || '',
+        name: profile?.[0]?.full_name || '',
         supabaseId: user.id,
       });
       customerId = customer.id;
-      await adminSupabase.from('profiles').update({ stripe_customer_id: customerId }).eq('id', user.id);
+      await queryDirect(
+        'UPDATE profiles SET stripe_customer_id = $1 WHERE id = $2',
+        [customerId, user.id]
+      );
     }
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
-    if (program.stripe_price_id) {
+    if (p.stripe_price_id) {
       const session = await createCheckoutSession({
         customerId,
-        priceId: program.stripe_price_id,
+        priceId: p.stripe_price_id,
         mode: 'payment',
         successUrl: `${appUrl}/en/coach-training?payment=success`,
         cancelUrl: `${appUrl}/en/coach-training/${programSlug}?payment=cancelled`,

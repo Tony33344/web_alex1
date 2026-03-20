@@ -58,14 +58,16 @@ export async function POST(request: Request) {
       ? `EVT-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`
       : null;
 
-    // Insert registration using safe parameterized insert
+    // Insert registration - use only base columns that exist in original schema
+    // bank_transfer_reference is stored in notes field as fallback
+    const notes = bankRef ? `Bank transfer reference: ${bankRef}` : null;
+    
     const { error } = await adminSupabase.from('event_registrations').insert({
       event_id: eventId,
       user_id: user.id,
       status,
       payment_status: paymentStatus,
-      payment_method: method,
-      bank_transfer_reference: bankRef,
+      notes,
     });
 
     if (error) {

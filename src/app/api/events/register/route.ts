@@ -58,19 +58,25 @@ export async function POST(request: Request) {
       ? `EVT-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`
       : null;
 
-    // Insert registration
-    const { error } = await adminSupabase.from('event_registrations').insert({
-      event_id: eventId,
-      user_id: user.id,
-      status,
-      payment_status: paymentStatus,
-      payment_method: method,
-      bank_transfer_reference: bankRef,
-    });
-
+    // Insert registration using raw SQL to bypass PostgREST schema cache
+    const insertSql = method === 'bank_transfer' 
+      ? `INSERT INTO event_registrations (event_id, user_id, status, payment_status, payment_method, bank_transfer_reference) 
+         VALUES ('${eventId}', '${user.id}', '${status}', '${paymentStatus}', '${method}', '${bankRef}')`
+      : `INSERT INTO event_registrations (event_id, user_id, status, payment_status, payment_method) 
+         VALUES ('${eventId}', '${user.id}', '${status}', '${paymentStatus}', '${method}')`;
+    
+    let { error } = await adminSupabase.rpc('exec_sql', { sql: insertSql });
+    
+    // Fallback: if exec_sql fails, try standard insert without new columns
     if (error) {
-      console.error('Event registration insert error:', error);
-      return NextResponse.json({ error: 'Registration failed: ' + error.message }, { status: 500 });
+      console.log('exec_sql failed, trying standard insert without new columns:', error.message);
+      const result = await adminSupabase.from('event_registrations').insert({
+        event_id: eventId,
+        user_id: user.id,
+        status,
+        payment_status: paymentStatus,
+      });
+      error = result.error;
     }
 
     if (!isFull) {

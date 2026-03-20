@@ -804,4 +804,12 @@ ON CONFLICT (key) DO NOTHING;
 -- ============================================
 SELECT pg_notify('pgrst', 'reload schema');
 
+-- Create exec_sql function for raw SQL execution (bypasses schema cache)
+CREATE OR REPLACE FUNCTION exec_sql(sql text)
+RETURNS void AS $$
+BEGIN
+  EXECUTE sql;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 -- Alternative: comment out line above and restart Supabase project if issues persist

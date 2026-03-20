@@ -812,4 +812,74 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+-- Create enroll_program function to handle enrollment entirely server-side
+CREATE OR REPLACE FUNCTION enroll_program(
+  p_user_id UUID,
+  p_program_slug TEXT,
+  p_payment_method TEXT DEFAULT 'stripe'
+)
+RETURNS TABLE (
+  success BOOLEAN,
+  reference TEXT,
+  checkout_url TEXT,
+  error_message TEXT
+) AS $$
+DECLARE
+  v_program_id UUID;
+  v_program_price NUMERIC;
+  v_program_currency TEXT;
+  v_program_stripe_id TEXT;
+  v_existing_id UUID;
+  v_is_free BOOLEAN;
+  v_bank_ref TEXT;
+  v_method TEXT;
+  v_payment_status TEXT;
+BEGIN
+  -- Lookup program
+  SELECT id, price, currency, stripe_price_id 
+  INTO v_program_id, v_program_price, v_program_currency, v_program_stripe_id
+  FROM programs WHERE slug = p_program_slug;
+  
+  IF v_program_id IS NULL THEN
+    RETURN QUERY SELECT false, null::TEXT, null::TEXT, 'Program not found'::TEXT;
+    RETURN;
+  END IF;
+  
+  -- Check existing enrollment
+  SELECT id INTO v_existing_id 
+  FROM program_enrollments 
+  WHERE program_id = v_program_id AND user_id = p_user_id;
+  
+  IF v_existing_id IS NOT NULL THEN
+    RETURN QUERY SELECT false, null::TEXT, null::TEXT, 'Already enrolled'::TEXT;
+    RETURN;
+  END IF;
+  
+  -- Determine payment settings
+  v_is_free := COALESCE(v_program_price, 0) <= 0;
+  v_method := CASE WHEN v_is_free THEN 'free' ELSE p_payment_method END;
+  v_payment_status := CASE WHEN v_is_free THEN 'free' ELSE 'pending' END;
+  v_bank_ref := CASE WHEN v_method = 'bank_transfer' 
+    THEN 'PRG-' || TO_CHAR(NOW(), 'YYYYMMDDHH24MISS') || '-' || SUBSTRING(MD5(RANDOM()::TEXT), 1, 4)
+    ELSE NULL END;
+  
+  -- Insert enrollment
+  INSERT INTO program_enrollments (
+    program_id, user_id, status, payment_status, payment_method, bank_transfer_reference
+  ) VALUES (
+    v_program_id, p_user_id, 'enrolled', v_payment_status, v_method, v_bank_ref
+  );
+  
+  -- Return result
+  IF v_is_free THEN
+    RETURN QUERY SELECT true, null::TEXT, null::TEXT, null::TEXT;
+  ELSIF v_method = 'bank_transfer' THEN
+    RETURN QUERY SELECT true, v_bank_ref, null::TEXT, null::TEXT;
+  ELSE
+    -- For Stripe, return the program stripe_price_id for checkout
+    RETURN QUERY SELECT true, null::TEXT, v_program_stripe_id, null::TEXT;
+  END IF;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 -- Alternative: comment out line above and restart Supabase project if issues persist

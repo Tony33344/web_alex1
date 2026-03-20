@@ -71,7 +71,6 @@ export function EventRegisterButton({ eventId, locale, label, isFree, isFull, pr
       }
       if (data.checkoutUrl) return { checkoutUrl: data.checkoutUrl };
       if (data.reference) {
-        setRegistered(true);
         return { reference: data.reference };
       }
       setRegistered(true);
@@ -106,7 +105,10 @@ export function EventRegisterButton({ eventId, locale, label, isFree, isFull, pr
       {!isFree && price && price > 0 && (
         <CheckoutDialog
           open={showCheckout}
-          onOpenChange={setShowCheckout}
+          onOpenChange={(open) => {
+            setShowCheckout(open);
+            if (!open && !error) setRegistered(true);
+          }}
           title={eventTitle || 'Event Registration'}
           price={price}
           currency={currency || 'EUR'}

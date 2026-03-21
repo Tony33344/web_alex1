@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
+import { ImageUpload } from '@/components/admin/ImageUpload';
 import type { Event } from '@/types/database';
 
 export default function EditEventPage() {
@@ -16,10 +17,11 @@ export default function EditEventPage() {
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
 
   useEffect(() => {
     fetch(`/api/admin/data?table=events&id=${id}`)
-      .then(r => r.json()).then(d => { setEvent(d as Event | null); setLoading(false); })
+      .then(r => r.json()).then(d => { setEvent(d as Event | null); setImageUrl((d as Event)?.image_url || ''); setLoading(false); })
       .catch(() => setLoading(false));
   }, [id]);
 
@@ -86,8 +88,14 @@ export default function EditEventPage() {
                 <Input id="location" name="location" defaultValue={event.location || ''} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="image_url">Image URL</Label>
-                <Input id="image_url" name="image_url" defaultValue={event.image_url || ''} />
+                <Label>Event Image</Label>
+                <input type="hidden" name="image_url" value={imageUrl} />
+                <ImageUpload
+                  value={imageUrl || null}
+                  onChange={setImageUrl}
+                  folder="events"
+                  label="Event image"
+                />
               </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-3">

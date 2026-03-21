@@ -23,10 +23,10 @@ export default function AdminMediaPage() {
 
     const supabase = createClient();
     const fileName = `${Date.now()}-${file.name}`;
-    const { error: uploadError } = await supabase.storage.from('media').upload(fileName, file);
-    if (uploadError) { alert('Upload failed'); return; }
+    const { error: uploadError } = await supabase.storage.from('images').upload(`media/${fileName}`, file);
+    if (uploadError) { alert('Upload failed: ' + uploadError.message); return; }
 
-    const { data: { publicUrl } } = supabase.storage.from('media').getPublicUrl(fileName);
+    const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(`media/${fileName}`);
 
     const res = await fetch('/api/admin/data', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },

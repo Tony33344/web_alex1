@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
+import { ImageUpload } from '@/components/admin/ImageUpload';
 import type { Program } from '@/types/database';
 
 export default function EditProgramPage() {
@@ -16,10 +17,11 @@ export default function EditProgramPage() {
   const [program, setProgram] = useState<Program | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
 
   useEffect(() => {
     fetch(`/api/admin/data?table=programs&id=${id}`)
-      .then(r => r.json()).then(d => { setProgram(d as Program | null); setLoading(false); })
+      .then(r => r.json()).then(d => { setProgram(d as Program | null); setImageUrl((d as Program)?.image_url || ''); setLoading(false); })
       .catch(() => setLoading(false));
   }, [id]);
 
@@ -92,8 +94,14 @@ export default function EditProgramPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="image_url">Image URL</Label>
-              <Input id="image_url" name="image_url" defaultValue={program.image_url || ''} />
+              <Label>Program Image</Label>
+              <input type="hidden" name="image_url" value={imageUrl} />
+              <ImageUpload
+                value={imageUrl || null}
+                onChange={setImageUrl}
+                folder="programs"
+                label="Program image"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="what_you_learn">What You&apos;ll Learn (one per line)</Label>

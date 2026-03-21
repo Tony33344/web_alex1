@@ -74,14 +74,15 @@ export function Header({ locale }: HeaderProps) {
 
         {/* Desktop Navigation */}
         <nav className="hidden items-center gap-1 lg:flex">
-          <Link
-            href={p('/')}
-            className={`rounded-md px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
-              pathname === `/${locale}` ? 'text-primary' : 'text-foreground/70'
-            }`}
-          >
-            About
-          </Link>
+          {/* About Dropdown */}
+          <NavDropdown
+            label="About"
+            active={isActive('/about')}
+            items={[
+              { label: 'Our Mission', href: p('/about/mission') },
+              { label: 'Our Vision', href: p('/about/vision') },
+            ]}
+          />
 
           {/* Role Teachers Dropdown */}
           <NavDropdown
@@ -214,7 +215,17 @@ export function Header({ locale }: HeaderProps) {
             </SheetTrigger>
             <SheetContent side="right" className="w-80 overflow-y-auto">
               <div className="mt-8 flex flex-col gap-2">
-                <MobileLink href={p('/')} label="About" onClick={() => setMobileOpen(false)} />
+                <Accordion className="w-full">
+                  <AccordionItem value="about" className="border-none">
+                    <AccordionTrigger className="py-2 text-sm font-medium hover:no-underline">
+                      About
+                    </AccordionTrigger>
+                    <AccordionContent className="flex flex-col gap-1 pl-4">
+                      <MobileLink href={p('/about/mission')} label="Our Mission" onClick={() => setMobileOpen(false)} />
+                      <MobileLink href={p('/about/vision')} label="Our Vision" onClick={() => setMobileOpen(false)} />
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
 
                 <Accordion className="w-full">
                   <AccordionItem value="role-teachers" className="border-none">

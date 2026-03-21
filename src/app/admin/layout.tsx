@@ -4,13 +4,14 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard, FileText, Users, Heart, GraduationCap, Calendar, BookOpen,
-  CreditCard, MessageSquare, Mail, Settings, Image, Globe, Star, BarChart3, Menu, X, ShoppingCart,
+  CreditCard, MessageSquare, Mail, Settings, Image, Globe, Star, BarChart3, Menu, X, ShoppingCart, Info,
 } from 'lucide-react';
 import { useState } from 'react';
 import '@/app/globals.css';
 
 const navItems = [
   { label: 'Dashboard', href: '/admin', icon: LayoutDashboard },
+  { label: 'About', href: '/admin/about', icon: Info },
   { label: 'Pages', href: '/admin/pages', icon: FileText },
   { label: 'Teachers', href: '/admin/teachers', icon: Users },
   { label: 'Testimonials', href: '/admin/testimonials', icon: Star },

@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
+import { ImageUpload } from '@/components/admin/ImageUpload';
 import type { HealthCategory } from '@/types/database';
 
 export default function EditHealthCategoryPage() {
@@ -16,10 +17,11 @@ export default function EditHealthCategoryPage() {
   const [category, setCategory] = useState<HealthCategory | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [coverUrl, setCoverUrl] = useState('');
 
   useEffect(() => {
     fetch(`/api/admin/data?table=health_categories&id=${id}`)
-      .then(r => r.json()).then(d => { setCategory(d as HealthCategory | null); setLoading(false); })
+      .then(r => r.json()).then(d => { setCategory(d as HealthCategory | null); setCoverUrl((d as HealthCategory)?.cover_image_url || ''); setLoading(false); })
       .catch(() => setLoading(false));
   }, [id]);
 
@@ -76,8 +78,14 @@ export default function EditHealthCategoryPage() {
                 <Input id="icon_name" name="icon_name" defaultValue={category.icon_name || ''} placeholder="e.g. Heart, Sun, Brain" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="cover_image_url">Cover Image URL</Label>
-                <Input id="cover_image_url" name="cover_image_url" defaultValue={category.cover_image_url || ''} />
+                <Label>Cover Image</Label>
+                <input type="hidden" name="cover_image_url" value={coverUrl} />
+                <ImageUpload
+                  value={coverUrl || null}
+                  onChange={setCoverUrl}
+                  folder="health"
+                  label="Cover image"
+                />
               </div>
             </div>
             <label className="flex items-center gap-2 text-sm">

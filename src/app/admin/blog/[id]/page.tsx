@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { BLOG_CATEGORIES } from '@/lib/constants';
+import { ImageUpload } from '@/components/admin/ImageUpload';
 import type { BlogPost } from '@/types/database';
 
 export default function EditBlogPostPage() {
@@ -17,10 +18,11 @@ export default function EditBlogPostPage() {
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
 
   useEffect(() => {
     fetch(`/api/admin/data?table=blog_posts&id=${id}`)
-      .then(r => r.json()).then(d => { setPost(d as BlogPost | null); setLoading(false); })
+      .then(r => r.json()).then(d => { setPost(d as BlogPost | null); setImageUrl((d as BlogPost)?.featured_image_url || ''); setLoading(false); })
       .catch(() => setLoading(false));
   }, [id]);
 
@@ -72,8 +74,14 @@ export default function EditBlogPostPage() {
               <Textarea id="content_en" name="content_en" rows={12} defaultValue={post.content_en || ''} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="featured_image_url">Featured Image URL</Label>
-              <Input id="featured_image_url" name="featured_image_url" defaultValue={post.featured_image_url || ''} />
+              <Label>Featured Image</Label>
+              <input type="hidden" name="featured_image_url" value={imageUrl} />
+              <ImageUpload
+                value={imageUrl || null}
+                onChange={setImageUrl}
+                folder="blog"
+                label="Featured image"
+              />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">

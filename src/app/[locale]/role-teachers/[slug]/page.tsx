@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 import { getTeacher } from '@/lib/queries/teachers';
 import { getLocalizedField } from '@/lib/localization';
+import { nl2br } from '@/lib/utils/text';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
@@ -60,7 +61,7 @@ export default async function TeacherDetailPage({ params }: { params: Promise<{ 
           <div className="prose max-w-none text-muted-foreground">
             <h2 className="text-foreground">About {teacher.name}</h2>
             {bio ? (
-              <div dangerouslySetInnerHTML={{ __html: bio }} />
+              <div dangerouslySetInnerHTML={{ __html: nl2br(bio) }} />
             ) : (
               <p>Full biography coming soon.</p>
             )}

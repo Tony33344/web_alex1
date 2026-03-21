@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 import { getEvent } from '@/lib/queries/events';
 import { getLocalizedField } from '@/lib/localization';
+import { nl2br } from '@/lib/utils/text';
 import { EventRegisterButton } from '@/components/sections/EventRegisterButton';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
@@ -57,9 +58,9 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
             ))}
           </div>
           <h1 className="text-3xl font-bold">{title}</h1>
-          {description && <p className="text-lg text-muted-foreground">{description}</p>}
+          {description && <p className="text-lg text-muted-foreground whitespace-pre-line">{description}</p>}
           {longContent && (
-            <div className="prose max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: longContent }} />
+            <div className="prose max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: nl2br(longContent) }} />
           )}
         </div>
 

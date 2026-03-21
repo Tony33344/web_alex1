@@ -6,6 +6,7 @@ import { getTranslations } from 'next-intl/server';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 import { getHealthCategory } from '@/lib/queries/health';
 import { getLocalizedField } from '@/lib/localization';
+import { nl2br } from '@/lib/utils/text';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
@@ -42,9 +43,9 @@ export default async function HealthCategoryPage({ params }: { params: Promise<{
           )}
         </div>
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{name}</h1>
-        {description && <p className="text-lg text-muted-foreground">{description}</p>}
+        {description && <p className="text-lg text-muted-foreground whitespace-pre-line">{description}</p>}
         {longContent ? (
-          <div className="prose max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: longContent }} />
+          <div className="prose max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: nl2br(longContent) }} />
         ) : (
           <div className="prose max-w-none text-muted-foreground">
             <p>Detailed content coming soon.</p>

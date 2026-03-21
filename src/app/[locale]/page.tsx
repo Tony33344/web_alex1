@@ -191,7 +191,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
                     {getLocalizedField(featuredEvent, 'title', locale)}
                   </h2>
-                  <p className="text-lg leading-relaxed text-primary-foreground/80">
+                  <p className="text-lg leading-relaxed text-primary-foreground/80 whitespace-pre-line">
                     {getLocalizedField(featuredEvent, 'description', locale)}
                   </p>
                   <div className="flex items-center gap-4 text-sm text-primary-foreground/70">

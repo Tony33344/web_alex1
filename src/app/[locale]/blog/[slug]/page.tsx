@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 import { getBlogPost } from '@/lib/queries/blog';
 import { getLocalizedField } from '@/lib/localization';
+import { nl2br } from '@/lib/utils/text';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
@@ -54,7 +55,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
       </div>
 
       {content ? (
-        <div className="prose prose-lg mt-8 max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: content }} />
+        <div className="prose prose-lg mt-8 max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: nl2br(content) }} />
       ) : (
         <div className="prose prose-lg mt-8 max-w-none text-muted-foreground">
           <p>Content coming soon.</p>

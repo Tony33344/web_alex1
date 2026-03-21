@@ -37,7 +37,7 @@ export default async function HealthPage({ params }: { params: Promise<{ locale:
                         <IconComp className="h-8 w-8 text-primary" />
                       </div>
                       <h3 className="text-xl font-semibold">{name}</h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">{description}</p>
+                      <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{description}</p>
                       <span className="mt-auto flex items-center gap-1.5 text-sm font-medium text-primary opacity-0 transition-opacity group-hover:opacity-100">
                         {t('common.learnMore')} <ArrowRight className="h-4 w-4" />
                       </span>

@@ -10,6 +10,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { ImageUpload } from '@/components/admin/ImageUpload';
+import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import type { Page } from '@/types/database';
 
 const LOCALES = ['en', 'de', 'it', 'fr', 'hi', 'si'] as const;
@@ -165,13 +166,11 @@ export default function AdminAboutEditPage() {
                 />
               </div>
               <div className="space-y-2">
-                <Label>Content (HTML supported)</Label>
-                <Textarea
+                <Label>Content</Label>
+                <RichTextEditor
                   value={(page[contentField] as string) || ''}
-                  onChange={(e) => updateField(contentField, e.target.value)}
+                  onChange={(html) => updateField(contentField, html)}
                   placeholder={`Content in ${activeLocale.toUpperCase()}`}
-                  rows={16}
-                  className="font-mono text-sm"
                 />
               </div>
             </CardContent>

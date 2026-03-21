@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { Card, CardContent } from '@/components/ui/card';
 import { ImageUpload } from '@/components/admin/ImageUpload';
 import type { HealthCategory } from '@/types/database';
@@ -18,10 +19,12 @@ export default function EditHealthCategoryPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [coverUrl, setCoverUrl] = useState('');
+  const [description, setDescription] = useState('');
+  const [longContent, setLongContent] = useState('');
 
   useEffect(() => {
     fetch(`/api/admin/data?table=health_categories&id=${id}`)
-      .then(r => r.json()).then(d => { setCategory(d as HealthCategory | null); setCoverUrl((d as HealthCategory)?.cover_image_url || ''); setLoading(false); })
+      .then(r => r.json()).then(d => { const cat = d as HealthCategory | null; setCategory(cat); setCoverUrl(cat?.cover_image_url || ''); setDescription(cat?.description_en || ''); setLongContent(cat?.long_content_en || ''); setLoading(false); })
       .catch(() => setLoading(false));
   }, [id]);
 
@@ -65,12 +68,22 @@ export default function EditHealthCategoryPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description_en">Description (English)</Label>
-              <Textarea id="description_en" name="description_en" rows={3} defaultValue={category.description_en || ''} />
+              <Label>Description (English)</Label>
+              <input type="hidden" name="description_en" value={description} />
+              <RichTextEditor
+                value={description || ''}
+                onChange={setDescription}
+                placeholder="Health category description"
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="long_content_en">Long Content (English / HTML)</Label>
-              <Textarea id="long_content_en" name="long_content_en" rows={10} defaultValue={category.long_content_en || ''} />
+              <Label>Long Content (English)</Label>
+              <input type="hidden" name="long_content_en" value={longContent} />
+              <RichTextEditor
+                value={longContent || ''}
+                onChange={setLongContent}
+                placeholder="Detailed health content"
+              />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">

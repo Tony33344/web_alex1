@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { Card, CardContent } from '@/components/ui/card';
 import { ImageUpload } from '@/components/admin/ImageUpload';
 import type { Event } from '@/types/database';
@@ -18,10 +19,11 @@ export default function EditEventPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
+  const [description, setDescription] = useState('');
 
   useEffect(() => {
     fetch(`/api/admin/data?table=events&id=${id}`)
-      .then(r => r.json()).then(d => { setEvent(d as Event | null); setImageUrl((d as Event)?.image_url || ''); setLoading(false); })
+      .then(r => r.json()).then(d => { setEvent(d as Event | null); setImageUrl((d as Event)?.image_url || ''); setDescription((d as Event)?.description_en || ''); setLoading(false); })
       .catch(() => setLoading(false));
   }, [id]);
 
@@ -69,8 +71,13 @@ export default function EditEventPage() {
               <Input id="title_de" name="title_de" defaultValue={event.title_de || ''} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description_en">Description</Label>
-              <Textarea id="description_en" name="description_en" rows={4} defaultValue={event.description_en || ''} />
+              <Label>Description</Label>
+              <input type="hidden" name="description_en" value={description} />
+              <RichTextEditor
+                value={description || ''}
+                onChange={setDescription}
+                placeholder="Event description"
+              />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">

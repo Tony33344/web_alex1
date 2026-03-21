@@ -7,13 +7,16 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { Card, CardContent } from '@/components/ui/card';
 import { ImageUpload } from '@/components/admin/ImageUpload';
 
 export default function NewTestimonialPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
-  const [photoUrl, setPhotoUrl] = useState('');
+  const [authorPhotoUrl, setAuthorPhotoUrl] = useState('');
+  const [contentEn, setContentEn] = useState('');
+  const [contentDe, setContentDe] = useState('');
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -24,7 +27,7 @@ export default function NewTestimonialPage() {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ table: 'testimonials', data: {
         author_name: fd.get('author_name'), author_title: fd.get('author_title') || null,
-        content_en: fd.get('content_en'), content_de: fd.get('content_de') || null,
+        content_en: contentEn, content_de: contentDe || null,
         rating: parseInt(fd.get('rating') as string) || 5,
         author_photo_url: fd.get('author_photo_url') || null,
         is_published: fd.get('is_published') === 'on',
@@ -52,12 +55,22 @@ export default function NewTestimonialPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="content_en">Content (English) *</Label>
-              <Textarea id="content_en" name="content_en" rows={4} required />
+              <Label>Content (English)</Label>
+              <input type="hidden" name="content_en" value={contentEn} />
+              <RichTextEditor
+                value={contentEn || ''}
+                onChange={setContentEn}
+                placeholder="Testimonial content"
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="content_de">Content (German)</Label>
-              <Textarea id="content_de" name="content_de" rows={4} />
+              <Label>Content (German)</Label>
+              <input type="hidden" name="content_de" value={contentDe} />
+              <RichTextEditor
+                value={contentDe || ''}
+                onChange={setContentDe}
+                placeholder="Testimonial content (German)"
+              />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
@@ -66,10 +79,10 @@ export default function NewTestimonialPage() {
               </div>
               <div className="space-y-2">
                 <Label>Author Photo</Label>
-                <input type="hidden" name="author_photo_url" value={photoUrl} />
+                <input type="hidden" name="author_photo_url" value={authorPhotoUrl} />
                 <ImageUpload
-                  value={photoUrl || null}
-                  onChange={setPhotoUrl}
+                  value={authorPhotoUrl || null}
+                  onChange={setAuthorPhotoUrl}
                   folder="testimonials"
                   label="Author photo"
                 />

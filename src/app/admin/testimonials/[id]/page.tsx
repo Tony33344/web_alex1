@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { Card, CardContent } from '@/components/ui/card';
 import { ImageUpload } from '@/components/admin/ImageUpload';
 import type { Testimonial } from '@/types/database';
@@ -17,11 +18,13 @@ export default function EditTestimonialPage() {
   const [item, setItem] = useState<Testimonial | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [photoUrl, setPhotoUrl] = useState('');
+  const [authorPhotoUrl, setAuthorPhotoUrl] = useState('');
+  const [contentEn, setContentEn] = useState('');
+  const [contentDe, setContentDe] = useState('');
 
   useEffect(() => {
     fetch(`/api/admin/data?table=testimonials&id=${id}`)
-      .then(r => r.json()).then(d => { setItem(d as Testimonial | null); setPhotoUrl((d as Testimonial)?.author_photo_url || ''); setLoading(false); })
+      .then(r => r.json()).then(d => { const t = d as Testimonial | null; setItem(t); setAuthorPhotoUrl(t?.author_photo_url || ''); setContentEn(t?.content_en || ''); setContentDe(t?.content_de || ''); setLoading(false); })
       .catch(() => setLoading(false));
   }, [id]);
 
@@ -65,12 +68,22 @@ export default function EditTestimonialPage() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="content_en">Content (English) *</Label>
-              <Textarea id="content_en" name="content_en" rows={4} required defaultValue={item.content_en} />
+              <Label>Content (English)</Label>
+              <input type="hidden" name="content_en" value={contentEn} />
+              <RichTextEditor
+                value={contentEn || ''}
+                onChange={setContentEn}
+                placeholder="Testimonial content"
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="content_de">Content (German)</Label>
-              <Textarea id="content_de" name="content_de" rows={4} defaultValue={item.content_de || ''} />
+              <Label>Content (German)</Label>
+              <input type="hidden" name="content_de" value={contentDe} />
+              <RichTextEditor
+                value={contentDe || ''}
+                onChange={setContentDe}
+                placeholder="Testimonial content (German)"
+              />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
@@ -79,10 +92,10 @@ export default function EditTestimonialPage() {
               </div>
               <div className="space-y-2">
                 <Label>Author Photo</Label>
-                <input type="hidden" name="author_photo_url" value={photoUrl} />
+                <input type="hidden" name="author_photo_url" value={authorPhotoUrl} />
                 <ImageUpload
-                  value={photoUrl || null}
-                  onChange={setPhotoUrl}
+                  value={authorPhotoUrl || null}
+                  onChange={setAuthorPhotoUrl}
                   folder="testimonials"
                   label="Author photo"
                 />

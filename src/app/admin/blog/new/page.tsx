@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BLOG_CATEGORIES } from '@/lib/constants';
 import { ImageUpload } from '@/components/admin/ImageUpload';
@@ -15,6 +16,7 @@ export default function NewBlogPostPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
+  const [content, setContent] = useState('');
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -28,9 +30,10 @@ export default function NewBlogPostPage() {
       body: JSON.stringify({ table: 'blog_posts', data: {
         slug,
         title_en: fd.get('title_en'), title_de: fd.get('title_de') || null,
-        excerpt_en: fd.get('excerpt_en') || null, content_en: fd.get('content_en') || null,
+        excerpt_en: fd.get('excerpt_en') || null,
         category: fd.get('category') || null,
         featured_image_url: fd.get('featured_image_url') || null,
+        content_en: fd.get('content_en') || null,
         is_published: fd.get('is_published') === 'on',
         is_members_only: fd.get('is_members_only') === 'on',
         is_featured: fd.get('is_featured') === 'on',
@@ -61,8 +64,13 @@ export default function NewBlogPostPage() {
               <Textarea id="excerpt_en" name="excerpt_en" rows={2} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="content_en">Content (English)</Label>
-              <Textarea id="content_en" name="content_en" rows={12} />
+              <Label>Content (English)</Label>
+              <input type="hidden" name="content_en" value={content} />
+              <RichTextEditor
+                value={content || ''}
+                onChange={setContent}
+                placeholder="Blog post content"
+              />
             </div>
             <div className="space-y-2">
               <Label>Featured Image</Label>

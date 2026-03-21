@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { Card, CardContent } from '@/components/ui/card';
 import { ImageUpload } from '@/components/admin/ImageUpload';
 
@@ -14,6 +15,7 @@ export default function NewEventPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
+  const [description, setDescription] = useState('');
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -53,8 +55,13 @@ export default function NewEventPage() {
               <Input id="title_en" name="title_en" required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description_en">Description</Label>
-              <Textarea id="description_en" name="description_en" rows={4} />
+              <Label>Description</Label>
+              <input type="hidden" name="description_en" value={description} />
+              <RichTextEditor
+                value={description || ''}
+                onChange={setDescription}
+                placeholder="Event description"
+              />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">

@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { Card, CardContent } from '@/components/ui/card';
 import { BLOG_CATEGORIES } from '@/lib/constants';
 import { ImageUpload } from '@/components/admin/ImageUpload';
@@ -18,11 +19,12 @@ export default function EditBlogPostPage() {
   const [post, setPost] = useState<BlogPost | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [imageUrl, setImageUrl] = useState('');
+  const [featuredImageUrl, setFeaturedImageUrl] = useState('');
+  const [content, setContent] = useState('');
 
   useEffect(() => {
     fetch(`/api/admin/data?table=blog_posts&id=${id}`)
-      .then(r => r.json()).then(d => { setPost(d as BlogPost | null); setImageUrl((d as BlogPost)?.featured_image_url || ''); setLoading(false); })
+      .then(r => r.json()).then(d => { setPost(d as BlogPost | null); setFeaturedImageUrl((d as BlogPost)?.featured_image_url || ''); setContent((d as BlogPost)?.content_en || ''); setLoading(false); })
       .catch(() => setLoading(false));
   }, [id]);
 
@@ -70,15 +72,20 @@ export default function EditBlogPostPage() {
               <Textarea id="excerpt_en" name="excerpt_en" rows={2} defaultValue={post.excerpt_en || ''} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="content_en">Content (English)</Label>
-              <Textarea id="content_en" name="content_en" rows={12} defaultValue={post.content_en || ''} />
+              <Label>Content (English)</Label>
+              <input type="hidden" name="content_en" value={content} />
+              <RichTextEditor
+                value={content || ''}
+                onChange={setContent}
+                placeholder="Blog post content"
+              />
             </div>
             <div className="space-y-2">
               <Label>Featured Image</Label>
-              <input type="hidden" name="featured_image_url" value={imageUrl} />
+              <input type="hidden" name="featured_image_url" value={featuredImageUrl} />
               <ImageUpload
-                value={imageUrl || null}
-                onChange={setImageUrl}
+                value={featuredImageUrl || null}
+                onChange={setFeaturedImageUrl}
                 folder="blog"
                 label="Featured image"
               />

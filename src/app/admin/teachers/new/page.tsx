@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { Card, CardContent } from '@/components/ui/card';
 import { ImageUpload } from '@/components/admin/ImageUpload';
 
@@ -14,6 +15,8 @@ export default function NewTeacherPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
   const [photoUrl, setPhotoUrl] = useState('');
+  const [shortBio, setShortBio] = useState('');
+  const [bio, setBio] = useState('');
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -50,12 +53,22 @@ export default function NewTeacherPage() {
               <Input id="title_en" name="title_en" placeholder="e.g. Founder & Lead Teacher" />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="short_bio_en">Short Bio (English)</Label>
-              <Textarea id="short_bio_en" name="short_bio_en" rows={3} />
+              <Label>Short Bio (English)</Label>
+              <input type="hidden" name="short_bio_en" value={shortBio} />
+              <RichTextEditor
+                value={shortBio || ''}
+                onChange={setShortBio}
+                placeholder="Brief teacher bio"
+              />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="bio_en">Full Bio (English)</Label>
-              <Textarea id="bio_en" name="bio_en" rows={8} />
+              <Label>Full Bio (English)</Label>
+              <input type="hidden" name="bio_en" value={bio} />
+              <RichTextEditor
+                value={bio || ''}
+                onChange={setBio}
+                placeholder="Detailed teacher biography"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="specialties">Specialties (comma-separated)</Label>

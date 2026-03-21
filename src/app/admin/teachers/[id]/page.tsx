@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
+import { ImageUpload } from '@/components/admin/ImageUpload';
 import type { Teacher } from '@/types/database';
 
 export default function EditTeacherPage() {
@@ -16,10 +17,11 @@ export default function EditTeacherPage() {
   const [teacher, setTeacher] = useState<Teacher | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState('');
 
   useEffect(() => {
     fetch(`/api/admin/data?table=teachers&id=${id}`)
-      .then(r => r.json()).then(d => { setTeacher(d as Teacher | null); setLoading(false); })
+      .then(r => r.json()).then(d => { setTeacher(d as Teacher | null); setPhotoUrl((d as Teacher)?.photo_url || ''); setLoading(false); })
       .catch(() => setLoading(false));
   }, [id]);
 
@@ -77,8 +79,14 @@ export default function EditTeacherPage() {
               <Input id="specialties" name="specialties" defaultValue={teacher.specialties?.join(', ') || ''} />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="photo_url">Photo URL</Label>
-              <Input id="photo_url" name="photo_url" defaultValue={teacher.photo_url || ''} />
+              <Label>Teacher Photo</Label>
+              <input type="hidden" name="photo_url" value={photoUrl} />
+              <ImageUpload
+                value={photoUrl || null}
+                onChange={setPhotoUrl}
+                folder="teachers"
+                label="Teacher photo"
+              />
             </div>
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" name="is_active" defaultChecked={teacher.is_active} className="h-4 w-4 rounded border-input" /> Active

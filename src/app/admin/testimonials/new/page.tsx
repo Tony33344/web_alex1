@@ -8,9 +8,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
+import { ImageUpload } from '@/components/admin/ImageUpload';
+
 export default function NewTestimonialPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState('');
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -23,6 +26,7 @@ export default function NewTestimonialPage() {
         author_name: fd.get('author_name'), author_title: fd.get('author_title') || null,
         content_en: fd.get('content_en'), content_de: fd.get('content_de') || null,
         rating: parseInt(fd.get('rating') as string) || 5,
+        author_photo_url: fd.get('author_photo_url') || null,
         is_published: fd.get('is_published') === 'on',
         is_featured: fd.get('is_featured') === 'on',
       }}),
@@ -55,9 +59,21 @@ export default function NewTestimonialPage() {
               <Label htmlFor="content_de">Content (German)</Label>
               <Textarea id="content_de" name="content_de" rows={4} />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="rating">Rating (1-5)</Label>
-              <Input id="rating" name="rating" type="number" min="1" max="5" defaultValue="5" />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="rating">Rating (1-5)</Label>
+                <Input id="rating" name="rating" type="number" min="1" max="5" defaultValue="5" />
+              </div>
+              <div className="space-y-2">
+                <Label>Author Photo</Label>
+                <input type="hidden" name="author_photo_url" value={photoUrl} />
+                <ImageUpload
+                  value={photoUrl || null}
+                  onChange={setPhotoUrl}
+                  folder="testimonials"
+                  label="Author photo"
+                />
+              </div>
             </div>
             <div className="flex flex-wrap gap-6">
               <label className="flex items-center gap-2 text-sm">

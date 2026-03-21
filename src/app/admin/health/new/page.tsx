@@ -8,9 +8,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
+import { ImageUpload } from '@/components/admin/ImageUpload';
+
 export default function NewHealthCategoryPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [coverUrl, setCoverUrl] = useState('');
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -63,8 +66,14 @@ export default function NewHealthCategoryPage() {
                 <Input id="icon_name" name="icon_name" placeholder="e.g. Heart, Sun, Brain" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="cover_image_url">Cover Image URL</Label>
-                <Input id="cover_image_url" name="cover_image_url" />
+                <Label>Cover Image</Label>
+                <input type="hidden" name="cover_image_url" value={coverUrl} />
+                <ImageUpload
+                  value={coverUrl || null}
+                  onChange={setCoverUrl}
+                  folder="health"
+                  label="Cover image"
+                />
               </div>
             </div>
             <label className="flex items-center gap-2 text-sm">

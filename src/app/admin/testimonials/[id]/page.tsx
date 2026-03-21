@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
+import { ImageUpload } from '@/components/admin/ImageUpload';
 import type { Testimonial } from '@/types/database';
 
 export default function EditTestimonialPage() {
@@ -16,10 +17,11 @@ export default function EditTestimonialPage() {
   const [item, setItem] = useState<Testimonial | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState('');
 
   useEffect(() => {
     fetch(`/api/admin/data?table=testimonials&id=${id}`)
-      .then(r => r.json()).then(d => { setItem(d as Testimonial | null); setLoading(false); })
+      .then(r => r.json()).then(d => { setItem(d as Testimonial | null); setPhotoUrl((d as Testimonial)?.author_photo_url || ''); setLoading(false); })
       .catch(() => setLoading(false));
   }, [id]);
 
@@ -76,8 +78,14 @@ export default function EditTestimonialPage() {
                 <Input id="rating" name="rating" type="number" min="1" max="5" defaultValue={item.rating || 5} />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="author_photo_url">Author Photo URL</Label>
-                <Input id="author_photo_url" name="author_photo_url" defaultValue={item.author_photo_url || ''} />
+                <Label>Author Photo</Label>
+                <input type="hidden" name="author_photo_url" value={photoUrl} />
+                <ImageUpload
+                  value={photoUrl || null}
+                  onChange={setPhotoUrl}
+                  folder="testimonials"
+                  label="Author photo"
+                />
               </div>
             </div>
             <div className="flex flex-wrap gap-6">

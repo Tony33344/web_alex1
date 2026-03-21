@@ -9,10 +9,12 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BLOG_CATEGORIES } from '@/lib/constants';
+import { ImageUpload } from '@/components/admin/ImageUpload';
 
 export default function NewBlogPostPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -28,6 +30,7 @@ export default function NewBlogPostPage() {
         title_en: fd.get('title_en'), title_de: fd.get('title_de') || null,
         excerpt_en: fd.get('excerpt_en') || null, content_en: fd.get('content_en') || null,
         category: fd.get('category') || null,
+        featured_image_url: fd.get('featured_image_url') || null,
         is_published: fd.get('is_published') === 'on',
         is_members_only: fd.get('is_members_only') === 'on',
         is_featured: fd.get('is_featured') === 'on',
@@ -60,6 +63,16 @@ export default function NewBlogPostPage() {
             <div className="space-y-2">
               <Label htmlFor="content_en">Content (English)</Label>
               <Textarea id="content_en" name="content_en" rows={12} />
+            </div>
+            <div className="space-y-2">
+              <Label>Featured Image</Label>
+              <input type="hidden" name="featured_image_url" value={imageUrl} />
+              <ImageUpload
+                value={imageUrl || null}
+                onChange={setImageUrl}
+                folder="blog"
+                label="Featured image"
+              />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">

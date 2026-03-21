@@ -8,9 +8,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
+import { ImageUpload } from '@/components/admin/ImageUpload';
+
 export default function NewTeacherPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [photoUrl, setPhotoUrl] = useState('');
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -24,6 +27,7 @@ export default function NewTeacherPage() {
         slug, name: fd.get('name'), title_en: fd.get('title_en') || null,
         short_bio_en: fd.get('short_bio_en') || null, bio_en: fd.get('bio_en') || null,
         specialties: (fd.get('specialties') as string).split(',').map((s: string) => s.trim()).filter(Boolean),
+        photo_url: fd.get('photo_url') || null,
         is_active: fd.get('is_active') === 'on',
       }}),
     });
@@ -56,6 +60,16 @@ export default function NewTeacherPage() {
             <div className="space-y-2">
               <Label htmlFor="specialties">Specialties (comma-separated)</Label>
               <Input id="specialties" name="specialties" placeholder="Sunyoga, Meditation, Healing" />
+            </div>
+            <div className="space-y-2">
+              <Label>Teacher Photo</Label>
+              <input type="hidden" name="photo_url" value={photoUrl} />
+              <ImageUpload
+                value={photoUrl || null}
+                onChange={setPhotoUrl}
+                folder="teachers"
+                label="Teacher photo"
+              />
             </div>
             <label className="flex items-center gap-2 text-sm">
               <input type="checkbox" name="is_active" defaultChecked className="h-4 w-4 rounded border-input" /> Active

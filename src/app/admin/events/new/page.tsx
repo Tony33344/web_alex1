@@ -8,10 +8,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
+import { ImageUpload } from '@/components/admin/ImageUpload';
 
 export default function NewEventPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -70,8 +72,14 @@ export default function NewEventPage() {
                 <Input id="location" name="location" />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="image_url">Image URL</Label>
-                <Input id="image_url" name="image_url" placeholder="https://..." />
+                <Label>Event Image</Label>
+                <input type="hidden" name="image_url" value={imageUrl} />
+                <ImageUpload
+                  value={imageUrl || null}
+                  onChange={setImageUrl}
+                  folder="events"
+                  label="Event image"
+                />
               </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-3">

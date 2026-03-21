@@ -8,10 +8,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
+import { ImageUpload } from '@/components/admin/ImageUpload';
 
 export default function NewProgramPage() {
   const router = useRouter();
   const [saving, setSaving] = useState(false);
+  const [imageUrl, setImageUrl] = useState('');
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -28,6 +30,7 @@ export default function NewProgramPage() {
         price: parseFloat(fd.get('price') as string) || null,
         stripe_price_id: fd.get('stripe_price_id') || null,
         max_participants: parseInt(fd.get('max_participants') as string) || null,
+        image_url: fd.get('image_url') || null,
         what_you_learn: (fd.get('what_you_learn') as string).split('\n').map((s: string) => s.trim()).filter(Boolean),
         prerequisites: (fd.get('prerequisites') as string).split('\n').map((s: string) => s.trim()).filter(Boolean),
         is_active: fd.get('is_active') === 'on',
@@ -77,6 +80,16 @@ export default function NewProgramPage() {
                 <Label htmlFor="stripe_price_id">Stripe Price ID</Label>
                 <Input id="stripe_price_id" name="stripe_price_id" placeholder="price_..." />
               </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Program Image</Label>
+              <input type="hidden" name="image_url" value={imageUrl} />
+              <ImageUpload
+                value={imageUrl || null}
+                onChange={setImageUrl}
+                folder="programs"
+                label="Program image"
+              />
             </div>
             <div className="space-y-2">
               <Label htmlFor="what_you_learn">What You&apos;ll Learn (one per line)</Label>

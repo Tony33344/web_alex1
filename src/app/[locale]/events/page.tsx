@@ -51,7 +51,7 @@ export default async function EventsPage({ params, searchParams }: EventsPagePro
         {events.length === 0 ? (
           <p className="text-center text-muted-foreground">No upcoming events. Check back soon!</p>
         ) : (
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="flex flex-wrap justify-center gap-8">
             {events.map((event) => {
               const title = getLocalizedField(event, 'title', locale) || event.title_en;
               const spotsLeft = event.max_attendees ? event.max_attendees - event.current_attendees : null;
@@ -59,7 +59,7 @@ export default async function EventsPage({ params, searchParams }: EventsPagePro
               const startDate = new Date(event.start_date).toLocaleDateString(locale, { dateStyle: 'medium' });
 
               return (
-                <Link key={event.id} href={`/${locale}/events/${event.slug}`}>
+                <Link key={event.id} href={`/${locale}/events/${event.slug}`} className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)]">
                   <Card className="group h-full overflow-hidden transition-shadow hover:shadow-lg">
                     <div className="relative aspect-video bg-gradient-to-br from-primary/10 to-secondary/10">
                       {event.image_url && (

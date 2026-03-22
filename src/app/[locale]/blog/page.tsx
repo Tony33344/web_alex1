@@ -53,14 +53,14 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
               );
             })}
 
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="flex flex-wrap justify-center gap-8">
               {regularPosts.map((post) => {
                 const title = getLocalizedField(post, 'title', locale) || post.title_en;
                 const excerpt = getLocalizedField(post, 'excerpt', locale) || '';
                 const date = post.published_at ? new Date(post.published_at).toLocaleDateString(locale, { dateStyle: 'medium' }) : '';
 
                 return (
-                  <Link key={post.id} href={`/${locale}/blog/${post.slug}`}>
+                  <Link key={post.id} href={`/${locale}/blog/${post.slug}`} className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)]">
                     <Card className="group h-full overflow-hidden transition-shadow hover:shadow-lg">
                       <div className="aspect-video bg-gradient-to-br from-primary/5 to-muted">
                         {post.featured_image_url && (

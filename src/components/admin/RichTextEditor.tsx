@@ -23,6 +23,7 @@ import {
   AlignLeft,
   AlignCenter,
   AlignRight,
+  AlignJustify,
   Link as LinkIcon,
   Unlink,
   Minus,
@@ -432,6 +433,13 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
           title="Align Right"
         >
           <AlignRight className="h-4 w-4" />
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => editor.chain().focus().setTextAlign('justify').run()}
+          active={editor.isActive({ textAlign: 'justify' })}
+          title="Justify"
+        >
+          <AlignJustify className="h-4 w-4" />
         </ToolbarButton>
 
         <Separator />

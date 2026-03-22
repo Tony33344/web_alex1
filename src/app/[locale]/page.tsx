@@ -138,20 +138,41 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('home.healthTitle')}</h2>
             <p className="mt-4 text-muted-foreground">Six pillars of health and transformation</p>
           </div>
-          <div className="flex flex-wrap justify-center gap-6">
-            {healthCategories.length > 0 ? healthCategories.map((cat) => {
+          <div className="flex flex-wrap justify-center gap-8">
+            {healthCategories.length > 0 ? healthCategories.map((cat, i) => {
               const IconComp = (cat.icon_name && healthIconMap[cat.icon_name]) || Heart;
+              const palette = colorPalette[i % colorPalette.length];
               return (
                 <Link key={cat.slug} href={`/${locale}/health/${cat.slug}`} className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)]">
-                  <Card className="group cursor-pointer border-transparent bg-muted/50 transition-all hover:border-primary/20 hover:bg-card hover:shadow-md">
-                    <CardContent className="flex flex-col items-center gap-4 pt-8 text-center">
-                      <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 transition-colors group-hover:bg-primary/20">
-                        <IconComp className="h-7 w-7 text-primary" />
+                  <div className="overflow-hidden rounded-2xl shadow-md transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl bg-card ring-1 ring-foreground/10">
+                    {/* Image or gradient header */}
+                    <div className="relative h-44 overflow-hidden">
+                      {cat.cover_image_url ? (
+                        <img
+                          src={cat.cover_image_url}
+                          alt={getLocalizedField(cat, 'name', locale) || cat.name_en}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className={`h-full w-full bg-gradient-to-br ${palette.bg}`} />
+                      )}
+                      {/* Subtle bottom fade into card */}
+                      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
+                      {/* Icon badge */}
+                      <div className={`absolute left-4 bottom-2 flex h-12 w-12 items-center justify-center rounded-xl ${palette.icon} shadow-md ring-2 ring-card`}>
+                        <IconComp className="h-6 w-6" />
                       </div>
-                      <h3 className="text-lg font-semibold">{getLocalizedField(cat, 'name', locale)}</h3>
-                      <p className="text-sm text-muted-foreground">{getLocalizedField(cat, 'description', locale)}</p>
-                    </CardContent>
-                  </Card>
+                    </div>
+
+                    {/* Text content */}
+                    <div className="px-5 pt-8 pb-5">
+                      <h3 className="text-lg font-bold">{getLocalizedField(cat, 'name', locale) || cat.name_en}</h3>
+                      <p className="mt-1.5 text-sm text-muted-foreground line-clamp-2 leading-relaxed">{getLocalizedField(cat, 'description', locale) || ''}</p>
+                      <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-all duration-200 group-hover:gap-2.5">
+                        {t('common.learnMore')} <ArrowRight className="h-4 w-4" />
+                      </span>
+                    </div>
+                  </div>
                 </Link>
               );
             }) : (
@@ -162,17 +183,27 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 { icon: Brain, title: 'Meditation', description: 'Cultivate inner peace and clarity of mind' },
                 { icon: Dumbbell, title: 'Power Training', description: 'Build strength with conscious movement' },
                 { icon: Hand, title: 'Acupresura', description: 'Activate healing points for holistic wellbeing' },
-              ].map((item) => (
-                <Card key={item.title} className="group cursor-pointer border-transparent bg-muted/50 transition-all hover:border-primary/20 hover:bg-card hover:shadow-md">
-                  <CardContent className="flex flex-col items-center gap-4 pt-8 text-center">
-                    <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 transition-colors group-hover:bg-primary/20">
-                      <item.icon className="h-7 w-7 text-primary" />
+              ].map((item, i) => {
+                const palette = colorPalette[i % colorPalette.length];
+                return (
+                  <div key={item.title} className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)]">
+                    <div className="overflow-hidden rounded-2xl shadow-md bg-card ring-1 ring-foreground/10">
+                      {/* Gradient header */}
+                      <div className="relative h-44 overflow-hidden">
+                        <div className={`h-full w-full bg-gradient-to-br ${palette.bg}`} />
+                        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
+                        <div className={`absolute left-4 bottom-2 flex h-12 w-12 items-center justify-center rounded-xl ${palette.icon} shadow-md ring-2 ring-card`}>
+                          <item.icon className="h-6 w-6" />
+                        </div>
+                      </div>
+                      <div className="px-5 pt-8 pb-5">
+                        <h3 className="text-lg font-bold">{item.title}</h3>
+                        <p className="mt-1.5 text-sm text-muted-foreground">{item.description}</p>
+                      </div>
                     </div>
-                    <h3 className="text-lg font-semibold">{item.title}</h3>
-                    <p className="text-sm text-muted-foreground">{item.description}</p>
-                  </CardContent>
-                </Card>
-              ))
+                  </div>
+                );
+              })
             )}
           </div>
         </div>

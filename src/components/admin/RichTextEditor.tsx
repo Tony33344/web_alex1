@@ -116,7 +116,8 @@ function nodeToHtml(node: Node): string {
   // Already-semantic headings
   if (/^h[1-6]$/.test(tag)) {
     const level = Math.min(parseInt(tag[1]), 3);
-    return `<h${level}>${inner}</h${level}>`;
+    const align = /text-align\s*:\s*(center|right|justify)/i.exec(style)?.[1];
+    return align ? `<h${level} style="text-align:${align}">${inner}</h${level}>` : `<h${level}>${inner}</h${level}>`;
   }
 
   // Semantic lists — recurse into li items
@@ -217,7 +218,9 @@ function cleanWordHtml(html: string): string {
       flushList();
       const level = Math.min(parseInt(tag[1]), 3);
       const inner = Array.from(el.childNodes).map(nodeToHtml).join('');
-      output.push(`<h${level}>${inner}</h${level}>`);
+      const elStyle = el.getAttribute('style') || '';
+      const align = /text-align\s*:\s*(center|right|justify)/i.exec(elStyle)?.[1];
+      output.push(align ? `<h${level} style="text-align:${align}">${inner}</h${level}>` : `<h${level}>${inner}</h${level}>`);
       continue;
     }
 
@@ -232,7 +235,9 @@ function cleanWordHtml(html: string): string {
       const level = getHeadingLevel(el);
       if (level) {
         flushList();
-        output.push(`<h${level}>${inner}</h${level}>`);
+        const elStyle = el.getAttribute('style') || '';
+        const align = /text-align\s*:\s*(center|right|justify)/i.exec(elStyle)?.[1];
+        output.push(align ? `<h${level} style="text-align:${align}">${inner}</h${level}>` : `<h${level}>${inner}</h${level}>`);
         continue;
       }
 
@@ -253,9 +258,11 @@ function cleanWordHtml(html: string): string {
         continue;
       }
 
-      // Regular paragraph
+      // Regular paragraph — preserve text-align
       flushList();
-      output.push(`<p>${inner}</p>`);
+      const elStyle = el.getAttribute('style') || '';
+      const align = /text-align\s*:\s*(center|right|justify)/i.exec(elStyle)?.[1];
+      output.push(align ? `<p style="text-align:${align}">${inner}</p>` : `<p>${inner}</p>`);
       continue;
     }
 

@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@plugin "@tailwindcss/typography";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -126,5 +127,21 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+@layer utilities {
+  /* Allow inline text-align styles from the rich text editor to override prose defaults */
+  .prose [style*="text-align:center"],
+  .prose [style*="text-align: center"] {
+    text-align: center !important;
+  }
+  .prose [style*="text-align:right"],
+  .prose [style*="text-align: right"] {
+    text-align: right !important;
+  }
+  .prose [style*="text-align:justify"],
+  .prose [style*="text-align: justify"] {
+    text-align: justify !important;
   }
 }

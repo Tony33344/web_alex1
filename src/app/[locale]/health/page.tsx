@@ -44,36 +44,33 @@ export default async function HealthPage({ params }: { params: Promise<{ locale:
                   href={`/${locale}/health/${cat.slug}`}
                   className="group w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)]"
                 >
-                  <div className="relative h-72 overflow-hidden rounded-2xl shadow-md transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl">
-                    {/* Background image or gradient */}
-                    {cat.image_url ? (
-                      <img
-                        src={cat.image_url}
-                        alt={name}
-                        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/40 to-secondary/40" />
-                    )}
-
-                    {/* Color overlay */}
-                    <div className={`absolute inset-0 bg-gradient-to-t ${palette.bg} mix-blend-multiply transition-opacity duration-300 group-hover:opacity-90`} />
-
-                    {/* Content */}
-                    <div className="absolute inset-0 flex flex-col justify-between p-6">
-                      {/* Icon */}
-                      <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${palette.icon} shadow-sm`}>
+                  <div className="overflow-hidden rounded-2xl shadow-md transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl bg-card ring-1 ring-foreground/10">
+                    {/* Image or gradient header */}
+                    <div className="relative h-44 overflow-hidden">
+                      {cat.image_url ? (
+                        <img
+                          src={cat.image_url}
+                          alt={name}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      ) : (
+                        <div className={`h-full w-full bg-gradient-to-br ${palette.bg}`} />
+                      )}
+                      {/* Subtle bottom fade into card */}
+                      <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-card to-transparent" />
+                      {/* Icon badge */}
+                      <div className={`absolute left-4 bottom-0 translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-xl ${palette.icon} shadow-md ring-2 ring-card`}>
                         <IconComp className="h-6 w-6" />
                       </div>
+                    </div>
 
-                      {/* Text */}
-                      <div>
-                        <h3 className="text-xl font-bold text-white drop-shadow">{name}</h3>
-                        <p className="mt-1.5 text-sm text-white/80 line-clamp-2 leading-relaxed">{description}</p>
-                        <span className={`mt-3 inline-flex items-center gap-1.5 text-sm font-semibold ${palette.accent} transition-all duration-200 group-hover:gap-2.5`}>
-                          {t('common.learnMore')} <ArrowRight className="h-4 w-4" />
-                        </span>
-                      </div>
+                    {/* Text content */}
+                    <div className="px-5 pt-8 pb-5">
+                      <h3 className="text-lg font-bold">{name}</h3>
+                      <p className="mt-1.5 text-sm text-muted-foreground line-clamp-2 leading-relaxed">{description}</p>
+                      <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-all duration-200 group-hover:gap-2.5">
+                        {t('common.learnMore')} <ArrowRight className="h-4 w-4" />
+                      </span>
                     </div>
                   </div>
                 </Link>

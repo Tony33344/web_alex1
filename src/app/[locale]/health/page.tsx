@@ -47,9 +47,9 @@ export default async function HealthPage({ params }: { params: Promise<{ locale:
                   <div className="overflow-hidden rounded-2xl shadow-md transition-all duration-300 group-hover:-translate-y-1 group-hover:shadow-xl bg-card ring-1 ring-foreground/10">
                     {/* Image or gradient header */}
                     <div className="relative h-44 overflow-hidden">
-                      {cat.image_url ? (
+                      {cat.cover_image_url ? (
                         <img
-                          src={cat.image_url}
+                          src={cat.cover_image_url}
                           alt={name}
                           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                         />

@@ -16,6 +16,15 @@ import { NewsletterSection } from '@/components/sections/NewsletterSection';
 
 const healthIconMap: Record<string, LucideIcon> = { Leaf, Sun, Heart, Brain, Dumbbell, Hand };
 
+const colorPalette = [
+  { bg: 'from-emerald-500/80 to-teal-600/80',    icon: 'bg-emerald-100 text-emerald-700',  accent: 'text-emerald-300' },
+  { bg: 'from-violet-500/80 to-purple-700/80',   icon: 'bg-violet-100 text-violet-700',    accent: 'text-violet-300' },
+  { bg: 'from-amber-500/80 to-orange-600/80',    icon: 'bg-amber-100 text-amber-700',      accent: 'text-amber-300' },
+  { bg: 'from-sky-500/80 to-blue-700/80',        icon: 'bg-sky-100 text-sky-700',          accent: 'text-sky-300' },
+  { bg: 'from-rose-500/80 to-pink-700/80',       icon: 'bg-rose-100 text-rose-700',        accent: 'text-rose-300' },
+  { bg: 'from-lime-500/80 to-green-700/80',      icon: 'bg-lime-100 text-lime-700',        accent: 'text-lime-300' },
+];
+
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations();

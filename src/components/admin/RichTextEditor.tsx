@@ -3,6 +3,10 @@
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Underline from '@tiptap/extension-underline';
+import TextAlign from '@tiptap/extension-text-align';
+import Link from '@tiptap/extension-link';
+import { TextStyle } from '@tiptap/extension-text-style';
+import Color from '@tiptap/extension-color';
 import {
   Bold,
   Italic,
@@ -16,8 +20,14 @@ import {
   Undo,
   Redo,
   RemoveFormatting,
+  AlignLeft,
+  AlignCenter,
+  AlignRight,
+  Link as LinkIcon,
+  Unlink,
+  Minus,
 } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useCallback } from 'react';
 
 interface RichTextEditorProps {
   value: string;
@@ -28,11 +38,13 @@ interface RichTextEditorProps {
 function ToolbarButton({
   onClick,
   active,
+  disabled,
   children,
   title,
 }: {
   onClick: () => void;
   active?: boolean;
+  disabled?: boolean;
   children: React.ReactNode;
   title: string;
 }) {
@@ -40,16 +52,82 @@ function ToolbarButton({
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
       title={title}
       className={`flex h-8 w-8 items-center justify-center rounded transition-colors ${
-        active
-          ? 'bg-primary text-primary-foreground'
-          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+        disabled
+          ? 'text-muted-foreground/30 cursor-not-allowed'
+          : active
+            ? 'bg-primary text-primary-foreground'
+            : 'text-muted-foreground hover:bg-muted hover:text-foreground'
       }`}
     >
       {children}
     </button>
   );
+}
+
+function Separator() {
+  return <div className="mx-1 h-5 w-px bg-border" />;
+}
+
+/**
+ * Clean Word/Google Docs HTML on paste.
+ * Strips proprietary classes, styles, and tags while preserving semantic structure.
+ */
+function cleanWordHtml(html: string): string {
+  let clean = html;
+
+  // Remove Word-specific XML namespaces and processing instructions
+  clean = clean.replace(/<\?xml[^>]*>/gi, '');
+  clean = clean.replace(/<!\[if[^>]*>[\s\S]*?<!\[endif\]>/gi, '');
+  clean = clean.replace(/<o:p[^>]*>[\s\S]*?<\/o:p>/gi, '');
+  clean = clean.replace(/<w:[^>]*>[\s\S]*?<\/w:[^>]*>/gi, '');
+  clean = clean.replace(/<m:[^>]*>[\s\S]*?<\/m:[^>]*>/gi, '');
+
+  // Remove style tags entirely
+  clean = clean.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+
+  // Remove class attributes (Word adds mso-* classes)
+  clean = clean.replace(/\s*class="[^"]*"/gi, '');
+
+  // Remove style attributes but preserve font-weight:bold and font-style:italic
+  clean = clean.replace(/\s*style="[^"]*"/gi, (match) => {
+    const hasBold = /font-weight\s*:\s*(bold|[7-9]00)/i.test(match);
+    const hasItalic = /font-style\s*:\s*italic/i.test(match);
+    const hasUnderline = /text-decoration\s*:[^;"]*underline/i.test(match);
+    const parts: string[] = [];
+    if (hasBold) parts.push('font-weight:bold');
+    if (hasItalic) parts.push('font-style:italic');
+    if (hasUnderline) parts.push('text-decoration:underline');
+    return parts.length > 0 ? ` style="${parts.join(';')}"` : '';
+  });
+
+  // Convert Word bold spans to <strong>
+  clean = clean.replace(/<span\s+style="font-weight:bold">([\s\S]*?)<\/span>/gi, '<strong>$1</strong>');
+  // Convert Word italic spans to <em>
+  clean = clean.replace(/<span\s+style="font-style:italic">([\s\S]*?)<\/span>/gi, '<em>$1</em>');
+  // Convert Word underline spans to <u>
+  clean = clean.replace(/<span\s+style="text-decoration:underline">([\s\S]*?)<\/span>/gi, '<u>$1</u>');
+
+  // Remove empty spans
+  clean = clean.replace(/<span\s*>([\s\S]*?)<\/span>/gi, '$1');
+
+  // Remove Word-specific tags
+  clean = clean.replace(/<\/?font[^>]*>/gi, '');
+  clean = clean.replace(/<\/?meta[^>]*>/gi, '');
+  clean = clean.replace(/<\/?link[^>]*>/gi, '');
+
+  // Normalize multiple <br> into paragraph breaks
+  clean = clean.replace(/(<br\s*\/?>\s*){2,}/gi, '</p><p>');
+
+  // Remove empty paragraphs
+  clean = clean.replace(/<p[^>]*>\s*(&nbsp;|\s)*<\/p>/gi, '');
+
+  // Trim whitespace
+  clean = clean.trim();
+
+  return clean;
 }
 
 export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {
@@ -59,16 +137,28 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         heading: { levels: [1, 2, 3] },
       }),
       Underline,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
+      Link.configure({
+        openOnClick: false,
+        HTMLAttributes: { class: 'text-primary underline' },
+      }),
+      TextStyle,
+      Color,
     ],
     content: value || '',
     editorProps: {
       attributes: {
         class:
-          'prose prose-sm max-w-none min-h-[200px] px-4 py-3 focus:outline-none dark:prose-invert',
+          'prose prose-sm max-w-none min-h-[200px] px-4 py-3 focus:outline-none dark:prose-invert [&_u]:underline',
+      },
+      transformPastedHTML(html) {
+        return cleanWordHtml(html);
       },
     },
-    onUpdate: ({ editor }) => {
-      onChange(editor.getHTML());
+    onUpdate: ({ editor: ed }) => {
+      onChange(ed.getHTML());
     },
   });
 
@@ -76,9 +166,20 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
     if (editor && value !== editor.getHTML()) {
       editor.commands.setContent(value || '');
     }
-    // Only sync when value changes externally (e.g. data load)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
+
+  const setLink = useCallback(() => {
+    if (!editor) return;
+    const previousUrl = editor.getAttributes('link').href;
+    const url = window.prompt('Enter URL', previousUrl || 'https://');
+    if (url === null) return;
+    if (url === '') {
+      editor.chain().focus().extendMarkRange('link').unsetLink().run();
+      return;
+    }
+    editor.chain().focus().extendMarkRange('link').setLink({ href: url }).run();
+  }, [editor]);
 
   if (!editor) return null;
 
@@ -89,26 +190,26 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBold().run()}
           active={editor.isActive('bold')}
-          title="Bold"
+          title="Bold (Ctrl+B)"
         >
           <Bold className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleItalic().run()}
           active={editor.isActive('italic')}
-          title="Italic"
+          title="Italic (Ctrl+I)"
         >
           <Italic className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleUnderline().run()}
           active={editor.isActive('underline')}
-          title="Underline"
+          title="Underline (Ctrl+U)"
         >
           <UnderlineIcon className="h-4 w-4" />
         </ToolbarButton>
 
-        <div className="mx-1 h-5 w-px bg-border" />
+        <Separator />
 
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
@@ -132,7 +233,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
           <Heading3 className="h-4 w-4" />
         </ToolbarButton>
 
-        <div className="mx-1 h-5 w-px bg-border" />
+        <Separator />
 
         <ToolbarButton
           onClick={() => editor.chain().focus().toggleBulletList().run()}
@@ -155,8 +256,55 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         >
           <Quote className="h-4 w-4" />
         </ToolbarButton>
+        <ToolbarButton
+          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          title="Horizontal Rule"
+        >
+          <Minus className="h-4 w-4" />
+        </ToolbarButton>
 
-        <div className="mx-1 h-5 w-px bg-border" />
+        <Separator />
+
+        <ToolbarButton
+          onClick={() => editor.chain().focus().setTextAlign('left').run()}
+          active={editor.isActive({ textAlign: 'left' })}
+          title="Align Left"
+        >
+          <AlignLeft className="h-4 w-4" />
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => editor.chain().focus().setTextAlign('center').run()}
+          active={editor.isActive({ textAlign: 'center' })}
+          title="Align Center"
+        >
+          <AlignCenter className="h-4 w-4" />
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => editor.chain().focus().setTextAlign('right').run()}
+          active={editor.isActive({ textAlign: 'right' })}
+          title="Align Right"
+        >
+          <AlignRight className="h-4 w-4" />
+        </ToolbarButton>
+
+        <Separator />
+
+        <ToolbarButton
+          onClick={setLink}
+          active={editor.isActive('link')}
+          title="Add Link"
+        >
+          <LinkIcon className="h-4 w-4" />
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => editor.chain().focus().unsetLink().run()}
+          disabled={!editor.isActive('link')}
+          title="Remove Link"
+        >
+          <Unlink className="h-4 w-4" />
+        </ToolbarButton>
+
+        <Separator />
 
         <ToolbarButton
           onClick={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}
@@ -166,13 +314,13 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().undo().run()}
-          title="Undo"
+          title="Undo (Ctrl+Z)"
         >
           <Undo className="h-4 w-4" />
         </ToolbarButton>
         <ToolbarButton
           onClick={() => editor.chain().focus().redo().run()}
-          title="Redo"
+          title="Redo (Ctrl+Shift+Z)"
         >
           <Redo className="h-4 w-4" />
         </ToolbarButton>

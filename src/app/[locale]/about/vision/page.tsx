@@ -30,7 +30,7 @@ export default async function VisionPage({ params }: { params: Promise<{ locale:
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-      <Breadcrumbs locale={locale} items={[{ label: 'About', href: `/${locale}/about/mission` }, { label: title }]} />
+      <Breadcrumbs locale={locale} items={[{ label: 'About', href: `/${locale}/about` }, { label: title }]} />
 
       <div className="mt-8 space-y-10">
         {/* Hero */}

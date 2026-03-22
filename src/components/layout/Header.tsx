@@ -79,6 +79,7 @@ export function Header({ locale }: HeaderProps) {
             label="About"
             active={isActive('/about')}
             items={[
+              { label: 'About Us', href: p('/about') },
               { label: 'Our Mission', href: p('/about/mission') },
               { label: 'Our Vision', href: p('/about/vision') },
             ]}

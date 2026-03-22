@@ -57,9 +57,9 @@ export default async function HealthPage({ params }: { params: Promise<{ locale:
                         <div className={`h-full w-full bg-gradient-to-br ${palette.bg}`} />
                       )}
                       {/* Subtle bottom fade into card */}
-                      <div className="absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-card to-transparent" />
-                      {/* Icon badge */}
-                      <div className={`absolute left-4 bottom-0 translate-y-1/2 flex h-12 w-12 items-center justify-center rounded-xl ${palette.icon} shadow-md ring-2 ring-card`}>
+                      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
+                      {/* Icon badge - positioned inside the fade area */}
+                      <div className={`absolute left-4 bottom-2 flex h-12 w-12 items-center justify-center rounded-xl ${palette.icon} shadow-md ring-2 ring-card`}>
                         <IconComp className="h-6 w-6" />
                       </div>
                     </div>

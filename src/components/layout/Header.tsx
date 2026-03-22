@@ -82,6 +82,8 @@ export function Header({ locale }: HeaderProps) {
               { label: 'About Us', href: p('/about') },
               { label: 'Our Mission', href: p('/about/mission') },
               { label: 'Our Vision', href: p('/about/vision') },
+              { label: 'Donate', href: p('/about/donate') },
+              { label: 'Volunteer', href: p('/about/volunteer') },
             ]}
           />
 
@@ -222,8 +224,11 @@ export function Header({ locale }: HeaderProps) {
                       About
                     </AccordionTrigger>
                     <AccordionContent className="flex flex-col gap-1 pl-4">
+                      <MobileLink href={p('/about')} label="About Us" onClick={() => setMobileOpen(false)} />
                       <MobileLink href={p('/about/mission')} label="Our Mission" onClick={() => setMobileOpen(false)} />
                       <MobileLink href={p('/about/vision')} label="Our Vision" onClick={() => setMobileOpen(false)} />
+                      <MobileLink href={p('/about/donate')} label="Donate" onClick={() => setMobileOpen(false)} />
+                      <MobileLink href={p('/about/volunteer')} label="Volunteer" onClick={() => setMobileOpen(false)} />
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>

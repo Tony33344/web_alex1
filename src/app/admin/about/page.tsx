@@ -2,17 +2,19 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { Edit, Plus, Eye, EyeOff, Target, Compass } from 'lucide-react';
+import { Edit, Plus, Eye, EyeOff, Target, Compass, Heart, HandHeart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import type { Page } from '@/types/database';
 
-const ABOUT_SLUGS = ['mission', 'vision'];
+const ABOUT_SLUGS = ['mission', 'vision', 'donate', 'volunteer'];
 
 const SLUG_META: Record<string, { icon: typeof Target; label: string; description: string }> = {
   mission: { icon: Target, label: 'Our Mission', description: 'Why we exist and what drives us' },
   vision: { icon: Compass, label: 'Our Vision', description: 'Where we are heading and the future we see' },
+  donate: { icon: Heart, label: 'Donate', description: 'How supporters can contribute to our cause' },
+  volunteer: { icon: HandHeart, label: 'Volunteer', description: 'How to join and help the community' },
 };
 
 export default function AdminAboutPage() {
@@ -78,7 +80,7 @@ export default function AdminAboutPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">About</h1>
-        <p className="text-muted-foreground">Manage your Mission and Vision pages</p>
+        <p className="text-muted-foreground">Manage your Mission, Vision, Donate, and Volunteer pages</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">

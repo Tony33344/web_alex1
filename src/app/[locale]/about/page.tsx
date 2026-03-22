@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import { ArrowRight, Target, Compass } from 'lucide-react';
+import { ArrowRight, Target, Compass, Heart, HandHeart } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
 import { PageHeader } from '@/components/shared/PageHeader';
@@ -18,37 +18,35 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   const { locale } = await params;
   const t = await getTranslations();
 
-  const mission = await getPage('mission');
-  const vision = await getPage('vision');
+  const [mission, vision, donate, volunteer] = await Promise.all([
+    getPage('mission'),
+    getPage('vision'),
+    getPage('donate'),
+    getPage('volunteer'),
+  ]);
 
-  const missionTitle = mission ? (getLocalizedField(mission, 'title', locale) || mission.title_en) : 'Our Mission';
-  const visionTitle = vision ? (getLocalizedField(vision, 'title', locale) || vision.title_en) : 'Our Vision';
+  const pages = { mission, vision, donate, volunteer };
 
-  const missionExcerpt = mission
-    ? (getLocalizedField(mission, 'meta_description', locale) || mission.meta_description_en || '')
-    : 'Discover the purpose and driving force behind everything we do.';
-  const visionExcerpt = vision
-    ? (getLocalizedField(vision, 'meta_description', locale) || vision.meta_description_en || '')
-    : 'Explore the future we envision and the path we walk together.';
-
-  const cards = [
-    {
-      slug: 'mission',
-      title: missionTitle,
-      excerpt: missionExcerpt,
-      image: mission?.hero_image_url,
-      icon: Target,
-      gradient: 'from-primary/10 via-primary/5 to-secondary/10',
-    },
-    {
-      slug: 'vision',
-      title: visionTitle,
-      excerpt: visionExcerpt,
-      image: vision?.hero_image_url,
-      icon: Compass,
-      gradient: 'from-secondary/10 via-secondary/5 to-primary/10',
-    },
+  const cardDefs = [
+    { slug: 'mission', fallbackTitle: 'Our Mission', fallbackExcerpt: 'Discover the purpose and driving force behind everything we do.', icon: Target, gradient: 'from-primary/10 via-primary/5 to-secondary/10' },
+    { slug: 'vision', fallbackTitle: 'Our Vision', fallbackExcerpt: 'Explore the future we envision and the path we walk together.', icon: Compass, gradient: 'from-secondary/10 via-secondary/5 to-primary/10' },
+    { slug: 'donate', fallbackTitle: 'Donate', fallbackExcerpt: 'Support our work and help us build a home for the seeker.', icon: Heart, gradient: 'from-rose-50 via-primary/5 to-secondary/10 dark:from-rose-950/20' },
+    { slug: 'volunteer', fallbackTitle: 'Volunteer', fallbackExcerpt: 'Join our community and contribute your time and skills.', icon: HandHeart, gradient: 'from-emerald-50 via-primary/5 to-secondary/10 dark:from-emerald-950/20' },
   ];
+
+  const cards = cardDefs.map((def) => {
+    const page = pages[def.slug as keyof typeof pages];
+    return {
+      slug: def.slug,
+      title: page ? (getLocalizedField(page, 'title', locale) || page.title_en) : def.fallbackTitle,
+      excerpt: page
+        ? (getLocalizedField(page, 'meta_description', locale) || page.meta_description_en || def.fallbackExcerpt)
+        : def.fallbackExcerpt,
+      image: page?.hero_image_url,
+      icon: def.icon,
+      gradient: def.gradient,
+    };
+  });
 
   return (
     <>

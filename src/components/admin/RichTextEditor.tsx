@@ -72,62 +72,197 @@ function Separator() {
 }
 
 /**
- * Clean Word/Google Docs HTML on paste.
- * Strips proprietary classes, styles, and tags while preserving semantic structure.
+ * Clean Word / Google Docs HTML using DOM parsing.
+ * Converts Word list paragraphs to proper <ul>/<li>, keeps headings,
+ * bold, italic, underline, and paragraph structure intact.
  */
 function cleanWordHtml(html: string): string {
-  let clean = html;
+  // Phase 1 — pre-clean with regex (remove XML junk before DOM parsing)
+  let pre = html;
+  pre = pre.replace(/<\?xml[^>]*>/gi, '');
+  pre = pre.replace(/<!\[if[^>]*>[\s\S]*?<!\[endif\]>/gi, '');
+  pre = pre.replace(/<o:p[^>]*>[\s\S]*?<\/o:p>/gi, '');
+  pre = pre.replace(/<w:[^>]*>[\s\S]*?<\/w:[^>]*>/gi, '');
+  pre = pre.replace(/<m:[^>]*>[\s\S]*?<\/m:[^>]*>/gi, '');
+  pre = pre.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+  pre = pre.replace(/<\/?meta[^>]*>/gi, '');
+  pre = pre.replace(/<\/?link[^>]*\/?>/gi, '');
 
-  // Remove Word-specific XML namespaces and processing instructions
-  clean = clean.replace(/<\?xml[^>]*>/gi, '');
-  clean = clean.replace(/<!\[if[^>]*>[\s\S]*?<!\[endif\]>/gi, '');
-  clean = clean.replace(/<o:p[^>]*>[\s\S]*?<\/o:p>/gi, '');
-  clean = clean.replace(/<w:[^>]*>[\s\S]*?<\/w:[^>]*>/gi, '');
-  clean = clean.replace(/<m:[^>]*>[\s\S]*?<\/m:[^>]*>/gi, '');
+  // Phase 2 — DOM-based cleaning
+  const doc = new DOMParser().parseFromString(pre, 'text/html');
 
-  // Remove style tags entirely
-  clean = clean.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+  // Helper: check if an element is a Word list item
+  function isWordListItem(el: HTMLElement): boolean {
+    const style = el.getAttribute('style') || '';
+    const cls = el.getAttribute('class') || '';
+    return (
+      style.includes('mso-list') ||
+      cls.includes('MsoListParagraph') ||
+      cls.includes('MsoList') ||
+      // Google Docs lists
+      cls.includes('lst-') ||
+      // Word sometimes uses Symbol font for bullets
+      el.innerHTML.includes('Symbol') && el.innerHTML.includes('·')
+    );
+  }
 
-  // Remove class attributes (Word adds mso-* classes)
-  clean = clean.replace(/\s*class="[^"]*"/gi, '');
+  // Helper: detect heading level from Word styles
+  function getWordHeadingLevel(el: HTMLElement): number | null {
+    const cls = el.getAttribute('class') || '';
+    const style = el.getAttribute('style') || '';
+    // Word heading classes: MsoTitle, Heading1, etc.
+    const headingMatch = cls.match(/Heading(\d)/i) || cls.match(/MsoHeading(\d)/i);
+    if (headingMatch) return Math.min(parseInt(headingMatch[1]), 3);
+    // Word outline level
+    const outlineMatch = style.match(/mso-outline-level\s*:\s*(\d)/i);
+    if (outlineMatch) return Math.min(parseInt(outlineMatch[1]), 3);
+    // Check for MsoTitle
+    if (cls.includes('MsoTitle')) return 1;
+    if (cls.includes('MsoSubtitle')) return 2;
+    return null;
+  }
 
-  // Remove style attributes but preserve font-weight:bold and font-style:italic
-  clean = clean.replace(/\s*style="[^"]*"/gi, (match) => {
-    const hasBold = /font-weight\s*:\s*(bold|[7-9]00)/i.test(match);
-    const hasItalic = /font-style\s*:\s*italic/i.test(match);
-    const hasUnderline = /text-decoration\s*:[^;"]*underline/i.test(match);
-    const parts: string[] = [];
-    if (hasBold) parts.push('font-weight:bold');
-    if (hasItalic) parts.push('font-style:italic');
-    if (hasUnderline) parts.push('text-decoration:underline');
-    return parts.length > 0 ? ` style="${parts.join(';')}"` : '';
-  });
+  // Helper: extract clean text/HTML from an element, preserving inline formatting
+  function getCleanInner(el: HTMLElement): string {
+    // Clone to avoid mutating original
+    const clone = el.cloneNode(true) as HTMLElement;
 
-  // Convert Word bold spans to <strong>
-  clean = clean.replace(/<span\s+style="font-weight:bold">([\s\S]*?)<\/span>/gi, '<strong>$1</strong>');
-  // Convert Word italic spans to <em>
-  clean = clean.replace(/<span\s+style="font-style:italic">([\s\S]*?)<\/span>/gi, '<em>$1</em>');
-  // Convert Word underline spans to <u>
-  clean = clean.replace(/<span\s+style="text-decoration:underline">([\s\S]*?)<\/span>/gi, '<u>$1</u>');
+    // Remove Word bullet symbols (like ·, o, §, etc.)
+    // Word inserts them in spans with Symbol/Wingdings font
+    clone.querySelectorAll('span').forEach((span) => {
+      const sf = span.style.fontFamily || '';
+      if (/symbol|wingdings|courier/i.test(sf)) {
+        span.remove();
+        return;
+      }
+    });
 
-  // Remove empty spans
-  clean = clean.replace(/<span\s*>([\s\S]*?)<\/span>/gi, '$1');
+    // Process all spans: convert style-based formatting to semantic tags
+    clone.querySelectorAll('span').forEach((span) => {
+      const style = span.getAttribute('style') || '';
+      let inner = span.innerHTML;
+      if (/font-weight\s*:\s*(bold|[7-9]00)/i.test(style)) {
+        inner = `<strong>${inner}</strong>`;
+      }
+      if (/font-style\s*:\s*italic/i.test(style)) {
+        inner = `<em>${inner}</em>`;
+      }
+      if (/text-decoration\s*:[^;"]*underline/i.test(style)) {
+        inner = `<u>${inner}</u>`;
+      }
+      span.outerHTML = inner;
+    });
 
-  // Remove Word-specific tags
-  clean = clean.replace(/<\/?font[^>]*>/gi, '');
-  clean = clean.replace(/<\/?meta[^>]*>/gi, '');
-  clean = clean.replace(/<\/?link[^>]*>/gi, '');
+    // Convert <b> to <strong>, <i> to <em>
+    clone.querySelectorAll('b').forEach((b) => {
+      b.outerHTML = `<strong>${b.innerHTML}</strong>`;
+    });
+    clone.querySelectorAll('i').forEach((i) => {
+      i.outerHTML = `<em>${i.innerHTML}</em>`;
+    });
 
-  // Normalize multiple <br> into paragraph breaks
-  clean = clean.replace(/(<br\s*\/?>\s*){2,}/gi, '</p><p>');
+    return clone.innerHTML.trim();
+  }
 
-  // Remove empty paragraphs
-  clean = clean.replace(/<p[^>]*>\s*(&nbsp;|\s)*<\/p>/gi, '');
+  // Walk top-level body children and build clean HTML
+  const output: string[] = [];
+  let currentList: string[] | null = null;
+  let currentListType: 'ul' | 'ol' = 'ul';
 
-  // Trim whitespace
-  clean = clean.trim();
+  function flushList() {
+    if (currentList && currentList.length > 0) {
+      output.push(`<${currentListType}>${currentList.map((li) => `<li>${li}</li>`).join('')}</${currentListType}>`);
+      currentList = null;
+    }
+  }
 
-  return clean;
+  const body = doc.body;
+  const children = Array.from(body.children) as HTMLElement[];
+
+  // If no block children, body might just have inline content
+  if (children.length === 0) {
+    const text = body.innerHTML.trim();
+    if (text) return text;
+    return html;
+  }
+
+  for (const el of children) {
+    const tag = el.tagName.toLowerCase();
+
+    // Already semantic list — keep as-is (clean attributes)
+    if (tag === 'ul' || tag === 'ol') {
+      flushList();
+      const items = Array.from(el.querySelectorAll('li')).map((li) => getCleanInner(li as HTMLElement));
+      output.push(`<${tag}>${items.map((li) => `<li>${li}</li>`).join('')}</${tag}>`);
+      continue;
+    }
+
+    // Already a heading tag
+    if (/^h[1-6]$/.test(tag)) {
+      flushList();
+      const level = Math.min(parseInt(tag[1]), 3);
+      output.push(`<h${level}>${getCleanInner(el)}</h${level}>`);
+      continue;
+    }
+
+    // Word paragraph — could be heading, list item, or regular paragraph
+    if (tag === 'p' || tag === 'div') {
+      const inner = getCleanInner(el);
+
+      // Skip truly empty paragraphs
+      if (!inner || /^(\s|&nbsp;)*$/.test(inner)) {
+        continue;
+      }
+
+      // Check if it's a Word heading
+      const headingLevel = getWordHeadingLevel(el);
+      if (headingLevel) {
+        flushList();
+        output.push(`<h${headingLevel}>${inner}</h${headingLevel}>`);
+        continue;
+      }
+
+      // Check if it's a Word list item
+      if (isWordListItem(el)) {
+        // Detect ordered vs unordered
+        const style = el.getAttribute('style') || '';
+        const isOrdered = /mso-list\s*:[^;]*level\d[^;]*lfo/i.test(style) && /\d+\./i.test(inner.substring(0, 10));
+        const listType: 'ul' | 'ol' = isOrdered ? 'ol' : 'ul';
+
+        if (currentList === null || currentListType !== listType) {
+          flushList();
+          currentList = [];
+          currentListType = listType;
+        }
+        // Remove leading bullet characters (·, •, -, >) and numbers (1., 2.)
+        const cleaned = inner.replace(/^[\s·•\-–—>§]+/, '').replace(/^\d+[.)]\s*/, '').trim();
+        currentList.push(cleaned);
+        continue;
+      }
+
+      // Regular paragraph
+      flushList();
+      output.push(`<p>${inner}</p>`);
+      continue;
+    }
+
+    // Keep blockquote, table, hr, etc.
+    if (tag === 'blockquote' || tag === 'table' || tag === 'hr') {
+      flushList();
+      output.push(el.outerHTML);
+      continue;
+    }
+  }
+
+  flushList();
+
+  let result = output.join('');
+
+  // Final cleanup: remove leftover font tags and empty attributes
+  result = result.replace(/<\/?font[^>]*>/gi, '');
+  result = result.replace(/\s+(class|style|lang|dir|id|align|valign|data-[a-z-]+)="[^"]*"/gi, '');
+
+  return result;
 }
 
 export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {

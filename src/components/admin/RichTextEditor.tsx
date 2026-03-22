@@ -72,171 +72,184 @@ function Separator() {
 }
 
 /**
- * Clean Word / Google Docs HTML using DOM parsing.
- * Converts Word list paragraphs to proper <ul>/<li>, keeps headings,
- * bold, italic, underline, and paragraph structure intact.
+ * Recursively convert a DOM node to clean semantic HTML string.
+ * Preserves bold, italic, underline, links. Strips all Word/MSO attributes.
+ */
+function nodeToHtml(node: Node): string {
+  if (node.nodeType === Node.TEXT_NODE) {
+    return node.textContent || '';
+  }
+  if (node.nodeType !== Node.ELEMENT_NODE) return '';
+
+  const el = node as HTMLElement;
+  const tag = el.tagName.toLowerCase();
+  const style = el.getAttribute('style') || '';
+  const cls = el.getAttribute('class') || '';
+
+  // Strip Symbol/Wingdings font spans (Word bullet markers)
+  if (tag === 'span' && /symbol|wingdings|webdings/i.test(style)) {
+    return '';
+  }
+
+  // Get children content recursively
+  const inner = Array.from(el.childNodes).map(nodeToHtml).join('');
+
+  // Map inline semantic tags through
+  if (tag === 'strong' || tag === 'b') return `<strong>${inner}</strong>`;
+  if (tag === 'em' || tag === 'i') return `<em>${inner}</em>`;
+  if (tag === 'u') return `<u>${inner}</u>`;
+  if (tag === 'a') {
+    const href = el.getAttribute('href') || '';
+    return href ? `<a href="${href}">${inner}</a>` : inner;
+  }
+  if (tag === 'br') return '<br>';
+
+  // Span: check for inline formatting styles, wrap accordingly
+  if (tag === 'span') {
+    let result = inner;
+    if (/font-weight\s*:\s*(bold|[7-9]00)/i.test(style)) result = `<strong>${result}</strong>`;
+    if (/font-style\s*:\s*italic/i.test(style)) result = `<em>${result}</em>`;
+    if (/text-decoration\s*:[^;"]*underline/i.test(style)) result = `<u>${result}</u>`;
+    return result;
+  }
+
+  // Already-semantic headings
+  if (/^h[1-6]$/.test(tag)) {
+    const level = Math.min(parseInt(tag[1]), 3);
+    return `<h${level}>${inner}</h${level}>`;
+  }
+
+  // Semantic lists — recurse into li items
+  if (tag === 'ul') return `<ul>${inner}</ul>`;
+  if (tag === 'ol') return `<ol>${inner}</ol>`;
+  if (tag === 'li') return `<li>${inner}</li>`;
+
+  if (tag === 'blockquote') return `<blockquote>${inner}</blockquote>`;
+  if (tag === 'hr') return '<hr>';
+
+  // Block containers — return inner (handled by parent walker)
+  if (tag === 'p' || tag === 'div') return inner;
+
+  // Everything else: just return inner content
+  return inner;
+}
+
+/**
+ * Clean Word / Google Docs HTML on paste.
+ * Uses two-pass approach: pre-regex to strip XML junk, then
+ * block-level DOM walk to reconstruct semantic structure.
  */
 function cleanWordHtml(html: string): string {
-  // Phase 1 — pre-clean with regex (remove XML junk before DOM parsing)
+  // Pass 1: strip Word XML noise with regex before DOM parsing
   let pre = html;
   pre = pre.replace(/<\?xml[^>]*>/gi, '');
   pre = pre.replace(/<!\[if[^>]*>[\s\S]*?<!\[endif\]>/gi, '');
   pre = pre.replace(/<o:p[^>]*>[\s\S]*?<\/o:p>/gi, '');
-  pre = pre.replace(/<w:[^>]*>[\s\S]*?<\/w:[^>]*>/gi, '');
-  pre = pre.replace(/<m:[^>]*>[\s\S]*?<\/m:[^>]*>/gi, '');
+  pre = pre.replace(/<w:[^>]*?>[\s\S]*?<\/w:[^>]*?>/gi, '');
+  pre = pre.replace(/<m:[^>]*?>[\s\S]*?<\/m:[^>]*?>/gi, '');
   pre = pre.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
-  pre = pre.replace(/<\/?meta[^>]*>/gi, '');
-  pre = pre.replace(/<\/?link[^>]*\/?>/gi, '');
+  pre = pre.replace(/<\/?meta[^>]*?>/gi, '');
+  pre = pre.replace(/<\/?link[^>]*?\/?>/gi, '');
 
-  // Phase 2 — DOM-based cleaning
+  // Pass 2: parse DOM
   const doc = new DOMParser().parseFromString(pre, 'text/html');
+  const body = doc.body;
 
-  // Helper: check if an element is a Word list item
+  // Helpers
   function isWordListItem(el: HTMLElement): boolean {
-    const style = el.getAttribute('style') || '';
-    const cls = el.getAttribute('class') || '';
+    const s = el.getAttribute('style') || '';
+    const c = el.getAttribute('class') || '';
     return (
-      style.includes('mso-list') ||
-      cls.includes('MsoListParagraph') ||
-      cls.includes('MsoList') ||
-      // Google Docs lists
-      cls.includes('lst-') ||
-      // Word sometimes uses Symbol font for bullets
-      el.innerHTML.includes('Symbol') && el.innerHTML.includes('·')
+      s.includes('mso-list') ||
+      c.includes('MsoListParagraph') ||
+      c.includes('MsoList') ||
+      c.includes('lst-kix') ||
+      c.startsWith('lst-')
     );
   }
 
-  // Helper: detect heading level from Word styles
-  function getWordHeadingLevel(el: HTMLElement): number | null {
-    const cls = el.getAttribute('class') || '';
-    const style = el.getAttribute('style') || '';
-    // Word heading classes: MsoTitle, Heading1, etc.
-    const headingMatch = cls.match(/Heading(\d)/i) || cls.match(/MsoHeading(\d)/i);
-    if (headingMatch) return Math.min(parseInt(headingMatch[1]), 3);
-    // Word outline level
-    const outlineMatch = style.match(/mso-outline-level\s*:\s*(\d)/i);
-    if (outlineMatch) return Math.min(parseInt(outlineMatch[1]), 3);
-    // Check for MsoTitle
-    if (cls.includes('MsoTitle')) return 1;
-    if (cls.includes('MsoSubtitle')) return 2;
+  function getHeadingLevel(el: HTMLElement): number | null {
+    const c = el.getAttribute('class') || '';
+    const s = el.getAttribute('style') || '';
+    const m = c.match(/(?:Mso)?Heading\s*(\d)/i);
+    if (m) return Math.min(parseInt(m[1]), 3);
+    const o = s.match(/mso-outline-level\s*:\s*(\d)/i);
+    if (o) return Math.min(parseInt(o[1]), 3);
+    if (c.includes('MsoTitle')) return 1;
+    if (c.includes('MsoSubtitle')) return 2;
     return null;
   }
 
-  // Helper: extract clean text/HTML from an element, preserving inline formatting
-  function getCleanInner(el: HTMLElement): string {
-    // Clone to avoid mutating original
-    const clone = el.cloneNode(true) as HTMLElement;
-
-    // Remove Word bullet symbols (like ·, o, §, etc.)
-    // Word inserts them in spans with Symbol/Wingdings font
-    clone.querySelectorAll('span').forEach((span) => {
-      const sf = span.style.fontFamily || '';
-      if (/symbol|wingdings|courier/i.test(sf)) {
-        span.remove();
-        return;
-      }
-    });
-
-    // Process all spans: convert style-based formatting to semantic tags
-    clone.querySelectorAll('span').forEach((span) => {
-      const style = span.getAttribute('style') || '';
-      let inner = span.innerHTML;
-      if (/font-weight\s*:\s*(bold|[7-9]00)/i.test(style)) {
-        inner = `<strong>${inner}</strong>`;
-      }
-      if (/font-style\s*:\s*italic/i.test(style)) {
-        inner = `<em>${inner}</em>`;
-      }
-      if (/text-decoration\s*:[^;"]*underline/i.test(style)) {
-        inner = `<u>${inner}</u>`;
-      }
-      span.outerHTML = inner;
-    });
-
-    // Convert <b> to <strong>, <i> to <em>
-    clone.querySelectorAll('b').forEach((b) => {
-      b.outerHTML = `<strong>${b.innerHTML}</strong>`;
-    });
-    clone.querySelectorAll('i').forEach((i) => {
-      i.outerHTML = `<em>${i.innerHTML}</em>`;
-    });
-
-    return clone.innerHTML.trim();
-  }
-
-  // Walk top-level body children and build clean HTML
+  // Walk top-level block elements
   const output: string[] = [];
-  let currentList: string[] | null = null;
-  let currentListType: 'ul' | 'ol' = 'ul';
+  let listItems: string[] = [];
+  let listType: 'ul' | 'ol' = 'ul';
 
   function flushList() {
-    if (currentList && currentList.length > 0) {
-      output.push(`<${currentListType}>${currentList.map((li) => `<li>${li}</li>`).join('')}</${currentListType}>`);
-      currentList = null;
+    if (listItems.length > 0) {
+      output.push(`<${listType}>${listItems.map((li) => `<li>${li}</li>`).join('')}</${listType}>`);
+      listItems = [];
     }
   }
 
-  const body = doc.body;
-  const children = Array.from(body.children) as HTMLElement[];
+  const topChildren = Array.from(body.children) as HTMLElement[];
 
-  // If no block children, body might just have inline content
-  if (children.length === 0) {
-    const text = body.innerHTML.trim();
-    if (text) return text;
-    return html;
+  // No block children — just return inner HTML cleaned up
+  if (topChildren.length === 0) {
+    return nodeToHtml(body);
   }
 
-  for (const el of children) {
+  for (const el of topChildren) {
     const tag = el.tagName.toLowerCase();
 
-    // Already semantic list — keep as-is (clean attributes)
+    // Native semantic lists
     if (tag === 'ul' || tag === 'ol') {
       flushList();
-      const items = Array.from(el.querySelectorAll('li')).map((li) => getCleanInner(li as HTMLElement));
-      output.push(`<${tag}>${items.map((li) => `<li>${li}</li>`).join('')}</${tag}>`);
+      const items = Array.from(el.querySelectorAll('li')).map((li) =>
+        Array.from(li.childNodes).map(nodeToHtml).join('')
+      );
+      output.push(`<${tag}>${items.map((t) => `<li>${t}</li>`).join('')}</${tag}>`);
       continue;
     }
 
-    // Already a heading tag
+    // Native heading
     if (/^h[1-6]$/.test(tag)) {
       flushList();
       const level = Math.min(parseInt(tag[1]), 3);
-      output.push(`<h${level}>${getCleanInner(el)}</h${level}>`);
+      const inner = Array.from(el.childNodes).map(nodeToHtml).join('');
+      output.push(`<h${level}>${inner}</h${level}>`);
       continue;
     }
 
-    // Word paragraph — could be heading, list item, or regular paragraph
+    // Paragraph or div
     if (tag === 'p' || tag === 'div') {
-      const inner = getCleanInner(el);
+      const inner = Array.from(el.childNodes).map(nodeToHtml).join('').trim();
 
-      // Skip truly empty paragraphs
-      if (!inner || /^(\s|&nbsp;)*$/.test(inner)) {
-        continue;
-      }
+      // Skip empty
+      if (!inner || /^(&nbsp;\s*)+$/.test(inner)) continue;
 
-      // Check if it's a Word heading
-      const headingLevel = getWordHeadingLevel(el);
-      if (headingLevel) {
+      // Word heading paragraph
+      const level = getHeadingLevel(el);
+      if (level) {
         flushList();
-        output.push(`<h${headingLevel}>${inner}</h${headingLevel}>`);
+        output.push(`<h${level}>${inner}</h${level}>`);
         continue;
       }
 
-      // Check if it's a Word list item
+      // Word list item paragraph
       if (isWordListItem(el)) {
-        // Detect ordered vs unordered
-        const style = el.getAttribute('style') || '';
-        const isOrdered = /mso-list\s*:[^;]*level\d[^;]*lfo/i.test(style) && /\d+\./i.test(inner.substring(0, 10));
-        const listType: 'ul' | 'ol' = isOrdered ? 'ol' : 'ul';
-
-        if (currentList === null || currentListType !== listType) {
-          flushList();
-          currentList = [];
-          currentListType = listType;
-        }
-        // Remove leading bullet characters (·, •, -, >) and numbers (1., 2.)
-        const cleaned = inner.replace(/^[\s·•\-–—>§]+/, '').replace(/^\d+[.)]\s*/, '').trim();
-        currentList.push(cleaned);
+        const s = el.getAttribute('style') || '';
+        // Detect ordered: mso-list style references a decimal list type
+        const isOrdered = /list-style-type\s*:\s*decimal/i.test(s);
+        const newListType: 'ul' | 'ol' = isOrdered ? 'ol' : 'ul';
+        if (listItems.length > 0 && newListType !== listType) flushList();
+        listType = newListType;
+        // Strip leading bullet/number chars that Word injects as text
+        const cleaned = inner
+          .replace(/^[\s\u00b7\u2022\u2013\u2014·•\-–—>§o]+/, '')
+          .replace(/^\d+[.)]\s*/, '')
+          .trim();
+        listItems.push(cleaned);
         continue;
       }
 
@@ -246,23 +259,15 @@ function cleanWordHtml(html: string): string {
       continue;
     }
 
-    // Keep blockquote, table, hr, etc.
-    if (tag === 'blockquote' || tag === 'table' || tag === 'hr') {
+    if (tag === 'blockquote' || tag === 'hr' || tag === 'table') {
       flushList();
-      output.push(el.outerHTML);
+      output.push(tag === 'hr' ? '<hr>' : `<${tag}>${Array.from(el.childNodes).map(nodeToHtml).join('')}</${tag}>`);
       continue;
     }
   }
 
   flushList();
-
-  let result = output.join('');
-
-  // Final cleanup: remove leftover font tags and empty attributes
-  result = result.replace(/<\/?font[^>]*>/gi, '');
-  result = result.replace(/\s+(class|style|lang|dir|id|align|valign|data-[a-z-]+)="[^"]*"/gi, '');
-
-  return result;
+  return output.join('');
 }
 
 export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorProps) {

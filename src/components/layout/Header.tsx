@@ -82,8 +82,6 @@ export function Header({ locale }: HeaderProps) {
               { label: 'About Us', href: p('/about') },
               { label: 'Our Mission', href: p('/about/mission') },
               { label: 'Our Vision', href: p('/about/vision') },
-              { label: 'Donate', href: p('/about/donate') },
-              { label: 'Volunteer', href: p('/about/volunteer') },
             ]}
           />
 
@@ -160,6 +158,24 @@ export function Header({ locale }: HeaderProps) {
           >
             Contact
           </Link>
+
+          <Link
+            href={p('/about/donate')}
+            className={`rounded-md px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
+              isActive('/about/donate') ? 'text-primary' : 'text-foreground/70'
+            }`}
+          >
+            Donate
+          </Link>
+
+          <Link
+            href={p('/about/volunteer')}
+            className={`rounded-md px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
+              isActive('/about/volunteer') ? 'text-primary' : 'text-foreground/70'
+            }`}
+          >
+            Volunteer
+          </Link>
         </nav>
 
         {/* Right Section */}
@@ -227,8 +243,6 @@ export function Header({ locale }: HeaderProps) {
                       <MobileLink href={p('/about')} label="About Us" onClick={() => setMobileOpen(false)} />
                       <MobileLink href={p('/about/mission')} label="Our Mission" onClick={() => setMobileOpen(false)} />
                       <MobileLink href={p('/about/vision')} label="Our Vision" onClick={() => setMobileOpen(false)} />
-                      <MobileLink href={p('/about/donate')} label="Donate" onClick={() => setMobileOpen(false)} />
-                      <MobileLink href={p('/about/volunteer')} label="Volunteer" onClick={() => setMobileOpen(false)} />
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
@@ -280,6 +294,8 @@ export function Header({ locale }: HeaderProps) {
                 <MobileLink href={p('/membership')} label="Membership" onClick={() => setMobileOpen(false)} />
                 <MobileLink href={p('/blog')} label="Blog" onClick={() => setMobileOpen(false)} />
                 <MobileLink href={p('/contact')} label="Contact" onClick={() => setMobileOpen(false)} />
+                <MobileLink href={p('/about/donate')} label="Donate" onClick={() => setMobileOpen(false)} />
+                <MobileLink href={p('/about/volunteer')} label="Volunteer" onClick={() => setMobileOpen(false)} />
 
                 {!user && (
                   <div className="mt-4 flex flex-col gap-2 border-t pt-4">

@@ -107,9 +107,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('home.meetTeachersTitle')}</h2>
               <p className="mt-4 text-muted-foreground">Discover the wisdom and guidance of our expert Role Teachers</p>
             </div>
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="flex flex-wrap justify-center gap-8">
               {teachers.map((teacher) => (
-                <Link key={teacher.slug} href={`/${locale}/role-teachers/${teacher.slug}`}>
+                <Link key={teacher.slug} href={`/${locale}/role-teachers/${teacher.slug}`} className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)]">
                   <Card className="group overflow-hidden transition-shadow hover:shadow-lg">
                     <div className="aspect-[4/5] bg-gradient-to-br from-primary/10 to-secondary/10">
                       {teacher.photo_url && <img src={teacher.photo_url} alt={teacher.name} className="h-full w-full object-cover" />}
@@ -138,11 +138,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('home.healthTitle')}</h2>
             <p className="mt-4 text-muted-foreground">Six pillars of health and transformation</p>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="flex flex-wrap justify-center gap-6">
             {healthCategories.length > 0 ? healthCategories.map((cat) => {
               const IconComp = (cat.icon_name && healthIconMap[cat.icon_name]) || Heart;
               return (
-                <Link key={cat.slug} href={`/${locale}/health/${cat.slug}`}>
+                <Link key={cat.slug} href={`/${locale}/health/${cat.slug}`} className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)]">
                   <Card className="group cursor-pointer border-transparent bg-muted/50 transition-all hover:border-primary/20 hover:bg-card hover:shadow-md">
                     <CardContent className="flex flex-col items-center gap-4 pt-8 text-center">
                       <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 transition-colors group-hover:bg-primary/20">
@@ -235,12 +235,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('home.programs')}</h2>
               <p className="mt-4 text-muted-foreground">Become a certified wellness coach</p>
             </div>
-            <div className="grid gap-8 md:grid-cols-3">
+            <div className="flex flex-wrap justify-center gap-8">
               {programs.slice(0, 3).map((program) => {
                 const name = getLocalizedField(program, 'name', locale) || program.name_en;
                 const priceLabel = program.price ? `${program.currency} ${program.price}` : t('common.free');
                 return (
-                  <Link key={program.slug} href={`/${locale}/coach-training/${program.slug}`}>
+                  <Link key={program.slug} href={`/${locale}/coach-training/${program.slug}`} className="w-full md:w-[calc(33.333%-1.5rem)]">
                     <Card className="group h-full overflow-hidden transition-shadow hover:shadow-lg">
                       <div className="aspect-video bg-gradient-to-br from-primary/5 to-secondary/5">
                         {program.image_url && <img src={program.image_url} alt={name} className="h-full w-full object-cover" />}
@@ -274,24 +274,26 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <div className="mb-12 text-center">
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('home.testimonials')}</h2>
             </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="flex flex-wrap justify-center gap-6">
               {testimonials.slice(0, 6).map((item) => (
-                <Card key={item.id} className="bg-card">
-                  <CardContent className="space-y-4 pt-6">
-                    <div className="flex gap-1 text-secondary">
-                      {[...Array(item.rating || 5)].map((_, i) => (
-                        <Star key={i} className="h-4 w-4 fill-current" />
-                      ))}
-                    </div>
-                    <p className="text-sm leading-relaxed text-muted-foreground italic">
-                      &ldquo;{getLocalizedField(item, 'content', locale)}&rdquo;
-                    </p>
-                    <div>
-                      <p className="text-sm font-semibold">{item.author_name}</p>
-                      {item.author_title && <p className="text-xs text-muted-foreground">{item.author_title}</p>}
-                    </div>
-                  </CardContent>
-                </Card>
+                <div key={item.id} className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)]">
+                  <Card className="bg-card h-full">
+                    <CardContent className="space-y-4 pt-6">
+                      <div className="flex gap-1 text-secondary">
+                        {[...Array(item.rating || 5)].map((_, i) => (
+                          <Star key={i} className="h-4 w-4 fill-current" />
+                        ))}
+                      </div>
+                      <p className="text-sm leading-relaxed text-muted-foreground italic">
+                        &ldquo;{getLocalizedField(item, 'content', locale)}&rdquo;
+                      </p>
+                      <div>
+                        <p className="text-sm font-semibold">{item.author_name}</p>
+                        {item.author_title && <p className="text-xs text-muted-foreground">{item.author_title}</p>}
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
               ))}
             </div>
           </div>
@@ -314,12 +316,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             </Link>
           </div>
           {posts.length > 0 ? (
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="flex flex-wrap justify-center gap-8">
               {posts.map((post) => {
                 const title = getLocalizedField(post, 'title', locale) || post.title_en;
                 const date = post.published_at ? new Date(post.published_at).toLocaleDateString(locale, { dateStyle: 'medium' }) : '';
                 return (
-                  <Link key={post.id} href={`/${locale}/blog/${post.slug}`}>
+                  <Link key={post.id} href={`/${locale}/blog/${post.slug}`} className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)]">
                     <Card className="group h-full overflow-hidden transition-shadow hover:shadow-lg">
                       <div className="aspect-video bg-gradient-to-br from-primary/5 to-muted">
                         {post.featured_image_url && <img src={post.featured_image_url} alt={title} className="h-full w-full object-cover" />}

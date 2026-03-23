@@ -410,3 +410,20 @@ export interface TranslationOverride {
   value: string;
   updated_at: string;
 }
+
+export interface GalleryImage {
+  id: string;
+  entity_type: 'teacher' | 'event' | 'program' | 'health_category' | 'page';
+  entity_id: string;
+  image_url: string;
+  caption_en: string | null;
+  caption_de: string | null;
+  caption_it: string | null;
+  caption_fr: string | null;
+  caption_hi: string | null;
+  caption_si: string | null;
+  alt_text: string | null;
+  display_order: number;
+  is_visible: boolean;
+  created_at: string;
+}

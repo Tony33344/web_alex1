@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { Card, CardContent } from '@/components/ui/card';
 import { ImageUpload } from '@/components/admin/ImageUpload';
+import { GalleryManager } from '@/components/admin/GalleryManager';
 import type { HealthCategory } from '@/types/database';
 
 export default function EditHealthCategoryPage() {
@@ -109,6 +110,12 @@ export default function EditHealthCategoryPage() {
               <Button type="button" variant="outline" onClick={() => router.push('/admin/health')}>Cancel</Button>
             </div>
           </form>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="pt-6">
+          <GalleryManager entityType="health_category" entityId={id} />
         </CardContent>
       </Card>
     </div>

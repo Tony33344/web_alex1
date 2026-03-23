@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { Card, CardContent } from '@/components/ui/card';
 import { ImageUpload } from '@/components/admin/ImageUpload';
+import { GalleryManager } from '@/components/admin/GalleryManager';
 import type { Event } from '@/types/database';
 
 export default function EditEventPage() {
@@ -129,6 +130,12 @@ export default function EditEventPage() {
               <Button type="button" variant="outline" onClick={() => router.push('/admin/events')}>Cancel</Button>
             </div>
           </form>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="pt-6">
+          <GalleryManager entityType="event" entityId={id} />
         </CardContent>
       </Card>
     </div>

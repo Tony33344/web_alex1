@@ -5,7 +5,9 @@ import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { Card, CardContent } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
+import { GalleryGrid } from '@/components/shared/GalleryGrid';
 import { getProgram } from '@/lib/queries/programs';
+import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
 import { nl2br } from '@/lib/utils/text';
 import { EnrollButton } from '@/components/sections/EnrollButton';
@@ -34,6 +36,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
   const description = getLocalizedField(program, 'description', locale) || '';
   const longContent = getLocalizedField(program, 'long_content', locale) || '';
   const priceLabel = program.price ? `${program.currency} ${program.price}` : t('common.free');
+  const galleryImages = await getGalleryImages('program', program.id);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
@@ -73,6 +76,13 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
                   <li key={item} className="text-sm text-muted-foreground">• {item}</li>
                 ))}
               </ul>
+            </div>
+          )}
+
+          {galleryImages.length > 0 && (
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold">Gallery</h2>
+              <GalleryGrid images={galleryImages} locale={locale} />
             </div>
           )}
         </div>

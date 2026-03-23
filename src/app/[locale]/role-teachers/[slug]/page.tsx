@@ -5,7 +5,9 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
+import { GalleryGrid } from '@/components/shared/GalleryGrid';
 import { getTeacher } from '@/lib/queries/teachers';
+import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
 import { nl2br } from '@/lib/utils/text';
 
@@ -30,6 +32,7 @@ export default async function TeacherDetailPage({ params }: { params: Promise<{ 
 
   const title = getLocalizedField(teacher, 'title', locale) || 'Role Teacher';
   const bio = getLocalizedField(teacher, 'bio', locale) || '';
+  const galleryImages = await getGalleryImages('teacher', teacher.id);
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
@@ -66,6 +69,13 @@ export default async function TeacherDetailPage({ params }: { params: Promise<{ 
               <p>Full biography coming soon.</p>
             )}
           </div>
+
+          {galleryImages.length > 0 && (
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold">Gallery</h2>
+              <GalleryGrid images={galleryImages} locale={locale} />
+            </div>
+          )}
         </div>
       </div>
 

@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { Card, CardContent } from '@/components/ui/card';
 import { ImageUpload } from '@/components/admin/ImageUpload';
+import { GalleryManager } from '@/components/admin/GalleryManager';
 import type { Teacher } from '@/types/database';
 
 export default function EditTeacherPage() {
@@ -109,6 +110,13 @@ export default function EditTeacherPage() {
               <Button type="button" variant="outline" onClick={() => router.push('/admin/teachers')}>Cancel</Button>
             </div>
           </form>
+        </CardContent>
+      </Card>
+
+      {/* Gallery section — outside form since it self-manages */}
+      <Card>
+        <CardContent className="pt-6">
+          <GalleryManager entityType="teacher" entityId={id} />
         </CardContent>
       </Card>
     </div>

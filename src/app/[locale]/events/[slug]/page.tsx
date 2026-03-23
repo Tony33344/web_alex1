@@ -6,7 +6,9 @@ import { notFound } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
+import { GalleryGrid } from '@/components/shared/GalleryGrid';
 import { getEvent } from '@/lib/queries/events';
+import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
 import { nl2br } from '@/lib/utils/text';
 import { EventRegisterButton } from '@/components/sections/EventRegisterButton';
@@ -38,6 +40,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
   const startTime = new Date(event.start_date).toLocaleTimeString(locale, { timeStyle: 'short' });
   const spotsLeft = event.max_attendees ? event.max_attendees - event.current_attendees : null;
   const priceLabel = event.price && event.price > 0 ? `${event.currency} ${event.price}` : t('common.free');
+  const galleryImages = await getGalleryImages('event', event.id);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
@@ -61,6 +64,13 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
           {description && <p className="text-lg text-muted-foreground whitespace-pre-line">{description}</p>}
           {longContent && (
             <div className="prose max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: nl2br(longContent) }} />
+          )}
+
+          {galleryImages.length > 0 && (
+            <div className="space-y-4">
+              <h2 className="text-xl font-semibold">Gallery</h2>
+              <GalleryGrid images={galleryImages} locale={locale} />
+            </div>
           )}
         </div>
 

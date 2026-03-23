@@ -6,6 +6,7 @@ const ALLOWED_TABLES = [
   'testimonials', 'pages', 'sections', 'media', 'translation_overrides',
   'case_studies', 'membership_plans', 'site_settings', 'contact_submissions',
   'newsletter_subscribers', 'profiles', 'event_registrations', 'program_enrollments',
+  'gallery_images',
 ];
 
 function isAllowed(table: string): boolean {

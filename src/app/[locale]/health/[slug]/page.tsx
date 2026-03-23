@@ -4,7 +4,9 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
+import { GalleryGrid } from '@/components/shared/GalleryGrid';
 import { getHealthCategory } from '@/lib/queries/health';
+import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
 import { nl2br } from '@/lib/utils/text';
 
@@ -31,6 +33,7 @@ export default async function HealthCategoryPage({ params }: { params: Promise<{
   const name = getLocalizedField(category, 'name', locale) || category.name_en;
   const description = getLocalizedField(category, 'description', locale) || '';
   const longContent = getLocalizedField(category, 'long_content', locale) || '';
+  const galleryImages = await getGalleryImages('health_category', category.id);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
@@ -49,6 +52,13 @@ export default async function HealthCategoryPage({ params }: { params: Promise<{
         ) : (
           <div className="prose max-w-none text-muted-foreground">
             <p>Detailed content coming soon.</p>
+          </div>
+        )}
+
+        {galleryImages.length > 0 && (
+          <div className="space-y-4">
+            <h2 className="text-xl font-semibold">Gallery</h2>
+            <GalleryGrid images={galleryImages} locale={locale} />
           </div>
         )}
       </div>

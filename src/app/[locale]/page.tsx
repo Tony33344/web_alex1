@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Heart, Sun, Brain, Dumbbell, Hand, Leaf, Star, Calendar, BookOpen, Users, type LucideIcon } from 'lucide-react';
+import { ArrowRight, Heart, Sun, Brain, Dumbbell, Hand, Leaf, Star, Calendar, BookOpen, Users, Target, Compass, type LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +11,7 @@ import { getBlogPosts } from '@/lib/queries/blog';
 import { getTestimonials } from '@/lib/queries/testimonials';
 import { getFeaturedEvent } from '@/lib/queries/events';
 import { getHealthCategories } from '@/lib/queries/health';
+import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
 import { NewsletterSection } from '@/components/sections/NewsletterSection';
 
@@ -29,13 +30,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   const t = await getTranslations();
 
-  const [teachers, programs, { posts }, testimonials, featuredEvent, healthCategories] = await Promise.all([
+  const [teachers, programs, { posts }, testimonials, featuredEvent, healthCategories, missionPage, visionPage] = await Promise.all([
     getTeachers(),
     getPrograms(),
     getBlogPosts({ limit: 3 }),
     getTestimonials({ featured: true }),
     getFeaturedEvent(),
     getHealthCategories(),
+    getPage('mission'),
+    getPage('vision'),
   ]);
 
   return (
@@ -84,51 +87,87 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
       {/* Section 2: Mission & Vision */}
       <section className="bg-background py-20">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap justify-center gap-8">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <div className="grid gap-6 md:grid-cols-2">
             {/* Mission Card */}
-            <div className="w-full md:w-[calc(50%-1rem)]">
-              <div className="overflow-hidden rounded-2xl shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl bg-card ring-1 ring-foreground/10">
-                {/* Gradient header */}
-                <div className="relative h-44 overflow-hidden">
-                  <div className="h-full w-full bg-gradient-to-br from-amber-500/80 to-orange-600/80" />
-                  <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
-                  {/* Icon badge */}
-                  <div className="absolute left-4 bottom-2 flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 text-amber-700 shadow-md ring-2 ring-card">
-                    <Sun className="h-6 w-6" />
+            <Link href={`/${locale}/about/mission`} className="group">
+              <Card className="h-full overflow-hidden border-transparent shadow-md transition-all duration-300 hover:shadow-xl hover:border-primary/20">
+                {missionPage?.hero_image_url ? (
+                  <div className="relative aspect-[16/9] overflow-hidden">
+                    <img
+                      src={missionPage.hero_image_url}
+                      alt={getLocalizedField(missionPage, 'title', locale) || 'Our Mission'}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
+                          <Target className="h-3.5 w-3.5 text-white" />
+                        </div>
+                      </div>
+                      <h2 className="text-lg font-bold text-white tracking-tight">{t('home.missionTitle')}</h2>
+                    </div>
                   </div>
-                </div>
-                {/* Text content */}
-                <div className="px-5 pt-8 pb-5">
-                  <h2 className="text-xl font-bold">{t('home.missionTitle')}</h2>
-                  <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
+                ) : (
+                  <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10 p-5">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 mb-3">
+                      <Target className="h-5 w-5 text-primary" />
+                    </div>
+                    <h2 className="text-lg font-bold tracking-tight">{t('home.missionTitle')}</h2>
+                  </div>
+                )}
+                <CardContent className="p-4 space-y-3">
+                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
                     To empower individuals on their journey toward holistic wellness by providing transformative education, authentic healing practices, and a supportive global community guided by experienced Role Teachers.
                   </p>
-                </div>
-              </div>
-            </div>
+                  <div className="flex items-center gap-2 text-sm font-medium text-primary transition-colors group-hover:gap-3">
+                    {t('common.learnMore')}
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
 
             {/* Vision Card */}
-            <div className="w-full md:w-[calc(50%-1rem)]">
-              <div className="overflow-hidden rounded-2xl shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl bg-card ring-1 ring-foreground/10">
-                {/* Gradient header */}
-                <div className="relative h-44 overflow-hidden">
-                  <div className="h-full w-full bg-gradient-to-br from-violet-500/80 to-purple-700/80" />
-                  <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
-                  {/* Icon badge */}
-                  <div className="absolute left-4 bottom-2 flex h-12 w-12 items-center justify-center rounded-xl bg-violet-100 text-violet-700 shadow-md ring-2 ring-card">
-                    <Star className="h-6 w-6" />
+            <Link href={`/${locale}/about/vision`} className="group">
+              <Card className="h-full overflow-hidden border-transparent shadow-md transition-all duration-300 hover:shadow-xl hover:border-primary/20">
+                {visionPage?.hero_image_url ? (
+                  <div className="relative aspect-[16/9] overflow-hidden">
+                    <img
+                      src={visionPage.hero_image_url}
+                      alt={getLocalizedField(visionPage, 'title', locale) || 'Our Vision'}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <div className="flex items-center gap-2 mb-1">
+                        <div className="flex h-7 w-7 items-center justify-center rounded-full bg-white/20 backdrop-blur-sm">
+                          <Compass className="h-3.5 w-3.5 text-white" />
+                        </div>
+                      </div>
+                      <h2 className="text-lg font-bold text-white tracking-tight">{t('home.visionTitle')}</h2>
+                    </div>
                   </div>
-                </div>
-                {/* Text content */}
-                <div className="px-5 pt-8 pb-5">
-                  <h2 className="text-xl font-bold">{t('home.visionTitle')}</h2>
-                  <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
+                ) : (
+                  <div className="bg-gradient-to-br from-secondary/10 via-secondary/5 to-primary/10 p-5">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary/20 mb-3">
+                      <Compass className="h-5 w-5 text-secondary-foreground" />
+                    </div>
+                    <h2 className="text-lg font-bold tracking-tight">{t('home.visionTitle')}</h2>
+                  </div>
+                )}
+                <CardContent className="p-4 space-y-3">
+                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
                     A world where everyone has access to the ancient wisdom and modern practices needed to achieve balance, health, and their infinite potential.
                   </p>
-                </div>
-              </div>
-            </div>
+                  <div className="flex items-center gap-2 text-sm font-medium text-primary transition-colors group-hover:gap-3">
+                    {t('common.learnMore')}
+                    <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           </div>
         </div>
       </section>

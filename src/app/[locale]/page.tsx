@@ -392,7 +392,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                         ))}
                       </div>
                       <p className="text-sm leading-relaxed text-muted-foreground italic">
-                        &ldquo;{getLocalizedField(item, 'content', locale)}&rdquo;
+                        &ldquo;{createBriefDescription(getLocalizedField(item, 'content', locale), 250)}&rdquo;
                       </p>
                       <div>
                         <p className="text-sm font-semibold">{item.author_name}</p>

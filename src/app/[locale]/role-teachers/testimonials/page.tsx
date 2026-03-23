@@ -4,6 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { getTestimonials } from '@/lib/queries/testimonials';
 import { getLocalizedField } from '@/lib/localization';
+import { createBriefDescription } from '@/lib/utils/html';
 
 export default async function TestimonialsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -28,7 +29,7 @@ export default async function TestimonialsPage({ params }: { params: Promise<{ l
                     ))}
                   </div>
                   <p className="text-sm leading-relaxed text-muted-foreground italic">
-                    &ldquo;{getLocalizedField(item, 'content', locale)}&rdquo;
+                    &ldquo;{createBriefDescription(getLocalizedField(item, 'content', locale), 300)}&rdquo;
                   </p>
                   <div>
                     <p className="text-sm font-semibold">{item.author_name}</p>

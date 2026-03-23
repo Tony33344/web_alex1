@@ -61,9 +61,8 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
             ))}
           </div>
           <h1 className="text-3xl font-bold">{title}</h1>
-          {description && <p className="text-lg text-muted-foreground whitespace-pre-line">{description}</p>}
-          {longContent && (
-            <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground" dangerouslySetInnerHTML={{ __html: nl2br(longContent) }} />
+          {(description || longContent) && (
+            <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground" dangerouslySetInnerHTML={{ __html: nl2br(description || longContent) }} />
           )}
 
           {galleryImages.length > 0 && (

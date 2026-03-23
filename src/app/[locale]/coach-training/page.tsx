@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { getPrograms } from '@/lib/queries/programs';
 import { getLocalizedField } from '@/lib/localization';
+import { createBriefDescription } from '@/lib/utils/html';
 
 interface CoachTrainingPageProps {
   params: Promise<{ locale: string }>;
@@ -73,7 +74,7 @@ export default async function CoachTrainingPage({ params, searchParams }: CoachT
                         </div>
                         <span className="text-2xl font-bold text-primary">{priceLabel}</span>
                       </div>
-                      <p className="mt-3 text-muted-foreground whitespace-pre-line">{description}</p>
+                      <p className="mt-3 text-muted-foreground line-clamp-3">{createBriefDescription(description, 200)}</p>
                       <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">
                         {program.duration && (
                           <span className="flex items-center gap-1.5"><Clock className="h-4 w-4" />{program.duration}</span>

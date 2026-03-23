@@ -4,6 +4,7 @@ import { Heart, Sun, Brain, Dumbbell, Hand, Leaf, ArrowRight, type LucideIcon } 
 import { PageHeader } from '@/components/shared/PageHeader';
 import { getHealthCategories } from '@/lib/queries/health';
 import { getLocalizedField } from '@/lib/localization';
+import { createBriefDescription } from '@/lib/utils/html';
 
 const iconMap: Record<string, LucideIcon> = {
   Leaf, Heart, Sun, Brain, Dumbbell, Hand,
@@ -67,7 +68,7 @@ export default async function HealthPage({ params }: { params: Promise<{ locale:
                     {/* Text content */}
                     <div className="px-5 pt-8 pb-5">
                       <h3 className="text-lg font-bold">{name}</h3>
-                      <p className="mt-1.5 text-sm text-muted-foreground line-clamp-2 leading-relaxed">{description}</p>
+                      <p className="mt-1.5 text-sm text-muted-foreground line-clamp-2 leading-relaxed">{createBriefDescription(description, 150)}</p>
                       <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-all duration-200 group-hover:gap-2.5">
                         {t('common.learnMore')} <ArrowRight className="h-4 w-4" />
                       </span>

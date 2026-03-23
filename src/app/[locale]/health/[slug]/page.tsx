@@ -47,7 +47,14 @@ export default async function HealthCategoryPage({ params }: { params: Promise<{
         </div>
         <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{name}</h1>
         {(description || longContent) ? (
-          <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground" dangerouslySetInnerHTML={{ __html: nl2br(description || longContent) }} />
+          <div className="space-y-8">
+            {description && (
+              <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground" dangerouslySetInnerHTML={{ __html: nl2br(description) }} />
+            )}
+            {longContent && (
+              <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground" dangerouslySetInnerHTML={{ __html: nl2br(longContent) }} />
+            )}
+          </div>
         ) : (
           <div className="prose max-w-none text-muted-foreground">
             <p>Detailed content coming soon.</p>

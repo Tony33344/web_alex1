@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { getTeachers } from '@/lib/queries/teachers';
 import { getLocalizedField } from '@/lib/localization';
+import { createBriefDescription } from '@/lib/utils/html';
 
 export default async function RoleTeachersPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -36,7 +37,7 @@ export default async function RoleTeachersPage({ params }: { params: Promise<{ l
                     </p>
                   </div>
                   <p className="text-muted-foreground leading-relaxed">
-                    {getLocalizedField(teacher, 'short_bio', locale) || getLocalizedField(teacher, 'bio', locale) || ''}
+                    {createBriefDescription(getLocalizedField(teacher, 'short_bio', locale) || getLocalizedField(teacher, 'bio', locale), 300)}
                   </p>
                   {teacher.specialties?.length > 0 && (
                     <div className="flex flex-wrap gap-2">

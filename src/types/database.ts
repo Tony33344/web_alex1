@@ -205,6 +205,12 @@ export interface Event {
   description_fr: string | null;
   description_hi: string | null;
   description_si: string | null;
+  brief_description_en: string | null;
+  brief_description_de: string | null;
+  brief_description_it: string | null;
+  brief_description_fr: string | null;
+  brief_description_hi: string | null;
+  brief_description_si: string | null;
   long_content_en: string | null;
   long_content_de: string | null;
   long_content_it: string | null;

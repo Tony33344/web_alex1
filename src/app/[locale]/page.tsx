@@ -13,6 +13,8 @@ import { getFeaturedEvent } from '@/lib/queries/events';
 import { getHealthCategories } from '@/lib/queries/health';
 import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
+import { nl2br } from '@/lib/utils/text';
+import { processHtmlContent, createBriefDescription } from '@/lib/utils/html';
 import { NewsletterSection } from '@/components/sections/NewsletterSection';
 
 const healthIconMap: Record<string, LucideIcon> = { Leaf, Sun, Heart, Brain, Dumbbell, Hand };
@@ -296,8 +298,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
                     {getLocalizedField(featuredEvent, 'title', locale)}
                   </h2>
-                  <p className="text-lg leading-relaxed text-primary-foreground/80 whitespace-pre-line">
-                    {getLocalizedField(featuredEvent, 'description', locale)}
+                  <p className="text-lg leading-relaxed text-primary-foreground/80">
+                    {getLocalizedField(featuredEvent, 'brief_description', locale) || createBriefDescription(getLocalizedField(featuredEvent, 'description', locale))}
                   </p>
                   <div className="flex items-center gap-4 text-sm text-primary-foreground/70">
                     <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" /> {new Date(featuredEvent.start_date).toLocaleDateString(locale, { dateStyle: 'long' })}</span>

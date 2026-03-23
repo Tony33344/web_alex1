@@ -37,6 +37,7 @@ export default function EditEventPage() {
       method: 'PATCH', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ table: 'events', id, data: {
         title_en: fd.get('title_en'), title_de: fd.get('title_de') || null,
+        brief_description_en: fd.get('brief_description_en') || null,
         description_en: fd.get('description_en') || null,
         start_date: fd.get('start_date') || null, end_date: fd.get('end_date') || null,
         location: fd.get('location') || null, image_url: fd.get('image_url') || null,
@@ -70,6 +71,10 @@ export default function EditEventPage() {
             <div className="space-y-2">
               <Label htmlFor="title_de">Title (German)</Label>
               <Input id="title_de" name="title_de" defaultValue={event.title_de || ''} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="brief_description_en">Brief Description (English) — for homepage featured event</Label>
+              <Textarea id="brief_description_en" name="brief_description_en" rows={3} placeholder="Short description for homepage (optional)" defaultValue={event.brief_description_en || ''} />
             </div>
             <div className="space-y-2">
               <Label>Description</Label>

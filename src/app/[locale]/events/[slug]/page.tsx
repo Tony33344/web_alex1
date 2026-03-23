@@ -11,6 +11,7 @@ import { getEvent } from '@/lib/queries/events';
 import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
 import { nl2br } from '@/lib/utils/text';
+import { processHtmlContent } from '@/lib/utils/html';
 import { EventRegisterButton } from '@/components/sections/EventRegisterButton';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
@@ -63,7 +64,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
           <h1 className="text-3xl font-bold">{title}</h1>
           {description && <p className="text-lg text-muted-foreground whitespace-pre-line">{description}</p>}
           {longContent && (
-            <div className="prose max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: nl2br(longContent) }} />
+            <div className="prose max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: processHtmlContent(longContent) }} />
           )}
 
           {galleryImages.length > 0 && (

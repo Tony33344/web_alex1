@@ -26,8 +26,6 @@ export function processHtmlContent(html: string | null | undefined): string {
       'blockquote', 'code', 'pre',
     ],
     ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'style', 'class'],
-    ALLOWED_STYLES: ['text-align'],
-    KEEP_CONTENT: true,
   });
 
   return clean;

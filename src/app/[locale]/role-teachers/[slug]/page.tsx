@@ -10,7 +10,6 @@ import { getTeacher } from '@/lib/queries/teachers';
 import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
 import { nl2br } from '@/lib/utils/text';
-import { processHtmlContent } from '@/lib/utils/html';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
@@ -62,10 +61,10 @@ export default async function TeacherDetailPage({ params }: { params: Promise<{ 
         </div>
 
         <div className="lg:col-span-3 space-y-8">
-          <div className="prose max-w-none text-muted-foreground">
+          <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground">
             <h2 className="text-foreground">About {teacher.name}</h2>
             {bio ? (
-              <div dangerouslySetInnerHTML={{ __html: processHtmlContent(bio) }} />
+              <div dangerouslySetInnerHTML={{ __html: nl2br(bio) }} />
             ) : (
               <p>Full biography coming soon.</p>
             )}

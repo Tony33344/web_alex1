@@ -10,7 +10,6 @@ import { getProgram } from '@/lib/queries/programs';
 import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
 import { nl2br } from '@/lib/utils/text';
-import { processHtmlContent } from '@/lib/utils/html';
 import { EnrollButton } from '@/components/sections/EnrollButton';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
@@ -53,7 +52,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{name}</h1>
           {description && <p className="text-lg text-muted-foreground whitespace-pre-line">{description}</p>}
           {longContent ? (
-            <div className="prose max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: processHtmlContent(longContent) }} />
+            <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground" dangerouslySetInnerHTML={{ __html: nl2br(longContent) }} />
           ) : null}
 
           {program.what_you_learn?.length > 0 && (

@@ -85,24 +85,49 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       {/* Section 2: Mission & Vision */}
       <section className="bg-background py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-12 md:grid-cols-2">
-            <div className="space-y-4 rounded-2xl border bg-card p-8 shadow-sm">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-                <Sun className="h-6 w-6 text-primary" />
+          <div className="flex flex-wrap justify-center gap-8">
+            {/* Mission Card */}
+            <div className="w-full md:w-[calc(50%-1rem)]">
+              <div className="overflow-hidden rounded-2xl shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl bg-card ring-1 ring-foreground/10">
+                {/* Gradient header */}
+                <div className="relative h-44 overflow-hidden">
+                  <div className="h-full w-full bg-gradient-to-br from-amber-500/80 to-orange-600/80" />
+                  <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
+                  {/* Icon badge */}
+                  <div className="absolute left-4 bottom-2 flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100 text-amber-700 shadow-md ring-2 ring-card">
+                    <Sun className="h-6 w-6" />
+                  </div>
+                </div>
+                {/* Text content */}
+                <div className="px-5 pt-8 pb-5">
+                  <h2 className="text-xl font-bold">{t('home.missionTitle')}</h2>
+                  <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
+                    To empower individuals on their journey toward holistic wellness by providing transformative education, authentic healing practices, and a supportive global community guided by experienced Role Teachers.
+                  </p>
+                </div>
               </div>
-              <h2 className="text-2xl font-bold">{t('home.missionTitle')}</h2>
-              <p className="leading-relaxed text-muted-foreground">
-                To empower individuals on their journey toward holistic wellness by providing transformative education, authentic healing practices, and a supportive global community guided by experienced Role Teachers.
-              </p>
             </div>
-            <div className="space-y-4 rounded-2xl border bg-card p-8 shadow-sm">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary/20">
-                <Star className="h-6 w-6 text-secondary-foreground" />
+
+            {/* Vision Card */}
+            <div className="w-full md:w-[calc(50%-1rem)]">
+              <div className="overflow-hidden rounded-2xl shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl bg-card ring-1 ring-foreground/10">
+                {/* Gradient header */}
+                <div className="relative h-44 overflow-hidden">
+                  <div className="h-full w-full bg-gradient-to-br from-violet-500/80 to-purple-700/80" />
+                  <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
+                  {/* Icon badge */}
+                  <div className="absolute left-4 bottom-2 flex h-12 w-12 items-center justify-center rounded-xl bg-violet-100 text-violet-700 shadow-md ring-2 ring-card">
+                    <Star className="h-6 w-6" />
+                  </div>
+                </div>
+                {/* Text content */}
+                <div className="px-5 pt-8 pb-5">
+                  <h2 className="text-xl font-bold">{t('home.visionTitle')}</h2>
+                  <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
+                    A world where everyone has access to the ancient wisdom and modern practices needed to achieve balance, health, and their infinite potential.
+                  </p>
+                </div>
               </div>
-              <h2 className="text-2xl font-bold">{t('home.visionTitle')}</h2>
-              <p className="leading-relaxed text-muted-foreground">
-                A world where everyone has access to the ancient wisdom and modern practices needed to achieve balance, health, and their infinite potential.
-              </p>
             </div>
           </div>
         </div>

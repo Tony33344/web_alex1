@@ -54,10 +54,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <div className="space-y-8">
               <Badge variant="secondary" className="px-4 py-1.5 text-sm">Welcome to Infinity Role Teachers</Badge>
               <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
-                {t('home.heroTitle')}
+                {(homePage && getLocalizedField(homePage, 'title', locale)) || t('home.heroTitle')}
               </h1>
               <p className="max-w-lg text-lg leading-relaxed text-muted-foreground">
-                {t('home.heroSubtitle')}
+                {(homePage && getLocalizedField(homePage, 'meta_description', locale)) || t('home.heroSubtitle')}
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href={`/${locale}/coach-training`}>

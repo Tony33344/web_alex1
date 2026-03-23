@@ -4,6 +4,7 @@ import { routing } from '@/i18n/routing';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { Toaster } from '@/components/ui/sonner';
+import { getPage } from '@/lib/queries/pages';
 
 export default async function LocaleLayout({
   children,
@@ -19,10 +20,12 @@ export default async function LocaleLayout({
   }
 
   const messages = (await import(`@/messages/${locale}.json`)).default;
+  const homePage = await getPage('home');
+  const logoUrl = homePage?.hero_image_url || undefined;
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <Header locale={locale} />
+      <Header locale={locale} logoUrl={logoUrl} />
       <main className="flex-1 pt-16">{children}</main>
       <Footer locale={locale} />
       <Toaster />

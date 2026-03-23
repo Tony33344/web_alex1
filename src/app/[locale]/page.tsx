@@ -77,7 +77,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                   src={homePage?.hero_image_url || "/logo/logo.jpeg"}
                   alt="Infinity Role Teachers"
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   priority
                 />
               </div>

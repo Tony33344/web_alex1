@@ -5,13 +5,14 @@ interface LogoProps {
   locale?: string;
   className?: string;
   size?: number;
+  logoUrl?: string;
 }
 
-export function Logo({ locale = 'en', className = '', size = 48 }: LogoProps) {
+export function Logo({ locale = 'en', className = '', size = 48, logoUrl }: LogoProps) {
   return (
     <Link href={`/${locale}`} className={`flex items-center gap-3 ${className}`}>
       <Image
-        src="/logo/logo.jpeg"
+        src={logoUrl || "/logo/logo.jpeg"}
         alt="Infinity Role Teachers"
         width={size}
         height={size}

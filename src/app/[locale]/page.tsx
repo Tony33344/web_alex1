@@ -30,7 +30,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   const t = await getTranslations();
 
-  const [teachers, programs, { posts }, testimonials, featuredEvent, healthCategories, missionPage, visionPage] = await Promise.all([
+  const [teachers, programs, { posts }, testimonials, featuredEvent, healthCategories, missionPage, visionPage, homePage] = await Promise.all([
     getTeachers(),
     getPrograms(),
     getBlogPosts({ limit: 3 }),
@@ -39,6 +39,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     getHealthCategories(),
     getPage('mission'),
     getPage('vision'),
+    getPage('home'),
   ]);
 
   return (
@@ -73,7 +74,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <div className="relative hidden lg:block">
               <div className="relative mx-auto aspect-square max-w-md overflow-hidden rounded-3xl bg-primary/5 shadow-2xl">
                 <Image
-                  src="/logo/logo.jpeg"
+                  src={homePage?.hero_image_url || "/logo/logo.jpeg"}
                   alt="Infinity Role Teachers"
                   fill
                   className="object-cover"

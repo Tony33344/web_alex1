@@ -54,4 +54,24 @@ ON CONFLICT (slug) DO UPDATE SET
   meta_description_en = EXCLUDED.meta_description_en,
   is_published = EXCLUDED.is_published,
   updated_at = NOW();
+
+-- ============================================
+-- HOME PAGE: Hero section image
+-- ============================================
+
+INSERT INTO pages (slug, title_en, content_en, meta_description_en, is_published, page_order)
+VALUES (
+  'home',
+  'Home',
+  '<p>Welcome to Infinity Role Teachers - your journey to holistic wellness begins here.</p>',
+  'Infinity Role Teachers - Holistic wellness, Sunyoga, meditation, and certified coach training programs.',
+  true,
+  0
+)
+ON CONFLICT (slug) DO UPDATE SET
+  title_en = EXCLUDED.title_en,
+  content_en = EXCLUDED.content_en,
+  meta_description_en = EXCLUDED.meta_description_en,
+  is_published = EXCLUDED.is_published,
+  updated_at = NOW();
  

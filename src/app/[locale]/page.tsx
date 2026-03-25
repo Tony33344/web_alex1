@@ -91,20 +91,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
       {/* Section 1b: Upcoming Events */}
       {upcomingEvents.length > 0 && (
-        <section className="bg-background py-16">
+        <section className="bg-background py-12">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="mb-10 flex items-end justify-between">
-              <div>
-                <Badge variant="secondary" className="mb-3">Upcoming</Badge>
-                <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('navigation.events')}</h2>
-                <p className="mt-2 text-muted-foreground">Secure your spot — limited availability</p>
-              </div>
-              <Link href={`/${locale}/events`}>
-                <Button variant="ghost" className="hidden gap-2 sm:flex">
-                  {t('home.readAll')}
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </Link>
+            {/* Centered title with accent band */}
+            <div className="mb-10 text-center">
+              <Badge variant="secondary" className="mb-3">Upcoming</Badge>
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('navigation.events')}</h2>
+              <p className="mt-2 text-muted-foreground">Secure your spot — limited availability</p>
+              {/* Accent band */}
+              <div className="mx-auto mt-4 h-1 w-24 rounded-full bg-gradient-to-r from-primary via-secondary to-primary" />
             </div>
             <div className="flex flex-wrap justify-center gap-8">
               {upcomingEvents.map((event) => {

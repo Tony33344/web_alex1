@@ -48,9 +48,9 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   return (
     <>
       {/* Section 1: Hero */}
-      <section className="relative flex min-h-[85vh] items-center overflow-hidden bg-gradient-to-br from-primary/10 via-background to-secondary/10">
+      <section className="relative flex items-center overflow-hidden bg-gradient-to-br from-primary/10 via-background to-secondary/10">
         <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'radial-gradient(circle at 25% 50%, var(--primary) 0%, transparent 50%), radial-gradient(circle at 75% 50%, var(--secondary) 0%, transparent 50%)' }} />
-        <div className="relative z-10 mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8">
+        <div className="relative z-10 mx-auto max-w-7xl w-full px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <div className="space-y-8">
               <Badge variant="secondary" className="px-4 py-1.5 text-sm">Welcome to Infinity Role Teachers</Badge>

@@ -144,10 +144,18 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </section>
       )}
 
-      {/* Section 2: Mission & Vision */}
-      <section className="bg-background py-20">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="grid gap-6 md:grid-cols-2">
+      {/* Section 2: About Us — Mission & Vision */}
+      <section className="bg-background py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          {/* Centered title with accent band */}
+          <div className="mb-10 text-center">
+            <Badge variant="secondary" className="mb-3">About Us</Badge>
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('home.aboutTitle') || 'Our Purpose'}</h2>
+            <p className="mt-2 text-muted-foreground">{t('home.aboutSubtitle') || 'Discover what drives us forward'}</p>
+            {/* Accent band */}
+            <div className="mx-auto mt-4 h-1 w-24 rounded-full bg-gradient-to-r from-primary via-secondary to-primary" />
+          </div>
+          <div className="mx-auto max-w-5xl grid gap-6 md:grid-cols-2">
             {/* Mission Card */}
             <Link href={`/${locale}/about/mission`} className="group">
               <Card className="h-full overflow-hidden border-transparent shadow-md transition-all duration-300 hover:shadow-xl hover:border-primary/20">

@@ -1,7 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight, Heart, Sun, Brain, Dumbbell, Hand, Leaf, Star, Calendar, BookOpen, Users, Target, Compass, type LucideIcon } from 'lucide-react';
+import { ArrowRight, Heart, Sun, Brain, Dumbbell, Hand, Leaf, Star, Calendar, BookOpen, Users, Target, Compass, MapPin, Clock, type LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -9,7 +9,7 @@ import { getTeachers } from '@/lib/queries/teachers';
 import { getPrograms } from '@/lib/queries/programs';
 import { getBlogPosts } from '@/lib/queries/blog';
 import { getTestimonials } from '@/lib/queries/testimonials';
-import { getFeaturedEvent } from '@/lib/queries/events';
+import { getFeaturedEvent, getEvents } from '@/lib/queries/events';
 import { getHealthCategories } from '@/lib/queries/health';
 import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
@@ -32,12 +32,13 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   const t = await getTranslations();
 
-  const [teachers, programs, { posts }, testimonials, featuredEvent, healthCategories, missionPage, visionPage, homePage] = await Promise.all([
+  const [teachers, programs, { posts }, testimonials, featuredEvent, { events: upcomingEvents }, healthCategories, missionPage, visionPage, homePage] = await Promise.all([
     getTeachers(),
     getPrograms(),
     getBlogPosts({ limit: 3 }),
     getTestimonials({ featured: true }),
     getFeaturedEvent(),
+    getEvents({ upcoming: true, limit: 6 }),
     getHealthCategories(),
     getPage('mission'),
     getPage('vision'),
@@ -87,6 +88,66 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
           </div>
         </div>
       </section>
+
+      {/* Section 1b: Upcoming Events */}
+      {upcomingEvents.length > 0 && (
+        <section className="bg-background py-16">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+            <div className="mb-10 flex items-end justify-between">
+              <div>
+                <Badge variant="secondary" className="mb-3">Upcoming</Badge>
+                <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('navigation.events')}</h2>
+                <p className="mt-2 text-muted-foreground">Secure your spot — limited availability</p>
+              </div>
+              <Link href={`/${locale}/events`}>
+                <Button variant="ghost" className="hidden gap-2 sm:flex">
+                  {t('home.readAll')}
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+            <div className="flex flex-wrap justify-center gap-8">
+              {upcomingEvents.map((event) => {
+                const evtTitle = getLocalizedField(event, 'title', locale) || event.title_en;
+                const spotsLeft = event.max_attendees ? event.max_attendees - event.current_attendees : null;
+                const priceLabel = event.price && event.price > 0 ? `${event.currency} ${event.price}` : t('common.free');
+                const startDate = new Date(event.start_date).toLocaleDateString(locale, { dateStyle: 'medium' });
+                return (
+                  <Link key={event.id} href={`/${locale}/events/${event.slug}`} className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)]">
+                    <Card className="group h-full overflow-hidden transition-shadow hover:shadow-lg">
+                      <div className="relative aspect-video bg-gradient-to-br from-primary/10 to-secondary/10">
+                        {event.image_url && (
+                          <img src={event.image_url} alt={evtTitle} className="h-full w-full object-cover" />
+                        )}
+                        {event.is_featured && (
+                          <Badge className="absolute left-3 top-3 bg-secondary text-secondary-foreground">Featured</Badge>
+                        )}
+                      </div>
+                      <CardHeader>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <Badge variant="outline">{event.is_online ? t('common.online') : t('common.inPerson')}</Badge>
+                          <span className="font-semibold text-primary">{priceLabel}</span>
+                        </div>
+                        <CardTitle className="text-lg group-hover:text-primary transition-colors">{evtTitle}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <div className="space-y-2 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-2"><Calendar className="h-4 w-4" />{startDate}</div>
+                          <div className="flex items-center gap-2"><MapPin className="h-4 w-4" />{event.is_online ? 'Online' : event.location || 'TBA'}</div>
+                          {spotsLeft !== null && (
+                            <div className={`flex items-center gap-2 ${spotsLeft <= 10 ? 'text-destructive font-medium' : ''}`}><Users className="h-4 w-4" />{spotsLeft > 0 ? `${spotsLeft} spots left` : t('common.eventFull')}</div>
+                          )}
+                        </div>
+                        <Button className="w-full">{t('common.registerNow')}</Button>
+                      </CardContent>
+                    </Card>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Section 2: Mission & Vision */}
       <section className="bg-background py-20">
@@ -243,7 +304,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                     {/* Text content */}
                     <div className="px-5 pt-8 pb-5">
                       <h3 className="text-lg font-bold">{getLocalizedField(cat, 'name', locale) || cat.name_en}</h3>
-                      <p className="mt-1.5 text-sm text-muted-foreground line-clamp-2 leading-relaxed">{getLocalizedField(cat, 'description', locale) || ''}</p>
+                      <p className="mt-1.5 text-sm text-muted-foreground line-clamp-2 leading-relaxed">{createBriefDescription(getLocalizedField(cat, 'description', locale), 120)}</p>
                       <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-semibold text-primary transition-all duration-200 group-hover:gap-2.5">
                         {t('common.learnMore')} <ArrowRight className="h-4 w-4" />
                       </span>

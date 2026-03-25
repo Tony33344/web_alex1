@@ -46,8 +46,9 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <Breadcrumbs locale={locale} items={[{ label: t('navigation.events'), href: `/${locale}/events` }, { label: title }]} />
 
+      {/* Image + Sidebar */}
       <div className="mt-8 grid gap-10 lg:grid-cols-5">
-        <div className="lg:col-span-3 space-y-6">
+        <div className="lg:col-span-3 space-y-4">
           <div className="aspect-video overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10">
             {event.image_url && (
               <img src={event.image_url} alt={title} className="h-full w-full object-cover" />
@@ -60,17 +61,6 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
               <Badge key={tag} variant="secondary">{tag}</Badge>
             ))}
           </div>
-          <h1 className="text-3xl font-bold">{title}</h1>
-          {(description || longContent) && (
-            <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground" dangerouslySetInnerHTML={{ __html: nl2br(description || longContent) }} />
-          )}
-
-          {galleryImages.length > 0 && (
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold">Gallery</h2>
-              <GalleryGrid images={galleryImages} locale={locale} />
-            </div>
-          )}
         </div>
 
         <div className="lg:col-span-2 space-y-4">
@@ -99,10 +89,26 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
               />
             </CardContent>
           </Card>
+
+          {galleryImages.length > 0 && (
+            <div className="space-y-3">
+              <h2 className="text-lg font-semibold">Gallery</h2>
+              <GalleryGrid images={galleryImages} locale={locale} />
+            </div>
+          )}
+
           <Link href={`/${locale}/events`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="h-4 w-4" /> {t('common.backTo')} {t('navigation.events')}
           </Link>
         </div>
+      </div>
+
+      {/* Full-width title + description */}
+      <div className="mt-10 space-y-6">
+        <h1 className="text-3xl font-bold">{title}</h1>
+        {(description || longContent) && (
+          <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground" dangerouslySetInnerHTML={{ __html: nl2br(description || longContent) }} />
+        )}
       </div>
     </div>
   );

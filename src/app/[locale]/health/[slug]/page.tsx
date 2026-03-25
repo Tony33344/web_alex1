@@ -36,7 +36,7 @@ export default async function HealthCategoryPage({ params }: { params: Promise<{
   const galleryImages = await getGalleryImages('health_category', category.id);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <Breadcrumbs locale={locale} items={[{ label: t('navigation.health'), href: `/${locale}/health` }, { label: name }]} />
 
       <div className="mt-8 space-y-8">

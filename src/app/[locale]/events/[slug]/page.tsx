@@ -43,11 +43,11 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
   const galleryImages = await getGalleryImages('event', event.id);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <Breadcrumbs locale={locale} items={[{ label: t('navigation.events'), href: `/${locale}/events` }, { label: title }]} />
 
-      <div className="mt-8 grid gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-2 space-y-6">
+      <div className="mt-8 grid gap-10 lg:grid-cols-5">
+        <div className="lg:col-span-3 space-y-6">
           <div className="aspect-video overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10">
             {event.image_url && (
               <img src={event.image_url} alt={title} className="h-full w-full object-cover" />
@@ -73,13 +73,13 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
           )}
         </div>
 
-        <div className="space-y-4">
+        <div className="lg:col-span-2 space-y-4">
           <Card>
             <CardContent className="space-y-4 pt-6">
               <div className="space-y-3 text-sm">
                 <div className="flex items-center gap-3"><Calendar className="h-4 w-4 text-primary" /><span>{startDate}</span></div>
                 <div className="flex items-center gap-3"><Clock className="h-4 w-4 text-primary" /><span>{startTime}</span></div>
-                <div className="flex items-center gap-3"><MapPin className="h-4 w-4 text-primary" /><span>{event.is_online ? 'Online' : event.location || 'TBA'}</span></div>
+                <div className="flex items-center gap-3"><MapPin className="h-4 w-4 text-primary" />{event.is_online ? <span>Online</span> : event.location ? <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`} target="_blank" rel="noopener noreferrer" className="underline hover:text-primary transition-colors">{event.location}</a> : <span>TBA</span>}</div>
                 {spotsLeft !== null && (
                   <div className="flex items-center gap-3"><Users className="h-4 w-4 text-primary" /><span>{spotsLeft > 0 ? `${spotsLeft} spots left` : t('common.eventFull')}</span></div>
                 )}

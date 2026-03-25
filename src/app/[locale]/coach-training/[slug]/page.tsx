@@ -39,7 +39,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
   const galleryImages = await getGalleryImages('program', program.id);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+    <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <Breadcrumbs locale={locale} items={[{ label: t('navigation.coachTraining'), href: `/${locale}/coach-training` }, { label: name }]} />
 
       <div className="mt-8 grid gap-12 lg:grid-cols-3">

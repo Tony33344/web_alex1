@@ -13,6 +13,8 @@ import { getLocalizedField } from '@/lib/localization';
 import { nl2br } from '@/lib/utils/text';
 import { EventRegisterButton } from '@/components/sections/EventRegisterButton';
 
+export const revalidate = 0;
+
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
   const event = await getEvent(slug);

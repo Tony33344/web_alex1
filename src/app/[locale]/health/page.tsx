@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Heart, Sun, Brain, Dumbbell, Hand, Leaf, ArrowRight, type LucideIcon } from 'lucide-react';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { getHealthCategories } from '@/lib/queries/health';
+import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
 import { createBriefDescription } from '@/lib/utils/html';
 
@@ -22,11 +23,17 @@ const colorPalette = [
 export default async function HealthPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations();
-  const categories = await getHealthCategories();
+  const [categories, page] = await Promise.all([
+    getHealthCategories(),
+    getPage('health'),
+  ]);
+
+  const pageTitle = page ? getLocalizedField(page, 'title', locale) || t('navigation.health') : t('navigation.health');
+  const pageContent = page ? getLocalizedField(page, 'content', locale) || '' : '';
 
   return (
     <>
-      <PageHeader title={t('navigation.health')} subtitle="Six pillars of holistic health and transformation" />
+      <PageHeader title={pageTitle} subtitle={pageContent} />
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         {categories.length === 0 ? (

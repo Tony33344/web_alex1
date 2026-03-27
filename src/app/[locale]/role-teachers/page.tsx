@@ -5,17 +5,24 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { getTeachers } from '@/lib/queries/teachers';
+import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
 import { createBriefDescription } from '@/lib/utils/html';
 
 export default async function RoleTeachersPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations();
-  const teachers = await getTeachers();
+  const [teachers, page] = await Promise.all([
+    getTeachers(),
+    getPage('role-teachers'),
+  ]);
+
+  const pageTitle = page ? getLocalizedField(page, 'title', locale) || t('navigation.meetTeachers') : t('navigation.meetTeachers');
+  const pageContent = page ? getLocalizedField(page, 'content', locale) || '' : '';
 
   return (
     <>
-      <PageHeader title={t('navigation.meetTeachers')} subtitle="Discover the wisdom and guidance of our expert Role Teachers" />
+      <PageHeader title={pageTitle} subtitle={pageContent} />
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         {teachers.length === 0 ? (

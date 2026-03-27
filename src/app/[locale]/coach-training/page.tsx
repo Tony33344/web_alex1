@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { getPrograms } from '@/lib/queries/programs';
+import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
 import { createBriefDescription } from '@/lib/utils/html';
 
@@ -18,11 +19,17 @@ export default async function CoachTrainingPage({ params, searchParams }: CoachT
   const { locale } = await params;
   const { payment } = await searchParams;
   const t = await getTranslations();
-  const programs = await getPrograms();
+  const [programs, page] = await Promise.all([
+    getPrograms(),
+    getPage('coach-training'),
+  ]);
+
+  const pageTitle = page ? getLocalizedField(page, 'title', locale) || t('navigation.coachTraining') : t('navigation.coachTraining');
+  const pageContent = page ? getLocalizedField(page, 'content', locale) || '' : '';
 
   return (
     <>
-      <PageHeader title={t('navigation.coachTraining')} subtitle="Become a certified wellness coach with our transformative programs" />
+      <PageHeader title={pageTitle} subtitle={pageContent} />
 
       {/* Payment Status Banner */}
       {payment === 'success' && (

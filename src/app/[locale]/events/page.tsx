@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { getEvents } from '@/lib/queries/events';
+import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
 
 interface EventsPageProps {
@@ -17,11 +18,17 @@ export default async function EventsPage({ params, searchParams }: EventsPagePro
   const { locale } = await params;
   const { payment } = await searchParams;
   const t = await getTranslations();
-  const { events } = await getEvents({ upcoming: true });
+  const [{ events }, page] = await Promise.all([
+    getEvents({ upcoming: true }),
+    getPage('events'),
+  ]);
+
+  const pageTitle = page ? getLocalizedField(page, 'title', locale) || t('navigation.events') : t('navigation.events');
+  const pageContent = page ? getLocalizedField(page, 'content', locale) || '' : '';
 
   return (
     <>
-      <PageHeader title={t('navigation.events')} subtitle="Discover our upcoming events, workshops, and retreats" />
+      <PageHeader title={pageTitle} subtitle={pageContent} />
 
       {/* Payment Status Banner */}
       {payment === 'success' && (

@@ -46,6 +46,14 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
       <div className="mt-8 grid gap-12 lg:grid-cols-3">
         {/* Main content - 2/3 width */}
         <div className="lg:col-span-2 space-y-8">
+          {/* Main Image - full width */}
+          <div className="aspect-video overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10">
+            {program.image_url ? (
+              <img src={program.image_url} alt={name} className="h-full w-full object-cover" />
+            ) : program.cover_image_url ? (
+              <img src={program.cover_image_url} alt={name} className="h-full w-full object-cover" />
+            ) : null}
+          </div>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{name}</h1>
           {(description || longContent) ? (
             <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground" dangerouslySetInnerHTML={{ __html: description || longContent }} />
@@ -78,15 +86,6 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
 
         {/* Sidebar - 1/3 width */}
         <div className="space-y-4">
-          {/* Main Image */}
-          <div className="aspect-video overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10">
-            {program.image_url ? (
-              <img src={program.image_url} alt={name} className="h-full w-full object-cover" />
-            ) : program.cover_image_url ? (
-              <img src={program.cover_image_url} alt={name} className="h-full w-full object-cover" />
-            ) : null}
-          </div>
-
           {/* Price & Enroll Card */}
           <Card className="sticky top-24">
             <CardContent className="space-y-4 pt-6">

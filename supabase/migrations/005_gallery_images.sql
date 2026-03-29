@@ -15,7 +15,12 @@ CREATE TABLE IF NOT EXISTS gallery_images (
   caption_fr TEXT,
   caption_hi TEXT,
   caption_si TEXT,
-  alt_text TEXT,
+  alt_text_en TEXT,
+  alt_text_de TEXT,
+  alt_text_it TEXT,
+  alt_text_fr TEXT,
+  alt_text_hi TEXT,
+  alt_text_si TEXT,
   display_order INT NOT NULL DEFAULT 0,
   is_visible BOOLEAN NOT NULL DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT NOW()

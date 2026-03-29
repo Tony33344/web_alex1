@@ -428,7 +428,12 @@ export interface GalleryImage {
   caption_fr: string | null;
   caption_hi: string | null;
   caption_si: string | null;
-  alt_text: string | null;
+  alt_text_en: string | null;
+  alt_text_de: string | null;
+  alt_text_it: string | null;
+  alt_text_fr: string | null;
+  alt_text_hi: string | null;
+  alt_text_si: string | null;
   display_order: number;
   is_visible: boolean;
   created_at: string;

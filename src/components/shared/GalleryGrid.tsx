@@ -23,7 +23,11 @@ export function GalleryGrid({ images, locale = 'en' }: GalleryGridProps) {
   function next() { setLightboxIndex((i) => (i !== null ? (i + 1) % count : null)); }
 
   function getCaption(img: GalleryImage) {
-    return getLocalizedField(img, 'caption', locale) || img.alt_text || '';
+    return getLocalizedField(img, 'caption', locale) || '';
+  }
+
+  function getAltText(img: GalleryImage) {
+    return getLocalizedField(img, 'alt_text', locale) || getLocalizedField(img, 'caption', locale) || '';
   }
 
   // Adaptive layout classes based on image count
@@ -58,7 +62,7 @@ export function GalleryGrid({ images, locale = 'en' }: GalleryGridProps) {
           >
             <img
               src={img.image_url}
-              alt={img.alt_text || ''}
+              alt={getAltText(img)}
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             />
             {getCaption(img) && (
@@ -109,7 +113,7 @@ export function GalleryGrid({ images, locale = 'en' }: GalleryGridProps) {
           >
             <img
               src={images[lightboxIndex].image_url}
-              alt={images[lightboxIndex].alt_text || ''}
+              alt={getAltText(images[lightboxIndex])}
               className="max-h-[85vh] max-w-[90vw] rounded-lg object-contain"
             />
             {getCaption(images[lightboxIndex]) && (

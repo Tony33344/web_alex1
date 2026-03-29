@@ -85,8 +85,8 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
           )}
         </div>
 
-        {/* Sidebar - 1/3 width - Price + Gallery (not sticky) */}
-        <div className="space-y-4">
+        {/* Sidebar - 1/3 width - Sticky with Price + Gallery */}
+        <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <Card>
             <CardContent className="space-y-4 pt-6">
               <div className="text-3xl font-bold text-primary">{priceLabel}</div>

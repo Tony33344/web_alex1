@@ -43,17 +43,18 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <Breadcrumbs locale={locale} items={[{ label: t('navigation.coachTraining'), href: `/${locale}/coach-training` }, { label: name }]} />
 
+      {/* Full-width Main Image */}
+      <div className="mt-8 aspect-video overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10">
+        {program.image_url ? (
+          <img src={program.image_url} alt={name} className="h-full w-full object-cover" />
+        ) : program.cover_image_url ? (
+          <img src={program.cover_image_url} alt={name} className="h-full w-full object-cover" />
+        ) : null}
+      </div>
+
       <div className="mt-8 grid gap-12 lg:grid-cols-3">
         {/* Main content - 2/3 width */}
         <div className="lg:col-span-2 space-y-8">
-          {/* Main Image - full width */}
-          <div className="aspect-video overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10">
-            {program.image_url ? (
-              <img src={program.image_url} alt={name} className="h-full w-full object-cover" />
-            ) : program.cover_image_url ? (
-              <img src={program.cover_image_url} alt={name} className="h-full w-full object-cover" />
-            ) : null}
-          </div>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{name}</h1>
           {(description || longContent) ? (
             <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground" dangerouslySetInnerHTML={{ __html: description || longContent }} />
@@ -82,11 +83,18 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
               </ul>
             </div>
           )}
+
+          {/* Gallery at bottom of main content */}
+          {galleryImages.length > 0 && (
+            <div className="space-y-4 pt-8 border-t">
+              <h2 className="text-xl font-semibold">Gallery</h2>
+              <GalleryGrid images={galleryImages} locale={locale} />
+            </div>
+          )}
         </div>
 
-        {/* Sidebar - 1/3 width */}
+        {/* Sidebar - 1/3 width - Sticky Price Card Only */}
         <div className="space-y-4">
-          {/* Price & Enroll Card */}
           <Card className="sticky top-24">
             <CardContent className="space-y-4 pt-6">
               <div className="text-3xl font-bold text-primary">{priceLabel}</div>
@@ -103,14 +111,6 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
               <p className="text-xs text-center text-muted-foreground">Secure your spot — limited availability</p>
             </CardContent>
           </Card>
-
-          {/* Gallery in sidebar */}
-          {galleryImages.length > 0 && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Gallery</h3>
-              <GalleryGrid images={galleryImages} locale={locale} />
-            </div>
-          )}
 
           <Link href={`/${locale}/coach-training`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="h-4 w-4" /> {t('common.backTo')} {t('navigation.coachTraining')}

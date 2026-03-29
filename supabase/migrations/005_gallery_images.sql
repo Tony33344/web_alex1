@@ -32,6 +32,10 @@ CREATE INDEX IF NOT EXISTS idx_gallery_entity ON gallery_images (entity_type, en
 -- RLS policies
 ALTER TABLE gallery_images ENABLE ROW LEVEL SECURITY;
 
+-- Drop existing policies if they exist (to avoid 42710 error)
+DROP POLICY IF EXISTS "Gallery images are publicly readable" ON gallery_images;
+DROP POLICY IF EXISTS "Admins can manage gallery images" ON gallery_images;
+
 -- Public read
 CREATE POLICY "Gallery images are publicly readable"
   ON gallery_images FOR SELECT

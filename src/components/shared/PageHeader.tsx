@@ -4,6 +4,16 @@ interface PageHeaderProps {
   backgroundImage?: string;
 }
 
+function stripHtml(html: string): string {
+  if (!html) return '';
+  // Remove HTML tags and decode entities
+  return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+}
+
+function hasHtml(html: string): boolean {
+  return /<[^>]+>/.test(html || '');
+}
+
 export function PageHeader({ title, subtitle, backgroundImage }: PageHeaderProps) {
   return (
     <section
@@ -16,9 +26,16 @@ export function PageHeader({ title, subtitle, backgroundImage }: PageHeaderProps
           {title}
         </h1>
         {subtitle && (
-          <p className={`mt-4 text-lg ${backgroundImage ? 'text-white/80' : 'text-muted-foreground'}`}>
-            {subtitle}
-          </p>
+          hasHtml(subtitle) ? (
+            <div
+              className={`mt-4 text-lg prose prose-lg dark:prose-invert mx-auto ${backgroundImage ? 'text-white/80' : 'text-muted-foreground'}`}
+              dangerouslySetInnerHTML={{ __html: subtitle }}
+            />
+          ) : (
+            <p className={`mt-4 text-lg ${backgroundImage ? 'text-white/80' : 'text-muted-foreground'}`}>
+              {subtitle}
+            </p>
+          )
         )}
       </div>
     </section>

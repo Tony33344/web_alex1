@@ -4,12 +4,6 @@ interface PageHeaderProps {
   backgroundImage?: string;
 }
 
-function stripHtml(html: string): string {
-  if (!html) return '';
-  // Remove HTML tags and decode entities
-  return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
-}
-
 function hasHtml(html: string): boolean {
   return /<[^>]+>/.test(html || '');
 }

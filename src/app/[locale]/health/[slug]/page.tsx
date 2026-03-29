@@ -8,7 +8,6 @@ import { GalleryGrid } from '@/components/shared/GalleryGrid';
 import { getHealthCategory } from '@/lib/queries/health';
 import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
-import { nl2br } from '@/lib/utils/text';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
@@ -49,10 +48,10 @@ export default async function HealthCategoryPage({ params }: { params: Promise<{
         {(description || longContent) ? (
           <div className="space-y-8">
             {description && (
-              <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground" dangerouslySetInnerHTML={{ __html: nl2br(description) }} />
+              <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground" dangerouslySetInnerHTML={{ __html: description }} />
             )}
             {longContent && (
-              <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground" dangerouslySetInnerHTML={{ __html: nl2br(longContent) }} />
+              <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground" dangerouslySetInnerHTML={{ __html: longContent }} />
             )}
           </div>
         ) : (

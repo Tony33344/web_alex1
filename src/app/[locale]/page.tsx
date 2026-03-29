@@ -32,7 +32,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   const t = await getTranslations();
 
-  const [teachers, programs, { posts }, testimonials, featuredEvent, { events: upcomingEvents }, healthCategories, missionPage, visionPage, homePage] = await Promise.all([
+  const [teachers, programs, { posts }, testimonials, featuredEvent, { events: upcomingEvents }, healthCategories, missionPage, visionPage, homePage, healthPage] = await Promise.all([
     getTeachers(),
     getPrograms(),
     getBlogPosts({ limit: 3 }),
@@ -43,6 +43,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     getPage('mission'),
     getPage('vision'),
     getPage('home'),
+    getPage('health'),
   ]);
 
   return (
@@ -275,8 +276,16 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <section className="bg-background py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-12 text-center">
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('home.healthTitle')}</h2>
-            <p className="mt-4 text-muted-foreground">Six pillars of health and transformation</p>
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              {(healthPage && getLocalizedField(healthPage, 'title', locale)) || t('home.healthTitle')}
+            </h2>
+            <div className="mt-4 prose prose-lg max-w-3xl mx-auto dark:prose-invert">
+              {(healthPage && getLocalizedField(healthPage, 'content', locale)) ? (
+                <div dangerouslySetInnerHTML={{ __html: getLocalizedField(healthPage, 'content', locale) || '' }} />
+              ) : (
+                <p className="text-muted-foreground">Six pillars of health and transformation</p>
+              )}
+            </div>
           </div>
           <div className="flex flex-wrap justify-center gap-8">
             {healthCategories.length > 0 ? healthCategories.map((cat, i) => {

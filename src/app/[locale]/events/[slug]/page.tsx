@@ -48,14 +48,16 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <Breadcrumbs locale={locale} items={[{ label: t('navigation.events'), href: `/${locale}/events` }, { label: title }]} />
 
-      {/* Image + Sidebar */}
-      <div className="mt-8 grid gap-10 lg:grid-cols-5">
-        <div className="lg:col-span-3 space-y-6">
-          <div className="aspect-video overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10">
-            {event.image_url && (
-              <img src={event.image_url} alt={title} className="h-full w-full object-cover" />
-            )}
-          </div>
+      {/* Full-width Main Image */}
+      <div className="mt-8 aspect-video overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10">
+        {event.image_url && (
+          <img src={event.image_url} alt={title} className="h-full w-full object-cover" />
+        )}
+      </div>
+
+      <div className="mt-8 grid gap-12 lg:grid-cols-3">
+        {/* Main content - 2/3 width */}
+        <div className="lg:col-span-2 space-y-6">
           <div className="flex flex-wrap gap-2">
             <Badge variant="outline">{event.is_online ? t('common.online') : t('common.inPerson')}</Badge>
             {event.is_featured && <Badge className="bg-secondary text-secondary-foreground">Featured</Badge>}
@@ -69,7 +71,8 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
           )}
         </div>
 
-        <div className="lg:col-span-2 space-y-4">
+        {/* Sidebar - 1/3 width - Sticky with Price + Gallery */}
+        <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <Card>
             <CardContent className="space-y-4 pt-6">
               <div className="space-y-3 text-sm">

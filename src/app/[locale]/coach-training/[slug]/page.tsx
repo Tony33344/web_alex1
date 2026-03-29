@@ -83,19 +83,11 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
               </ul>
             </div>
           )}
-
-          {/* Gallery at bottom of main content */}
-          {galleryImages.length > 0 && (
-            <div className="space-y-4 pt-8 border-t">
-              <h2 className="text-xl font-semibold">Gallery</h2>
-              <GalleryGrid images={galleryImages} locale={locale} />
-            </div>
-          )}
         </div>
 
-        {/* Sidebar - 1/3 width - Sticky Price Card Only */}
+        {/* Sidebar - 1/3 width - Price + Gallery (not sticky) */}
         <div className="space-y-4">
-          <Card className="sticky top-24">
+          <Card>
             <CardContent className="space-y-4 pt-6">
               <div className="text-3xl font-bold text-primary">{priceLabel}</div>
               <div className="space-y-3 text-sm text-muted-foreground">
@@ -111,6 +103,14 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
               <p className="text-xs text-center text-muted-foreground">Secure your spot — limited availability</p>
             </CardContent>
           </Card>
+
+          {/* Gallery in sidebar */}
+          {galleryImages.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Gallery</h3>
+              <GalleryGrid images={galleryImages} locale={locale} />
+            </div>
+          )}
 
           <Link href={`/${locale}/coach-training`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
             <ArrowLeft className="h-4 w-4" /> {t('common.backTo')} {t('navigation.coachTraining')}

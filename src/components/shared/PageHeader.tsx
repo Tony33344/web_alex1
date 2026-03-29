@@ -4,11 +4,14 @@ interface PageHeaderProps {
   backgroundImage?: string;
 }
 
-function hasHtml(html: string): boolean {
-  return /<[^>]+>/.test(html || '');
+function stripHtml(html: string): string {
+  if (!html) return '';
+  return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
 }
 
 export function PageHeader({ title, subtitle, backgroundImage }: PageHeaderProps) {
+  const cleanSubtitle = subtitle ? stripHtml(subtitle) : '';
+  
   return (
     <section
       className="relative flex min-h-[240px] items-center justify-center overflow-hidden bg-primary/5"
@@ -19,17 +22,10 @@ export function PageHeader({ title, subtitle, backgroundImage }: PageHeaderProps
         <h1 className={`text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl ${backgroundImage ? 'text-white' : 'text-foreground'}`}>
           {title}
         </h1>
-        {subtitle && (
-          hasHtml(subtitle) ? (
-            <div
-              className={`mt-4 text-lg prose prose-lg dark:prose-invert mx-auto ${backgroundImage ? 'text-white/80' : 'text-muted-foreground'}`}
-              dangerouslySetInnerHTML={{ __html: subtitle }}
-            />
-          ) : (
-            <p className={`mt-4 text-lg ${backgroundImage ? 'text-white/80' : 'text-muted-foreground'}`}>
-              {subtitle}
-            </p>
-          )
+        {cleanSubtitle && (
+          <p className={`mt-4 text-lg ${backgroundImage ? 'text-white/80' : 'text-muted-foreground'}`}>
+            {cleanSubtitle}
+          </p>
         )}
       </div>
     </section>

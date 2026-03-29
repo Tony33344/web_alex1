@@ -32,7 +32,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   const t = await getTranslations();
 
-  const [teachers, programs, { posts }, testimonials, featuredEvent, { events: upcomingEvents }, healthCategories, missionPage, visionPage, homePage, healthPage] = await Promise.all([
+  const [teachers, programs, { posts }, testimonials, featuredEvent, { events: upcomingEvents }, healthCategories, missionPage, visionPage, homePage, healthPage, roleTeachersPage, coachTrainingPage, blogPage, membershipPage, contactPage] = await Promise.all([
     getTeachers(),
     getPrograms(),
     getBlogPosts({ limit: 3 }),
@@ -44,6 +44,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     getPage('vision'),
     getPage('home'),
     getPage('health'),
+    getPage('role-teachers'),
+    getPage('coach-training'),
+    getPage('blog'),
+    getPage('membership'),
+    getPage('contact'),
   ]);
 
   return (
@@ -245,8 +250,16 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <section className="bg-muted/50 py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mb-12 text-center">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('home.meetTeachersTitle')}</h2>
-              <p className="mt-4 text-muted-foreground">Discover the wisdom and guidance of our expert Role Teachers</p>
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                {(roleTeachersPage && getLocalizedField(roleTeachersPage, 'title', locale)) || t('home.meetTeachersTitle')}
+              </h2>
+              <div className="mt-4 prose prose-lg max-w-3xl mx-auto dark:prose-invert">
+                {(roleTeachersPage && getLocalizedField(roleTeachersPage, 'content', locale)) ? (
+                  <div dangerouslySetInnerHTML={{ __html: getLocalizedField(roleTeachersPage, 'content', locale) || '' }} />
+                ) : (
+                  <p className="text-muted-foreground">Discover the wisdom and guidance of our expert Role Teachers</p>
+                )}
+              </div>
             </div>
             <div className="flex flex-wrap justify-center gap-8">
               {teachers.map((teacher) => (
@@ -412,8 +425,16 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <section className="bg-background py-20">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mb-12 text-center">
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('home.programs')}</h2>
-              <p className="mt-4 text-muted-foreground">Become a certified wellness coach</p>
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                {(coachTrainingPage && getLocalizedField(coachTrainingPage, 'title', locale)) || t('home.programs')}
+              </h2>
+              <div className="mt-4 prose prose-lg max-w-3xl mx-auto dark:prose-invert">
+                {(coachTrainingPage && getLocalizedField(coachTrainingPage, 'content', locale)) ? (
+                  <div dangerouslySetInnerHTML={{ __html: getLocalizedField(coachTrainingPage, 'content', locale) || '' }} />
+                ) : (
+                  <p className="text-muted-foreground">Become a certified wellness coach</p>
+                )}
+              </div>
             </div>
             <div className="flex flex-wrap justify-center gap-8">
               {programs.slice(0, 3).map((program) => {
@@ -485,8 +506,16 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-12 flex items-end justify-between">
             <div>
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('home.latestBlog')}</h2>
-              <p className="mt-2 text-muted-foreground">Insights, stories, and wellness tips</p>
+              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+                {(blogPage && getLocalizedField(blogPage, 'title', locale)) || t('home.latestBlog')}
+              </h2>
+              <div className="mt-2 prose dark:prose-invert">
+                {(blogPage && getLocalizedField(blogPage, 'content', locale)) ? (
+                  <div dangerouslySetInnerHTML={{ __html: getLocalizedField(blogPage, 'content', locale) || '' }} />
+                ) : (
+                  <p className="text-muted-foreground">Insights, stories, and wellness tips</p>
+                )}
+              </div>
             </div>
             <Link href={`/${locale}/blog`}>
               <Button variant="ghost" className="hidden gap-2 sm:flex">
@@ -529,10 +558,18 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       {/* Section 9: Membership CTA */}
       <section className="bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-20">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('home.membershipCta')}</h2>
-          <p className="mt-4 text-lg text-muted-foreground">
-            Unlock exclusive content, member-only events, and special discounts on all programs.
-          </p>
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            {(membershipPage && getLocalizedField(membershipPage, 'title', locale)) || t('home.membershipCta')}
+          </h2>
+          <div className="mt-4 prose prose-lg dark:prose-invert mx-auto">
+            {(membershipPage && getLocalizedField(membershipPage, 'content', locale)) ? (
+              <div dangerouslySetInnerHTML={{ __html: getLocalizedField(membershipPage, 'content', locale) || '' }} />
+            ) : (
+              <p className="text-muted-foreground">
+                Unlock exclusive content, member-only events, and special discounts on all programs.
+              </p>
+            )}
+          </div>
           <div className="mt-8 flex justify-center gap-4">
             <Link href={`/${locale}/membership`}>
               <Button size="lg" className="gap-2">
@@ -554,8 +591,16 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       {/* Section 11: Contact CTA */}
       <section className="bg-background py-16">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
-          <h2 className="text-2xl font-bold tracking-tight">{t('home.getInTouch')}</h2>
-          <p className="mt-2 text-muted-foreground">Have questions? We&apos;d love to hear from you.</p>
+          <h2 className="text-2xl font-bold tracking-tight">
+            {(contactPage && getLocalizedField(contactPage, 'title', locale)) || t('home.getInTouch')}
+          </h2>
+          <div className="mt-2 prose dark:prose-invert mx-auto">
+            {(contactPage && getLocalizedField(contactPage, 'content', locale)) ? (
+              <div dangerouslySetInnerHTML={{ __html: getLocalizedField(contactPage, 'content', locale) || '' }} />
+            ) : (
+              <p className="text-muted-foreground">Have questions? We&apos;d love to hear from you.</p>
+            )}
+          </div>
           <div className="mt-6">
             <Link href={`/${locale}/contact`}>
               <Button variant="outline" size="lg" className="gap-2">

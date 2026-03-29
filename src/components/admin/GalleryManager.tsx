@@ -173,7 +173,7 @@ export function GalleryManager({ entityType, entityId }: GalleryManagerProps) {
             >
               <img
                 src={img.image_url}
-                alt={img.alt_text || ''}
+                alt={img.alt_text_en || ''}
                 className="aspect-square w-full object-cover"
               />
 

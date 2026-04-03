@@ -10,9 +10,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import type { MembershipPlan } from '@/types/database';
 
-export default function EditMembershipPlanPage({ params }: { params: { id: string } }) {
+export default function EditMembershipPlanPage({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
-  const { id } = params;
+  const [id, setId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [plan, setPlan] = useState<Partial<MembershipPlan>>({
@@ -39,6 +39,11 @@ export default function EditMembershipPlanPage({ params }: { params: { id: strin
   });
 
   useEffect(() => {
+    params.then(p => setId(p.id));
+  }, [params]);
+
+  useEffect(() => {
+    if (!id) return;
     fetch(`/api/admin/membership/${id}`)
       .then(r => r.json())
       .then(data => {
@@ -88,7 +93,7 @@ export default function EditMembershipPlanPage({ params }: { params: { id: strin
     setPlan({ ...plan, features: newFeatures });
   }
 
-  if (loading) {
+  if (loading || !id) {
     return (
       <div className="flex items-center justify-center h-64">
         <Loader2 className="h-8 w-8 animate-spin" />

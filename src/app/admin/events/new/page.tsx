@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -16,6 +17,7 @@ export default function NewEventPage() {
   const [saving, setSaving] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const [description, setDescription] = useState('');
+  const [longContent, setLongContent] = useState('');
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -27,7 +29,8 @@ export default function NewEventPage() {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ table: 'events', data: {
         slug, title_en: fd.get('title_en'),
-        description_en: fd.get('description_en') || null,
+        description_en: description || null,
+        long_content_en: longContent || null,
         start_date: fd.get('start_date') || null,
         end_date: fd.get('end_date') || null,
         location: fd.get('location') || null,
@@ -40,7 +43,13 @@ export default function NewEventPage() {
         is_featured: fd.get('is_featured') === 'on',
       }}),
     });
-    if (res.ok) router.push('/admin/events');
+    if (res.ok) {
+      toast.success('Event created successfully');
+      router.push('/admin/events');
+    } else {
+      const err = await res.json();
+      toast.error(err.error || 'Failed to create event');
+    }
     setSaving(false);
   }
 
@@ -55,12 +64,21 @@ export default function NewEventPage() {
               <Input id="title_en" name="title_en" required />
             </div>
             <div className="space-y-2">
-              <Label>Description</Label>
+              <Label>Short Description</Label>
               <input type="hidden" name="description_en" value={description} />
               <RichTextEditor
                 value={description || ''}
                 onChange={setDescription}
-                placeholder="Event description"
+                placeholder="Brief event description"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Full Content (Long Description)</Label>
+              <input type="hidden" name="long_content_en" value={longContent} />
+              <RichTextEditor
+                value={longContent || ''}
+                onChange={setLongContent}
+                placeholder="Full event content - this will appear on the event detail page"
               />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">

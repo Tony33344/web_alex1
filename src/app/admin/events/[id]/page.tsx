@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,10 +22,11 @@ export default function EditEventPage() {
   const [saving, setSaving] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const [description, setDescription] = useState('');
+  const [longContent, setLongContent] = useState('');
 
   useEffect(() => {
     fetch(`/api/admin/data?table=events&id=${id}`)
-      .then(r => r.json()).then(d => { setEvent(d as Event | null); setImageUrl((d as Event)?.image_url || ''); setDescription((d as Event)?.description_en || ''); setLoading(false); })
+      .then(r => r.json()).then(d => { setEvent(d as Event | null); setImageUrl((d as Event)?.image_url || ''); setDescription((d as Event)?.description_en || ''); setLongContent((d as Event)?.long_content_en || ''); setLoading(false); })
       .catch(() => setLoading(false));
   }, [id]);
 
@@ -38,7 +40,8 @@ export default function EditEventPage() {
       body: JSON.stringify({ table: 'events', id, data: {
         title_en: fd.get('title_en'), title_de: fd.get('title_de') || null,
         brief_description_en: fd.get('brief_description_en') || null,
-        description_en: fd.get('description_en') || null,
+        description_en: description || null,
+        long_content_en: longContent || null,
         start_date: fd.get('start_date') || null, end_date: fd.get('end_date') || null,
         location: fd.get('location') || null, image_url: fd.get('image_url') || null,
         is_online: fd.get('is_online') === 'on',
@@ -49,7 +52,13 @@ export default function EditEventPage() {
         is_featured: fd.get('is_featured') === 'on',
       }}),
     });
-    if (res.ok) router.push('/admin/events');
+    if (res.ok) {
+      toast.success('Event saved successfully');
+      router.push('/admin/events');
+    } else {
+      const err = await res.json();
+      toast.error(err.error || 'Failed to save event');
+    }
     setSaving(false);
   }
 
@@ -77,12 +86,21 @@ export default function EditEventPage() {
               <Textarea id="brief_description_en" name="brief_description_en" rows={3} placeholder="Short description for homepage (optional)" defaultValue={event.brief_description_en || ''} />
             </div>
             <div className="space-y-2">
-              <Label>Description</Label>
+              <Label>Short Description</Label>
               <input type="hidden" name="description_en" value={description} />
               <RichTextEditor
                 value={description || ''}
                 onChange={setDescription}
-                placeholder="Event description"
+                placeholder="Brief event description"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label>Full Content (Long Description)</Label>
+              <input type="hidden" name="long_content_en" value={longContent} />
+              <RichTextEditor
+                value={longContent || ''}
+                onChange={setLongContent}
+                placeholder="Full event content - this will appear on the event detail page"
               />
             </div>
             <div className="grid gap-4 sm:grid-cols-2">

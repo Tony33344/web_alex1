@@ -9,6 +9,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RichTextEditor } from '@/components/admin/RichTextEditor';
+import { ImageUpload } from '@/components/admin/ImageUpload';
+import { GalleryManager } from '@/components/admin/GalleryManager';
 import type { MembershipPlan } from '@/types/database';
 
 export default function EditMembershipPlanPage({ params }: { params: Promise<{ id: string }> }) {
@@ -35,6 +37,7 @@ export default function EditMembershipPlanPage({ params }: { params: Promise<{ i
     long_content_fr: '',
     long_content_hi: '',
     long_content_si: '',
+    cover_image_url: '',
     plan_type: 'monthly',
     price: 0,
     currency: 'CHF',
@@ -167,6 +170,16 @@ export default function EditMembershipPlanPage({ params }: { params: Promise<{ i
               <Input id="stripe_price_id" value={plan.stripe_price_id || ''} onChange={e => setPlan({ ...plan, stripe_price_id: e.target.value })} placeholder="price_xxxxxxxxxxxxx" />
             </div>
 
+            <div className="space-y-2">
+              <Label>Cover Image</Label>
+              <ImageUpload
+                value={plan.cover_image_url || null}
+                onChange={v => setPlan({ ...plan, cover_image_url: v || '' })}
+                folder="membership"
+                label="Plan cover image"
+              />
+            </div>
+
             <div className="flex gap-4">
               <label className="flex items-center space-x-2 cursor-pointer">
                 <input type="checkbox" checked={plan.is_active} onChange={e => setPlan({ ...plan, is_active: e.target.checked })} className="h-4 w-4 rounded border-primary" />
@@ -255,6 +268,12 @@ export default function EditMembershipPlanPage({ params }: { params: Promise<{ i
               </div>
             </CardContent>
           )}
+        </Card>
+
+        <Card>
+          <CardContent className="pt-6">
+            <GalleryManager entityType="membership" entityId={id || ''} />
+          </CardContent>
         </Card>
 
         <div className="flex gap-4">

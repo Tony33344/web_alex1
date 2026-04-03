@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Check, ArrowRight, Star } from 'lucide-react';
@@ -8,9 +8,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckoutDialog } from '@/components/checkout/CheckoutDialog';
+import { GalleryGrid } from '@/components/shared/GalleryGrid';
 import { useUser } from '@/hooks/useUser';
 import type { MembershipPlan } from '@/types/database';
 import { getLocalizedField } from '@/lib/localization';
+import { getGalleryImages } from '@/lib/queries/gallery';
 
 interface MembershipClientProps {
   plans: MembershipPlan[];
@@ -25,12 +27,19 @@ export function MembershipClient({ plans, pageTitle, pageContent, locale }: Memb
   const { user, profile } = useUser();
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [showCheckout, setShowCheckout] = useState(false);
+  const [galleryImages, setGalleryImages] = useState<{ image_url: string; alt_text_en?: string | null }[]>([]);
 
   const monthlyPlan = plans.find(p => p.plan_type === 'monthly');
   const yearlyPlan = plans.find(p => p.plan_type === 'yearly');
   const activePlan = selectedPlanId 
     ? plans.find(p => p.id === selectedPlanId) 
     : (yearlyPlan || monthlyPlan || plans[0]);
+
+  useEffect(() => {
+    if (activePlan?.id) {
+      getGalleryImages('membership', activePlan.id).then(imgs => setGalleryImages(imgs.map(img => ({ image_url: img.image_url, alt_text_en: img.alt_text_en }))));
+    }
+  }, [activePlan?.id]);
 
   async function handleCheckout() {
     if (!user) {
@@ -131,6 +140,13 @@ export function MembershipClient({ plans, pageTitle, pageContent, locale }: Memb
                   <div className="prose prose-sm max-w-none dark:prose-invert" dangerouslySetInnerHTML={{ __html: longContent }} />
                 );
               })()}
+
+              {/* Gallery Images */}
+              {galleryImages.length > 0 && (
+                <div className="mt-4">
+                  <GalleryGrid images={galleryImages as any} locale={locale} />
+                </div>
+              )}
 
               <ul className="space-y-3">
                 {activePlan.features.map((feature, idx) => (

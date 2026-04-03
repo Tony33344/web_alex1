@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { RichTextEditor } from '@/components/admin/RichTextEditor';
+import { ImageUpload } from '@/components/admin/ImageUpload';
 import type { MembershipPlan } from '@/types/database';
 
 export default function NewMembershipPlanPage() {
@@ -33,6 +34,7 @@ export default function NewMembershipPlanPage() {
     long_content_fr: '',
     long_content_hi: '',
     long_content_si: '',
+    cover_image_url: '',
     plan_type: 'monthly',
     price: 0,
     currency: 'CHF',
@@ -132,6 +134,16 @@ export default function NewMembershipPlanPage() {
             <div className="space-y-2">
               <Label htmlFor="stripe_price_id">Stripe Price ID</Label>
               <Input id="stripe_price_id" value={plan.stripe_price_id || ''} onChange={e => setPlan({ ...plan, stripe_price_id: e.target.value })} placeholder="price_xxxxxxxxxxxxx" />
+            </div>
+
+            <div className="space-y-2">
+              <Label>Cover Image</Label>
+              <ImageUpload
+                value={plan.cover_image_url || null}
+                onChange={v => setPlan({ ...plan, cover_image_url: v || '' })}
+                folder="membership"
+                label="Plan cover image"
+              />
             </div>
 
             <div className="flex gap-4">

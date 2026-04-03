@@ -337,6 +337,7 @@ export interface MembershipPlan {
   long_content_fr: string | null;
   long_content_hi: string | null;
   long_content_si: string | null;
+  cover_image_url: string | null;
   plan_type: 'monthly' | 'yearly';
   price: number;
   currency: string;
@@ -425,7 +426,7 @@ export interface TranslationOverride {
 
 export interface GalleryImage {
   id: string;
-  entity_type: 'teacher' | 'event' | 'program' | 'health_category' | 'page';
+  entity_type: 'teacher' | 'event' | 'program' | 'health_category' | 'page' | 'membership';
   entity_id: string;
   image_url: string;
   caption_en: string | null;

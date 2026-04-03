@@ -68,14 +68,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
           </div>
           <h1 className="text-3xl font-bold">{title}</h1>
           {(description || longContent) && (
-            <div className="space-y-8">
-              {description && (
-                <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground" dangerouslySetInnerHTML={{ __html: description }} />
-              )}
-              {longContent && (
-                <ExpandableContent content={longContent} collapsedHeight={250} />
-              )}
-            </div>
+            <ExpandableContent content={[description, longContent].filter(Boolean).join('')} collapsedHeight={250} />
           )}
         </div>
 

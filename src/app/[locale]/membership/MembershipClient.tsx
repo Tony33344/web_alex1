@@ -21,7 +21,6 @@ interface MembershipClientProps {
 
 export function MembershipClient({ plans, pageTitle, pageContent, locale }: MembershipClientProps) {
   const t = useTranslations();
-  const params = useParams();
   const router = useRouter();
   const { user, profile } = useUser();
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);

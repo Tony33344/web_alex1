@@ -35,29 +35,33 @@ export default function EditEventPage() {
     setSaving(true);
     const fd = new FormData(e.currentTarget);
 
+    const payload = {
+      title_en: fd.get('title_en'), title_de: fd.get('title_de') || null,
+      brief_description_en: fd.get('brief_description_en') || null,
+      description_en: description || null,
+      long_content_en: longContent || null,
+      start_date: fd.get('start_date') || null, end_date: fd.get('end_date') || null,
+      location: fd.get('location') || null, image_url: fd.get('image_url') || null,
+      is_online: fd.get('is_online') === 'on',
+      price: parseFloat(fd.get('price') as string) || null,
+      stripe_price_id: fd.get('stripe_price_id') || null,
+      max_attendees: parseInt(fd.get('max_attendees') as string) || null,
+      is_published: fd.get('is_published') === 'on',
+      is_featured: fd.get('is_featured') === 'on',
+    };
+    console.log('PATCH payload:', { table: 'events', id, data: payload });
+
     const res = await fetch('/api/admin/data', {
       method: 'PATCH', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ table: 'events', id, data: {
-        title_en: fd.get('title_en'), title_de: fd.get('title_de') || null,
-        brief_description_en: fd.get('brief_description_en') || null,
-        description_en: description || null,
-        long_content_en: longContent || null,
-        start_date: fd.get('start_date') || null, end_date: fd.get('end_date') || null,
-        location: fd.get('location') || null, image_url: fd.get('image_url') || null,
-        is_online: fd.get('is_online') === 'on',
-        price: parseFloat(fd.get('price') as string) || null,
-        stripe_price_id: fd.get('stripe_price_id') || null,
-        max_attendees: parseInt(fd.get('max_attendees') as string) || null,
-        is_published: fd.get('is_published') === 'on',
-        is_featured: fd.get('is_featured') === 'on',
-      }}),
+      body: JSON.stringify({ table: 'events', id, data: payload }),
     });
+    const result = await res.json();
+    console.log('PATCH response:', res.status, result);
     if (res.ok) {
       toast.success('Event saved successfully');
       router.push('/admin/events');
     } else {
-      const err = await res.json();
-      toast.error(err.error || 'Failed to save event');
+      toast.error(result.error || 'Failed to save event');
     }
     setSaving(false);
   }

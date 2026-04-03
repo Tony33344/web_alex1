@@ -1,31 +1,41 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface ExpandableContentProps {
   content: string;
-  maxLength?: number;
+  collapsedHeight?: number;
 }
 
-export function ExpandableContent({ content, maxLength = 500 }: ExpandableContentProps) {
+export function ExpandableContent({ content, collapsedHeight = 200 }: ExpandableContentProps) {
   const [expanded, setExpanded] = useState(false);
+  const [needsTruncation, setNeedsTruncation] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      setNeedsTruncation(contentRef.current.scrollHeight > collapsedHeight + 40);
+    }
+  }, [content, collapsedHeight]);
 
   if (!content) return null;
 
-  const shouldTruncate = content.length > maxLength;
-  const displayContent = !expanded && shouldTruncate 
-    ? content.slice(0, maxLength) + '...' 
-    : content;
-
   return (
     <div>
-      <div 
-        className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground"
-        dangerouslySetInnerHTML={{ __html: displayContent }}
+      <div
+        ref={contentRef}
+        style={{
+          maxHeight: !expanded && needsTruncation ? `${collapsedHeight}px` : undefined,
+          overflow: !expanded && needsTruncation ? 'hidden' : undefined,
+          maskImage: !expanded && needsTruncation ? 'linear-gradient(to bottom, black 60%, transparent 100%)' : undefined,
+          WebkitMaskImage: !expanded && needsTruncation ? 'linear-gradient(to bottom, black 60%, transparent 100%)' : undefined,
+        }}
+        className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground transition-all duration-300"
+        dangerouslySetInnerHTML={{ __html: content }}
       />
-      {shouldTruncate && (
+      {needsTruncation && (
         <Button
           variant="link"
           onClick={() => setExpanded(!expanded)}

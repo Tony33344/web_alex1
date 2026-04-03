@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Check, ArrowRight, Star } from 'lucide-react';
@@ -9,25 +9,25 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { CheckoutDialog } from '@/components/checkout/CheckoutDialog';
 import { GalleryGrid } from '@/components/shared/GalleryGrid';
+import { ExpandableContent } from '@/components/shared/ExpandableContent';
 import { useUser } from '@/hooks/useUser';
-import type { MembershipPlan } from '@/types/database';
+import type { MembershipPlan, GalleryImage } from '@/types/database';
 import { getLocalizedField } from '@/lib/localization';
-import { getGalleryImages } from '@/lib/queries/gallery';
 
 interface MembershipClientProps {
   plans: MembershipPlan[];
   pageTitle: string;
   pageContent: string;
   locale: string;
+  galleryMap: Record<string, GalleryImage[]>;
 }
 
-export function MembershipClient({ plans, pageTitle, pageContent, locale }: MembershipClientProps) {
+export function MembershipClient({ plans, pageTitle, pageContent, locale, galleryMap }: MembershipClientProps) {
   const t = useTranslations();
   const router = useRouter();
   const { user, profile } = useUser();
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [showCheckout, setShowCheckout] = useState(false);
-  const [galleryImages, setGalleryImages] = useState<{ image_url: string; alt_text_en?: string | null }[]>([]);
 
   const monthlyPlan = plans.find(p => p.plan_type === 'monthly');
   const yearlyPlan = plans.find(p => p.plan_type === 'yearly');
@@ -35,11 +35,7 @@ export function MembershipClient({ plans, pageTitle, pageContent, locale }: Memb
     ? plans.find(p => p.id === selectedPlanId) 
     : (yearlyPlan || monthlyPlan || plans[0]);
 
-  useEffect(() => {
-    if (activePlan?.id) {
-      getGalleryImages('membership', activePlan.id).then(imgs => setGalleryImages(imgs.map(img => ({ image_url: img.image_url, alt_text_en: img.alt_text_en }))));
-    }
-  }, [activePlan?.id]);
+  const activeGallery = activePlan ? (galleryMap[activePlan.id] || []) : [];
 
   async function handleCheckout() {
     if (!user) {
@@ -63,7 +59,6 @@ export function MembershipClient({ plans, pageTitle, pageContent, locale }: Memb
       return { reference: data.reference };
     }
     
-    // Stripe payment
     const res = await fetch('/api/stripe/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -76,13 +71,15 @@ export function MembershipClient({ plans, pageTitle, pageContent, locale }: Memb
 
   const hasMultiplePlans = plans.length > 1;
   
-  // Get localized plan name
   const getPlanName = (plan: MembershipPlan) => {
     return getLocalizedField(plan, 'name', locale) || plan.name_en;
   };
 
+  const longContent = activePlan ? (getLocalizedField(activePlan, 'long_content', locale) || '') : '';
+  const description = activePlan ? (getLocalizedField(activePlan, 'description', locale) || '') : '';
+
   return (
-    <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+    <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
       {/* Billing Toggle */}
       {hasMultiplePlans && (
         <div className="mb-12 flex items-center justify-center gap-4">
@@ -110,67 +107,81 @@ export function MembershipClient({ plans, pageTitle, pageContent, locale }: Memb
         </div>
       )}
 
-      {/* Plan Card */}
       {activePlan && (
-        <div className="mx-auto max-w-md">
-          <Card className="relative overflow-hidden border-primary/30 shadow-lg">
-            {activePlan.is_popular && (
-              <div className="absolute right-4 top-4">
-                <Star className="h-5 w-5 fill-secondary text-secondary" />
+        <div className="grid gap-12 lg:grid-cols-3">
+          {/* Left: Content area */}
+          <div className="lg:col-span-2 space-y-8">
+            {/* Cover Image */}
+            {activePlan.cover_image_url && (
+              <div className="aspect-video overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10">
+                <img src={activePlan.cover_image_url} alt={getPlanName(activePlan)} className="h-full w-full object-cover" />
               </div>
             )}
-            <CardHeader className="pb-4 text-center">
-              <CardTitle className="text-xl">{getPlanName(activePlan)}</CardTitle>
-              <div className="mt-4">
-                <span className="text-4xl font-bold">{activePlan.currency} {activePlan.price}</span>
-                <span className="text-muted-foreground">/{activePlan.plan_type === 'monthly' ? t('common.perMonth') : t('common.perYear')}</span>
-              </div>
-              {activePlan.plan_type === 'yearly' && monthlyPlan && (
-                <p className="mt-2 text-sm text-primary">
-                  Save vs monthly plan
-                </p>
-              )}
-            </CardHeader>
-            <CardContent className="space-y-6">
-              {/* Long Content */}
-              {(() => {
-                const longContent = getLocalizedField(activePlan, 'long_content', locale);
-                if (!longContent) return null;
-                return (
-                  <div className="prose prose-sm max-w-none dark:prose-invert" dangerouslySetInnerHTML={{ __html: longContent }} />
-                );
-              })()}
 
-              {/* Gallery Images */}
-              {galleryImages.length > 0 && (
-                <div className="mt-4">
-                  <GalleryGrid images={galleryImages as any} locale={locale} />
+            {/* Description */}
+            {description && (
+              <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground" dangerouslySetInnerHTML={{ __html: description }} />
+            )}
+
+            {/* Long Content with Show more */}
+            {longContent && (
+              <ExpandableContent content={longContent} collapsedHeight={250} />
+            )}
+
+            {/* Gallery */}
+            {activeGallery.length > 0 && (
+              <div className="space-y-4">
+                <h2 className="text-xl font-semibold">Gallery</h2>
+                <GalleryGrid images={activeGallery} locale={locale} />
+              </div>
+            )}
+          </div>
+
+          {/* Right: Sticky pricing card */}
+          <div className="lg:sticky lg:top-24 lg:self-start">
+            <Card className="relative overflow-hidden border-primary/30 shadow-lg">
+              {activePlan.is_popular && (
+                <div className="absolute right-4 top-4">
+                  <Star className="h-5 w-5 fill-secondary text-secondary" />
                 </div>
               )}
+              <CardHeader className="pb-4 text-center">
+                <CardTitle className="text-xl">{getPlanName(activePlan)}</CardTitle>
+                <div className="mt-4">
+                  <span className="text-4xl font-bold">{activePlan.currency} {activePlan.price}</span>
+                  <span className="text-muted-foreground">/{activePlan.plan_type === 'monthly' ? t('common.perMonth') : t('common.perYear')}</span>
+                </div>
+                {activePlan.plan_type === 'yearly' && monthlyPlan && (
+                  <p className="mt-2 text-sm text-primary">
+                    Save vs monthly plan
+                  </p>
+                )}
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <ul className="space-y-3">
+                  {activePlan.features.map((feature, idx) => (
+                    <li key={idx} className="flex items-start gap-3 text-sm">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                      <span>{feature}</span>
+                    </li>
+                  ))}
+                </ul>
 
-              <ul className="space-y-3">
-                {activePlan.features.map((feature, idx) => (
-                  <li key={idx} className="flex items-start gap-3 text-sm">
-                    <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                    <span>{feature}</span>
-                  </li>
-                ))}
-              </ul>
-
-              {profile?.subscription_status === 'active' ? (
-                <form action="/api/stripe/portal" method="POST">
-                  <Button type="submit" variant="outline" className="w-full">
-                    {t('membership.manageSubscription')}
+                {profile?.subscription_status === 'active' ? (
+                  <form action="/api/stripe/portal" method="POST">
+                    <Button type="submit" variant="outline" className="w-full">
+                      {t('membership.manageSubscription')}
+                    </Button>
+                  </form>
+                ) : (
+                  <Button onClick={handleCheckout} className="w-full gap-2" size="lg">
+                    {t('common.subscribeNow')}
+                    <ArrowRight className="h-4 w-4" />
                   </Button>
-                </form>
-              ) : (
-                <Button onClick={handleCheckout} className="w-full gap-2" size="lg">
-                  {t('common.subscribeNow')}
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              )}
-            </CardContent>
-          </Card>
+                )}
+              </CardContent>
+            </Card>
+          </div>
         </div>
       )}
 

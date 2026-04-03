@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import type { MembershipPlan } from '@/types/database';
 
 export default function EditMembershipPlanPage({ params }: { params: Promise<{ id: string }> }) {
@@ -28,6 +29,12 @@ export default function EditMembershipPlanPage({ params }: { params: Promise<{ i
     description_fr: '',
     description_hi: '',
     description_si: '',
+    long_content_en: '',
+    long_content_de: '',
+    long_content_it: '',
+    long_content_fr: '',
+    long_content_hi: '',
+    long_content_si: '',
     plan_type: 'monthly',
     price: 0,
     currency: 'CHF',
@@ -37,6 +44,7 @@ export default function EditMembershipPlanPage({ params }: { params: Promise<{ i
     is_popular: false,
     display_order: 0,
   });
+  const [showLongContent, setShowLongContent] = useState(false);
 
   useEffect(() => {
     params.then(p => setId(p.id));
@@ -199,6 +207,54 @@ export default function EditMembershipPlanPage({ params }: { params: Promise<{ i
             ))}
             {(plan.features || []).length === 0 && <p className="text-muted-foreground text-sm">No features added</p>}
           </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <button
+              type="button"
+              onClick={() => setShowLongContent(!showLongContent)}
+              className="flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+            >
+              {showLongContent ? '▼' : '▶'} Full Content (Long Description)
+            </button>
+          </CardHeader>
+          {showLongContent && (
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Content (English)</Label>
+                <RichTextEditor
+                  value={plan.long_content_en || ''}
+                  onChange={v => setPlan({ ...plan, long_content_en: v })}
+                  placeholder="Detailed content about this membership plan"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Content (German)</Label>
+                <RichTextEditor
+                  value={plan.long_content_de || ''}
+                  onChange={v => setPlan({ ...plan, long_content_de: v })}
+                  placeholder="German content"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Content (Italian)</Label>
+                <RichTextEditor
+                  value={plan.long_content_it || ''}
+                  onChange={v => setPlan({ ...plan, long_content_it: v })}
+                  placeholder="Italian content"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Content (French)</Label>
+                <RichTextEditor
+                  value={plan.long_content_fr || ''}
+                  onChange={v => setPlan({ ...plan, long_content_fr: v })}
+                  placeholder="French content"
+                />
+              </div>
+            </CardContent>
+          )}
         </Card>
 
         <div className="flex gap-4">

@@ -123,6 +123,15 @@ export function MembershipClient({ plans, pageTitle, pageContent, locale }: Memb
               )}
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Long Content */}
+              {(() => {
+                const longContent = getLocalizedField(activePlan, 'long_content', locale);
+                if (!longContent) return null;
+                return (
+                  <div className="prose prose-sm max-w-none dark:prose-invert" dangerouslySetInnerHTML={{ __html: longContent }} />
+                );
+              })()}
+
               <ul className="space-y-3">
                 {activePlan.features.map((feature, idx) => (
                   <li key={idx} className="flex items-start gap-3 text-sm">

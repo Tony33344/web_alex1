@@ -18,6 +18,7 @@ export default function NewEventPage() {
   const [imageUrl, setImageUrl] = useState('');
   const [description, setDescription] = useState('');
   const [longContent, setLongContent] = useState('');
+  const [showLongContent, setShowLongContent] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -73,13 +74,23 @@ export default function NewEventPage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Full Content (Long Description)</Label>
-              <input type="hidden" name="long_content_en" value={longContent} />
-              <RichTextEditor
-                value={longContent || ''}
-                onChange={setLongContent}
-                placeholder="Full event content - this will appear on the event detail page"
-              />
+              <button
+                type="button"
+                onClick={() => setShowLongContent(!showLongContent)}
+                className="flex items-center gap-2 text-sm font-medium text-primary hover:underline"
+              >
+                {showLongContent ? '▼' : '▶'} Full Content (Long Description)
+              </button>
+              {showLongContent && (
+                <>
+                  <input type="hidden" name="long_content_en" value={longContent} />
+                  <RichTextEditor
+                    value={longContent || ''}
+                    onChange={setLongContent}
+                    placeholder="Full event content - this will appear on the event detail page"
+                  />
+                </>
+              )}
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">

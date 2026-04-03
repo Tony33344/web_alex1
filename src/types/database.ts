@@ -331,6 +331,12 @@ export interface MembershipPlan {
   description_fr: string | null;
   description_hi: string | null;
   description_si: string | null;
+  long_content_en: string | null;
+  long_content_de: string | null;
+  long_content_it: string | null;
+  long_content_fr: string | null;
+  long_content_hi: string | null;
+  long_content_si: string | null;
   plan_type: 'monthly' | 'yearly';
   price: number;
   currency: string;

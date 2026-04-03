@@ -36,12 +36,14 @@ export default function EditEventPage() {
     const fd = new FormData(e.currentTarget);
 
     const payload = {
-      title_en: fd.get('title_en'), title_de: fd.get('title_de') || null,
-      brief_description_en: fd.get('brief_description_en') || null,
+      title_en: fd.get('title_en'), 
+      title_de: fd.get('title_de') || null,
       description_en: description || null,
       long_content_en: longContent || null,
-      start_date: fd.get('start_date') || null, end_date: fd.get('end_date') || null,
-      location: fd.get('location') || null, image_url: fd.get('image_url') || null,
+      start_date: fd.get('start_date') || null, 
+      end_date: fd.get('end_date') || null,
+      location: fd.get('location') || null, 
+      image_url: fd.get('image_url') || null,
       is_online: fd.get('is_online') === 'on',
       price: parseFloat(fd.get('price') as string) || null,
       stripe_price_id: fd.get('stripe_price_id') || null,
@@ -84,10 +86,6 @@ export default function EditEventPage() {
             <div className="space-y-2">
               <Label htmlFor="title_de">Title (German)</Label>
               <Input id="title_de" name="title_de" defaultValue={event.title_de || ''} />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="brief_description_en">Brief Description (English) — for homepage featured event</Label>
-              <Textarea id="brief_description_en" name="brief_description_en" rows={3} placeholder="Short description for homepage (optional)" defaultValue={event.brief_description_en || ''} />
             </div>
             <div className="space-y-2">
               <Label>Short Description</Label>

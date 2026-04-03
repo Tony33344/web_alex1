@@ -12,6 +12,7 @@ import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
 import { nl2br } from '@/lib/utils/text';
 import { EventRegisterButton } from '@/components/sections/EventRegisterButton';
+import { ExpandableContent } from '@/components/shared/ExpandableContent';
 
 export const revalidate = 0;
 
@@ -72,7 +73,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
                 <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground" dangerouslySetInnerHTML={{ __html: description }} />
               )}
               {longContent && (
-                <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground" dangerouslySetInnerHTML={{ __html: longContent }} />
+                <ExpandableContent content={longContent} maxLength={600} />
               )}
             </div>
           )}

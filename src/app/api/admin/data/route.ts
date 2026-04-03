@@ -57,14 +57,22 @@ export async function POST(request: Request) {
 }
 
 export async function PATCH(request: Request) {
-  const { table, id, data: payload } = await request.json();
-  if (!table || !isAllowed(table) || !id) {
-    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+  try {
+    const { table, id, data: payload } = await request.json();
+    if (!table || !isAllowed(table) || !id) {
+      return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+    }
+    const admin = createAdminClient();
+    const { data, error } = await admin.from(table).update(payload).eq('id', id).select().single();
+    if (error) {
+      console.error('PATCH error:', { table, id, error: error.message, payload });
+      return NextResponse.json({ error: error.message, details: error }, { status: 500 });
+    }
+    return NextResponse.json(data);
+  } catch (err) {
+    console.error('PATCH exception:', err);
+    return NextResponse.json({ error: String(err) }, { status: 500 });
   }
-  const admin = createAdminClient();
-  const { data, error } = await admin.from(table).update(payload).eq('id', id).select().single();
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data);
 }
 
 export async function DELETE(request: Request) {

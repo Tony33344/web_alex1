@@ -69,12 +69,14 @@ export function Header({ locale, logoUrl }: HeaderProps) {
           : 'bg-background'
       }`}
     >
-      <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-24 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <Logo locale={locale} size={60} logoUrl={logoUrl} />
+        <div className="shrink-0">
+          <Logo locale={locale} size={60} logoUrl={logoUrl} />
+        </div>
 
         {/* Desktop Navigation */}
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden items-center gap-0.5 lg:flex">
           {/* About Dropdown */}
           <NavDropdown
             label="About"
@@ -126,7 +128,7 @@ export function Header({ locale, logoUrl }: HeaderProps) {
 
           <Link
             href={p('/events')}
-            className={`rounded-md px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
+            className={`whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
               isActive('/events') ? 'text-primary' : 'text-foreground/70'
             }`}
           >
@@ -135,7 +137,7 @@ export function Header({ locale, logoUrl }: HeaderProps) {
 
           <Link
             href={p('/membership')}
-            className={`rounded-md px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
+            className={`whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
               isActive('/membership') ? 'text-primary' : 'text-foreground/70'
             }`}
           >
@@ -144,7 +146,7 @@ export function Header({ locale, logoUrl }: HeaderProps) {
 
           <Link
             href={p('/blog')}
-            className={`rounded-md px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
+            className={`whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
               isActive('/blog') ? 'text-primary' : 'text-foreground/70'
             }`}
           >
@@ -153,7 +155,7 @@ export function Header({ locale, logoUrl }: HeaderProps) {
 
           <Link
             href={p('/contact')}
-            className={`rounded-md px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
+            className={`whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
               isActive('/contact') ? 'text-primary' : 'text-foreground/70'
             }`}
           >
@@ -162,7 +164,7 @@ export function Header({ locale, logoUrl }: HeaderProps) {
 
           <Link
             href={p('/about/donate')}
-            className={`rounded-md px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
+            className={`whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
               isActive('/about/donate') ? 'text-primary' : 'text-foreground/70'
             }`}
           >
@@ -171,7 +173,7 @@ export function Header({ locale, logoUrl }: HeaderProps) {
 
           <Link
             href={p('/about/volunteer')}
-            className={`rounded-md px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
+            className={`whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
               isActive('/about/volunteer') ? 'text-primary' : 'text-foreground/70'
             }`}
           >
@@ -339,7 +341,7 @@ function NavDropdown({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className={`inline-flex items-center gap-1 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:text-primary focus:outline-none ${
+        className={`inline-flex items-center gap-1 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors hover:text-primary focus:outline-none ${
           active ? 'text-primary' : 'text-foreground/70'
         }`}
       >

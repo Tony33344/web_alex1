@@ -69,7 +69,7 @@ export function Header({ locale, logoUrl }: HeaderProps) {
           : 'bg-background'
       }`}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-24 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         {/* Logo */}
         <Logo locale={locale} size={60} logoUrl={logoUrl} />
 

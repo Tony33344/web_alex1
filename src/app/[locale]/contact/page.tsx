@@ -49,7 +49,16 @@ export default function ContactPage() {
     <>
       <PageHeader title={t('contact.title')} subtitle={t('contact.subtitle')} />
 
-      <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+      {/* Logo */}
+      <div className="mx-auto max-w-7xl px-4 pt-8 text-center sm:px-6 lg:px-8">
+        <img
+          src="https://nchbiryeykludxrrdfaw.supabase.co/storage/v1/object/public/images/pages/home/logo%20small%20transparent.png"
+          alt="Infinity Role Teachers"
+          className="mx-auto h-16 w-auto"
+        />
+      </div>
+
+      <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-5">
           {/* Contact Form */}
           <div className="lg:col-span-3">

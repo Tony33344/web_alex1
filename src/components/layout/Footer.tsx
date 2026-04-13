@@ -16,11 +16,11 @@ export function Footer({ locale }: FooterProps) {
       <div className="mx-auto grid max-w-7xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
         {/* Column 1 — Brand */}
         <div className="space-y-4">
-          <div className="flex items-center gap-3">
-            <span className="text-lg font-semibold tracking-tight text-background">
-              Infinity Role Teachers
-            </span>
-          </div>
+          <img
+            src="https://nchbiryeykludxrrdfaw.supabase.co/storage/v1/object/public/images/pages/home/logo%20small%20transparent.png"
+            alt="Infinity Role Teachers"
+            className="h-12 w-auto"
+          />
           <p className="text-sm leading-relaxed text-background/70">
             Transform your life through holistic wellness and coaching. Discover your infinite potential with our expert Role Teachers.
           </p>

@@ -80,6 +80,15 @@ export function MembershipClient({ plans, pageTitle, pageContent, locale, galler
 
   return (
     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+      {/* Logo */}
+      <div className="mb-8 flex justify-center">
+        <img
+          src="https://nchbiryeykludxrrdfaw.supabase.co/storage/v1/object/public/images/pages/home/logo%20small%20transparent.png"
+          alt="Infinity Role Teachers"
+          className="h-16 w-auto"
+        />
+      </div>
+
       {/* Billing Toggle */}
       {hasMultiplePlans && (
         <div className="mb-12 flex items-center justify-center gap-4">

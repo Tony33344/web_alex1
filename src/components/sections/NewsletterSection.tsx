@@ -41,7 +41,7 @@ export function NewsletterSection({ title, placeholder, buttonLabel }: Newslette
         <img
           src="https://nchbiryeykludxrrdfaw.supabase.co/storage/v1/object/public/images/pages/home/logo%20small%20transparent.png"
           alt="Infinity Role Teachers"
-          className="mx-auto mb-6 h-16 w-auto"
+          className="mx-auto mb-6 h-48 w-auto"
         />
         <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
         <p className="mt-2 text-muted-foreground">Stay updated with our latest news, events, and wellness tips</p>

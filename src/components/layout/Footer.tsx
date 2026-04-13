@@ -19,7 +19,7 @@ export function Footer({ locale }: FooterProps) {
           <img
             src="https://nchbiryeykludxrrdfaw.supabase.co/storage/v1/object/public/images/pages/home/logo%20small%20transparent.png"
             alt="Infinity Role Teachers"
-            className="h-12 w-auto"
+            className="h-18 w-auto"
           />
           <p className="text-sm leading-relaxed text-background/70">
             Transform your life through holistic wellness and coaching. Discover your infinite potential with our expert Role Teachers.

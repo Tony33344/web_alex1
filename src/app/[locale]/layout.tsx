@@ -21,7 +21,7 @@ export default async function LocaleLayout({
 
   const messages = (await import(`@/messages/${locale}.json`)).default;
   const homePage = await getPage('home');
-  const logoUrl = homePage?.hero_image_url || undefined;
+  const logoUrl = homePage?.header_logo_url || undefined;
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>

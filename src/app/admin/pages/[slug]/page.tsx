@@ -63,6 +63,7 @@ export default function AdminPageEditPage() {
           content_si: page.content_si,
           meta_description_en: page.meta_description_en,
           hero_image_url: page.hero_image_url,
+          header_logo_url: page.header_logo_url,
           is_published: page.is_published,
           updated_at: new Date().toISOString(),
         },
@@ -195,6 +196,15 @@ export default function AdminPageEditPage() {
                   onChange={(url) => updateField('hero_image_url', url)}
                   folder={`pages/${page.slug}`}
                   label="Hero image"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Header Logo</Label>
+                <ImageUpload
+                  value={page.header_logo_url}
+                  onChange={(url) => updateField('header_logo_url', url)}
+                  folder={`pages/${page.slug}`}
+                  label="Header logo"
                 />
               </div>
               <div className="space-y-2">

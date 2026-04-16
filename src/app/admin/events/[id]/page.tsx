@@ -12,6 +12,7 @@ import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { Card, CardContent } from '@/components/ui/card';
 import { ImageUpload } from '@/components/admin/ImageUpload';
 import { GalleryManager } from '@/components/admin/GalleryManager';
+import { WaitlistManager } from '@/components/admin/WaitlistManager';
 import type { Event } from '@/types/database';
 
 export default function EditEventPage() {
@@ -172,6 +173,12 @@ export default function EditEventPage() {
       <Card>
         <CardContent className="pt-6">
           <GalleryManager entityType="event" entityId={id} />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardContent className="pt-6">
+          <WaitlistManager eventId={id} />
         </CardContent>
       </Card>
     </div>

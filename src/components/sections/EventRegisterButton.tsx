@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Loader2, CheckCircle } from 'lucide-react';
+import { Loader2, CheckCircle, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUser } from '@/hooks/useUser';
 import { CheckoutDialog } from '@/components/checkout/CheckoutDialog';
+import { WaitlistDialog } from './WaitlistDialog';
 
 interface EventRegisterButtonProps {
   eventId: string;
@@ -20,12 +21,13 @@ interface EventRegisterButtonProps {
 
 export function EventRegisterButton({ eventId, locale, label, isFree, isFull, price, currency, eventTitle }: EventRegisterButtonProps) {
   const router = useRouter();
-  const { user } = useUser();
+  const { user, profile } = useUser();
   const [loading, setLoading] = useState(false);
   const [registered, setRegistered] = useState(false);
   const [error, setError] = useState('');
   const [showCheckout, setShowCheckout] = useState(false);
   const [hasReference, setHasReference] = useState(false);
+  const [showWaitlist, setShowWaitlist] = useState(false);
 
   async function handleClick() {
     if (!user) {
@@ -97,11 +99,36 @@ export function EventRegisterButton({ eventId, locale, label, isFree, isFull, pr
     );
   }
 
+  if (isFull) {
+    return (
+      <div className="space-y-2">
+        <Button
+          className="w-full gap-2"
+          size="lg"
+          variant="outline"
+          onClick={() => setShowWaitlist(true)}
+        >
+          <Users className="h-4 w-4" />
+          Join Waiting List
+        </Button>
+        <p className="text-xs text-center text-muted-foreground">This event is full. Join the list to be notified if a spot opens.</p>
+        <WaitlistDialog
+          eventId={eventId}
+          eventTitle={eventTitle || 'Event'}
+          open={showWaitlist}
+          onOpenChange={setShowWaitlist}
+          defaultEmail={user?.email || ''}
+          defaultName={profile?.full_name || ''}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-2">
-      <Button className="w-full" size="lg" disabled={loading || isFull} onClick={handleClick}>
+      <Button className="w-full" size="lg" disabled={loading} onClick={handleClick}>
         {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-        {isFull ? 'Event Full — Join Waitlist' : label}
+        {label}
       </Button>
       {error && <p className="text-xs text-center text-destructive">{error}</p>}
       {!isFree && price && price > 0 && (

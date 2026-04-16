@@ -262,6 +262,23 @@ export interface EventRegistration {
   profile?: Pick<Profile, 'email' | 'full_name'>;
 }
 
+export interface WaitlistEntry {
+  id: string;
+  event_id: string;
+  user_id: string | null;
+  email: string;
+  name: string;
+  phone: string | null;
+  participant_type: 'member' | 'registered_user' | 'guest';
+  status: 'waiting' | 'notified' | 'confirmed' | 'cancelled';
+  position: number | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+  // Joined fields
+  event?: Pick<Event, 'title_en' | 'start_date'>;
+}
+
 export interface ProgramEnrollment {
   id: string;
   program_id: string;

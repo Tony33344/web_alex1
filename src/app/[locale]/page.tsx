@@ -1,6 +1,5 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
-import Image from 'next/image';
 import { ArrowRight, Heart, Sun, Brain, Dumbbell, Hand, Leaf, Star, Calendar, BookOpen, Users, Target, Compass, MapPin, Clock, type LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -80,16 +79,14 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 </Link>
               </div>
             </div>
-            <div className="relative hidden lg:block">
-              <div className="relative mx-auto aspect-square max-w-md overflow-hidden rounded-3xl bg-primary/5 shadow-2xl">
-                <Image
-                  src={homePage?.hero_image_url || "/logo/logo.jpeg"}
-                  alt="Infinity Role Teachers"
-                  fill
-                  className="object-contain"
-                  priority
-                />
-              </div>
+            <div className="hidden lg:flex items-center justify-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={homePage?.hero_image_url || "/logo/logo.jpeg"}
+                alt="Infinity Role Teachers"
+                className="max-w-md w-full object-contain"
+                style={{ background: 'transparent' }}
+              />
             </div>
           </div>
         </div>

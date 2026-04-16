@@ -23,7 +23,7 @@ interface Registration {
   notes: string | null;
   created_at: string;
   event?: { id: string; title_en: string; slug: string; start_date: string; price: number | null; currency: string; max_attendees: number | null; current_attendees: number };
-  profile?: { email: string; full_name: string | null };
+  profile?: { email: string; full_name: string | null; phone: string | null };
 }
 
 interface Enrollment {
@@ -39,7 +39,7 @@ interface Enrollment {
   confirmed_at: string | null;
   created_at: string;
   program?: { id: string; name_en: string; slug: string; price: number | null; currency: string };
-  profile?: { email: string; full_name: string | null };
+  profile?: { email: string; full_name: string | null; phone: string | null };
 }
 
 interface WaitlistEntry {
@@ -157,12 +157,15 @@ export default function AdminRegistrationsPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ table, id, data: { payment_status: 'paid', status: 'confirmed', confirmed_at: new Date().toISOString() } }),
     });
-    if (!res.ok) return;
-    if (table === 'event_registrations') {
-      setRegs(r => r.map(x => x.id === id ? { ...x, payment_status: 'paid', status: 'confirmed' } : x));
-    } else {
-      setEnrollments(e => e.map(x => x.id === id ? { ...x, payment_status: 'paid', status: 'confirmed' } : x));
+    if (!res.ok) {
+      const error = await res.json();
+      alert(`Failed to confirm: ${error.error || 'Unknown error'}`);
+      return;
     }
+    // Refresh data to get updated state
+    const regData = await fetch('/api/admin/registrations').then(r => r.json());
+    setRegs(regData.eventRegistrations ?? []);
+    setEnrollments(regData.programEnrollments ?? []);
   }
 
   async function cancelRegistration(table: string, id: string) {
@@ -171,12 +174,15 @@ export default function AdminRegistrationsPage() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ table, id, data: { status: 'cancelled', payment_status: 'refunded' } }),
     });
-    if (!res.ok) return;
-    if (table === 'event_registrations') {
-      setRegs(r => r.map(x => x.id === id ? { ...x, status: 'cancelled', payment_status: 'refunded' } : x));
-    } else {
-      setEnrollments(e => e.map(x => x.id === id ? { ...x, status: 'cancelled', payment_status: 'refunded' } : x));
+    if (!res.ok) {
+      const error = await res.json();
+      alert(`Failed to cancel: ${error.error || 'Unknown error'}`);
+      return;
     }
+    // Refresh data to get updated state
+    const regData = await fetch('/api/admin/registrations').then(r => r.json());
+    setRegs(regData.eventRegistrations ?? []);
+    setEnrollments(regData.programEnrollments ?? []);
   }
 
   async function updateWaitlist(id: string, status: string) {
@@ -279,9 +285,11 @@ export default function AdminRegistrationsPage() {
                           </div>
                           <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                             <span>{reg.profile?.email}</span>
+                            {reg.profile?.phone && <span>· {reg.profile?.phone}</span>}
                             <span className="flex items-center gap-1">{methodIcon(reg.payment_method)}{reg.payment_method === 'bank_transfer' ? 'Bank Transfer' : reg.payment_method === 'stripe' ? 'Stripe' : 'Free'}</span>
-                            {reg.notes && reg.notes.startsWith('Bank transfer') && <span className="font-mono">{reg.notes}</span>}
-                            <span>{new Date(reg.created_at).toLocaleDateString()}</span>
+                            {reg.amount && <span>· {reg.currency} {reg.amount}</span>}
+                            {reg.bank_transfer_reference && <span>· Ref: {reg.bank_transfer_reference}</span>}
+                            <span>· {new Date(reg.created_at).toLocaleDateString()}</span>
                           </div>
                         </div>
                         <div className="flex items-center gap-2 shrink-0">
@@ -354,10 +362,11 @@ export default function AdminRegistrationsPage() {
                   </div>
                   <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                     <span>{enr.profile?.full_name || enr.profile?.email || 'Unknown user'}</span>
+                    {enr.profile?.phone && <span>· {enr.profile?.phone}</span>}
                     <span className="flex items-center gap-1">{methodIcon(enr.payment_method)}{enr.payment_method === 'bank_transfer' ? 'Bank Transfer' : enr.payment_method === 'stripe' ? 'Stripe' : 'Free'}</span>
-                    {enr.amount && <span>{enr.currency} {enr.amount}</span>}
-                    {enr.bank_transfer_reference && <span>Ref: {enr.bank_transfer_reference}</span>}
-                    <span>{new Date(enr.created_at).toLocaleDateString()}</span>
+                    {enr.amount && <span>· {enr.currency} {enr.amount}</span>}
+                    {enr.bank_transfer_reference && <span>· Ref: {enr.bank_transfer_reference}</span>}
+                    <span>· {new Date(enr.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">

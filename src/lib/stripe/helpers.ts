@@ -73,6 +73,53 @@ export async function createDynamicCheckoutSession({
   return session;
 }
 
+/**
+ * Creates a recurring subscription Checkout session using a dynamic price (no pre-created Price ID needed).
+ * For membership subscriptions where the admin can change the price.
+ */
+export async function createDynamicSubscriptionSession({
+  customerId,
+  productName,
+  amountInCents,
+  currency,
+  interval = 'month',
+  successUrl,
+  cancelUrl,
+  metadata,
+}: {
+  customerId: string;
+  productName: string;
+  amountInCents: number;
+  currency: string;
+  interval?: 'month' | 'year';
+  successUrl: string;
+  cancelUrl: string;
+  metadata?: Record<string, string>;
+}) {
+  const session = await stripe.checkout.sessions.create({
+    customer: customerId,
+    mode: 'subscription',
+    line_items: [
+      {
+        price_data: {
+          currency: currency.toLowerCase(),
+          unit_amount: amountInCents,
+          product_data: { name: productName },
+          recurring: { interval },
+        },
+        quantity: 1,
+      },
+    ],
+    payment_method_types: ['card'],
+    success_url: successUrl,
+    cancel_url: cancelUrl,
+    metadata,
+    subscription_data: { metadata },
+  });
+
+  return session;
+}
+
 export async function createPortalSession({
   customerId,
   returnUrl,

@@ -34,7 +34,7 @@ export async function POST(request: Request) {
       const programId = session.metadata?.program_id;
 
       // Subscription payment (membership)
-      if (userId && session.subscription) {
+      if ((type === 'membership' || !type) && userId && session.subscription) {
         const subResponse = await stripe.subscriptions.retrieve(session.subscription as string);
         const sub = subResponse as unknown as { current_period_end: number };
         await supabase

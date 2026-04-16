@@ -79,6 +79,7 @@ export function Footer({ locale }: FooterProps) {
           <div className="flex gap-4">
             <Link href={p('/terms')} className="hover:text-background transition-colors">Terms &amp; Conditions</Link>
             <Link href={p('/privacy')} className="hover:text-background transition-colors">Privacy Policy</Link>
+            <Link href={p('/disclaimer')} className="hover:text-background transition-colors">Disclaimer</Link>
           </div>
         </div>
       </div>

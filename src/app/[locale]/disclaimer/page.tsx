@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import { Shield } from 'lucide-react';
+import { FileText } from 'lucide-react';
 import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
 import { nl2br } from '@/lib/utils/text';
@@ -8,8 +8,8 @@ import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
-  const page = await getPage('privacy');
-  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : 'Privacy Policy';
+  const page = await getPage('disclaimer');
+  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : 'Disclaimer';
   const desc = page ? (getLocalizedField(page, 'meta_description', locale) || page.meta_description_en || '') : '';
   return {
     title: `${title} | Infinity Role Teachers`,
@@ -18,11 +18,11 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   };
 }
 
-export default async function PrivacyPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function DisclaimerPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const page = await getPage('privacy');
+  const page = await getPage('disclaimer');
 
-  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : 'Privacy Policy';
+  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : 'Disclaimer';
   const content = page ? (getLocalizedField(page, 'content', locale) || page.content_en) : null;
 
   return (
@@ -34,9 +34,9 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
         <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10 p-8 sm:p-12 rounded-2xl">
           <div className="flex items-center gap-3 mb-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
-              <Shield className="h-6 w-6 text-primary" />
+              <FileText className="h-6 w-6 text-primary" />
             </div>
-            <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Privacy</span>
+            <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Legal Notice</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h1>
         </div>
@@ -48,8 +48,8 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
           </div>
         ) : (
           <div className="rounded-lg border border-dashed p-16 text-center">
-            <Shield className="mx-auto h-12 w-12 text-muted-foreground/40 mb-4" />
-            <p className="text-muted-foreground">Privacy policy content will appear here once published in the admin panel.</p>
+            <FileText className="mx-auto h-12 w-12 text-muted-foreground/40 mb-4" />
+            <p className="text-muted-foreground">Disclaimer content will appear here once published in the admin panel.</p>
           </div>
         )}
       </div>

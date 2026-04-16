@@ -24,8 +24,11 @@ export async function POST(request: Request) {
       .maybeSingle();
 
     if (!membershipPlan) {
-      return NextResponse.json({ error: 'Membership plan not found' }, { status: 404 });
+      console.error('Membership plan not found for plan_type:', plan === 'yearly' ? 'yearly' : 'monthly');
+      return NextResponse.json({ error: 'Membership plan not found. Please contact admin to set up membership plans.' }, { status: 404 });
     }
+
+    console.log('Membership plan found:', { id: membershipPlan.id, name: membershipPlan.name_en, price: membershipPlan.price, currency: membershipPlan.currency });
 
     const { data: profile } = await adminSupabase
       .from('profiles')
@@ -82,6 +85,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ url: session.url });
   } catch (error) {
     console.error('Checkout error:', error);
-    return NextResponse.json({ error: 'Failed to create checkout session' }, { status: 500 });
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    return NextResponse.json({ error: `Failed to create checkout session: ${message}` }, { status: 500 });
   }
 }

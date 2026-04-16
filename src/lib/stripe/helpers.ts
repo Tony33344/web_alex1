@@ -30,6 +30,49 @@ export async function createCheckoutSession({
   return session;
 }
 
+/**
+ * Creates a one-time Stripe Checkout session using a dynamic price (no pre-created Price ID needed).
+ * Card data is never stored — Stripe handles everything.
+ */
+export async function createDynamicCheckoutSession({
+  customerId,
+  productName,
+  amountInCents,
+  currency,
+  successUrl,
+  cancelUrl,
+  metadata,
+}: {
+  customerId: string;
+  productName: string;
+  amountInCents: number;
+  currency: string;
+  successUrl: string;
+  cancelUrl: string;
+  metadata?: Record<string, string>;
+}) {
+  const session = await stripe.checkout.sessions.create({
+    customer: customerId,
+    mode: 'payment',
+    line_items: [
+      {
+        price_data: {
+          currency: currency.toLowerCase(),
+          unit_amount: amountInCents,
+          product_data: { name: productName },
+        },
+        quantity: 1,
+      },
+    ],
+    payment_method_types: ['card'],
+    success_url: successUrl,
+    cancel_url: cancelUrl,
+    metadata,
+  });
+
+  return session;
+}
+
 export async function createPortalSession({
   customerId,
   returnUrl,

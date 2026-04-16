@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { createCheckoutSession, createOrRetrieveCustomer } from '@/lib/stripe/helpers';
+import { createCheckoutSession, createDynamicCheckoutSession, createOrRetrieveCustomer } from '@/lib/stripe/helpers';
 
 export async function POST(request: Request) {
   try {
@@ -112,20 +112,35 @@ export async function POST(request: Request) {
       }
 
       const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+      const stripeMetadata = { user_id: user.id, event_id: eventId, type: 'event' };
+      const successUrl = `${appUrl}/en/events?payment=success`;
+      const cancelUrl = `${appUrl}/en/events?payment=cancelled`;
 
+      let session;
       if (event.stripe_price_id) {
-        const session = await createCheckoutSession({
+        // Use pre-created Stripe Price
+        session = await createCheckoutSession({
           customerId,
           priceId: event.stripe_price_id,
           mode: 'payment',
-          successUrl: `${appUrl}/en/events?payment=success`,
-          cancelUrl: `${appUrl}/en/events?payment=cancelled`,
-          metadata: { user_id: user.id, event_id: eventId, type: 'event' },
+          successUrl,
+          cancelUrl,
+          metadata: stripeMetadata,
         });
-        return NextResponse.json({ success: true, status, checkoutUrl: session.url });
+      } else {
+        // Dynamic price — works for any event price without Stripe dashboard setup
+        session = await createDynamicCheckoutSession({
+          customerId,
+          productName: event.title_en,
+          amountInCents: Math.round(event.price * 100),
+          currency: event.currency || 'chf',
+          successUrl,
+          cancelUrl,
+          metadata: stripeMetadata,
+        });
       }
 
-      return NextResponse.json({ success: true, status, paymentPending: true });
+      return NextResponse.json({ success: true, status, checkoutUrl: session.url });
     }
 
     return NextResponse.json({ success: true, status });

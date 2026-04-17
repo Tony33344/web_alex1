@@ -1,10 +1,11 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
-import { ArrowRight, Clock, Users, Award, CheckCircle, XCircle } from 'lucide-react';
+import { ArrowRight, Clock, Users, Award, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { PaymentSuccessBanner } from '@/components/payments/PaymentSuccessBanner';
 import { getPrograms } from '@/lib/queries/programs';
 import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
@@ -31,18 +32,12 @@ export default async function CoachTrainingPage({ params, searchParams }: CoachT
     <>
       <PageHeader title={pageTitle} subtitle={pageContent} />
 
-      {/* Payment Status Banner */}
-      {payment === 'success' && (
-        <div className="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3 rounded-lg bg-green-50 p-4 text-green-800 dark:bg-green-900/20 dark:text-green-200">
-            <CheckCircle className="h-5 w-5 shrink-0" />
-            <div>
-              <p className="font-medium">Enrollment successful!</p>
-              <p className="text-sm opacity-90">You&apos;re enrolled in the program. Check your email for next steps.</p>
-            </div>
-          </div>
-        </div>
-      )}
+      <PaymentSuccessBanner
+        param="payment"
+        title="Enrollment confirmed"
+        message="You're enrolled in the program. Check your email for next steps."
+      />
+
       {payment === 'cancelled' && (
         <div className="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 rounded-lg bg-amber-50 p-4 text-amber-800 dark:bg-amber-900/20 dark:text-amber-200">

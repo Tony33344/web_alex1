@@ -1,10 +1,11 @@
 import { getTranslations } from 'next-intl/server';
-import { Calendar, MapPin, Users, CheckCircle, XCircle } from 'lucide-react';
+import { Calendar, MapPin, Users, XCircle } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/shared/PageHeader';
+import { PaymentSuccessBanner } from '@/components/payments/PaymentSuccessBanner';
 import { getEvents } from '@/lib/queries/events';
 import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
@@ -30,18 +31,8 @@ export default async function EventsPage({ params, searchParams }: EventsPagePro
     <>
       <PageHeader title={pageTitle} subtitle={pageContent} />
 
-      {/* Payment Status Banner */}
-      {payment === 'success' && (
-        <div className="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3 rounded-lg bg-green-50 p-4 text-green-800 dark:bg-green-900/20 dark:text-green-200">
-            <CheckCircle className="h-5 w-5 shrink-0" />
-            <div>
-              <p className="font-medium">Payment successful!</p>
-              <p className="text-sm opacity-90">You&apos;re registered for the event. Check your email for confirmation.</p>
-            </div>
-          </div>
-        </div>
-      )}
+      <PaymentSuccessBanner param="payment" />
+
       {payment === 'cancelled' && (
         <div className="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8">
           <div className="flex items-center gap-3 rounded-lg bg-amber-50 p-4 text-amber-800 dark:bg-amber-900/20 dark:text-amber-200">

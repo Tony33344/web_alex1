@@ -5,14 +5,14 @@ import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import { Loader2, User as UserIcon, Settings, Calendar, CreditCard, MapPin } from 'lucide-react';
+import { Loader2, User as UserIcon, Settings, Calendar, CreditCard, MapPin, Crown, CheckCircle2, Sparkles } from 'lucide-react';
+import { PaymentSuccessBanner } from '@/components/payments/PaymentSuccessBanner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Separator } from '@/components/ui/separator';
 import { useUser } from '@/hooks/useUser';
 import { createClient } from '@/lib/supabase/client';
 import { profileSchema, type ProfileFormData } from '@/lib/validators';
@@ -104,10 +104,22 @@ export default function ProfilePage() {
 
   if (!user || !profile) return null;
 
+  const isActiveMember = profile.subscription_status === 'active';
+
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
-      <h1 className="text-3xl font-bold">My Profile</h1>
-      <p className="mt-1 text-muted-foreground">Manage your account settings and subscriptions</p>
+      <PaymentSuccessBanner param="subscription" />
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">My Profile</h1>
+          <p className="mt-1 text-muted-foreground">Manage your account, subscription and bookings</p>
+        </div>
+        {isActiveMember && (
+          <Badge className="gap-1 bg-gradient-to-r from-amber-500 to-yellow-500 text-white shadow-md shadow-amber-500/30 border-0">
+            <Crown className="h-3.5 w-3.5" /> Member
+          </Badge>
+        )}
+      </div>
 
       <Tabs defaultValue="profile" className="mt-8">
         <TabsList>
@@ -171,43 +183,65 @@ export default function ProfilePage() {
         </TabsContent>
 
         <TabsContent value="subscription" className="mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Subscription</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-medium">Status:</span>
-                <Badge variant={profile.subscription_status === 'active' ? 'default' : 'secondary'}>
-                  {profile.subscription_status}
-                </Badge>
-              </div>
-              {profile.subscription_plan && (
+          {isActiveMember ? (
+            <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-primary via-primary to-secondary text-primary-foreground shadow-xl">
+              <div className="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
+              <div className="absolute -bottom-12 -left-12 h-48 w-48 rounded-full bg-white/10 blur-2xl" />
+              <CardContent className="relative p-8 space-y-6">
                 <div className="flex items-center gap-3">
-                  <span className="text-sm font-medium">Plan:</span>
-                  <span className="text-sm capitalize">{profile.subscription_plan}</span>
+                  <div className="grid h-12 w-12 place-items-center rounded-full bg-white/20 backdrop-blur">
+                    <Crown className="h-6 w-6" />
+                  </div>
+                  <div>
+                    <p className="text-xs uppercase tracking-wider opacity-80">Active member</p>
+                    <h3 className="text-2xl font-bold tracking-tight capitalize">
+                      {profile.subscription_plan} membership
+                    </h3>
+                  </div>
                 </div>
-              )}
-              {profile.subscription_end_date && (
-                <div className="flex items-center gap-3">
-                  <span className="text-sm font-medium">Renews:</span>
-                  <span className="text-sm">{new Date(profile.subscription_end_date).toLocaleDateString()}</span>
+
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="rounded-xl bg-white/10 p-3 backdrop-blur">
+                    <p className="text-xs opacity-70">Status</p>
+                    <p className="font-semibold flex items-center gap-1 mt-0.5">
+                      <CheckCircle2 className="h-4 w-4" /> Active
+                    </p>
+                  </div>
+                  {profile.subscription_end_date && (
+                    <div className="rounded-xl bg-white/10 p-3 backdrop-blur">
+                      <p className="text-xs opacity-70">Renews</p>
+                      <p className="font-semibold mt-0.5">
+                        {new Date(profile.subscription_end_date).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </p>
+                    </div>
+                  )}
                 </div>
-              )}
-              <Separator />
-              {profile.subscription_status === 'active' ? (
+
                 <form action="/api/stripe/portal" method="POST">
-                  <Button type="submit" variant="outline">
+                  <Button type="submit" variant="secondary" className="w-full bg-white text-primary hover:bg-white/90">
                     Manage Subscription
                   </Button>
                 </form>
-              ) : (
-                <Button onClick={() => router.push(`/${locale}/membership`)}>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card>
+              <CardContent className="py-10 text-center space-y-4">
+                <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-primary/10">
+                  <Sparkles className="h-7 w-7 text-primary" />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="text-lg font-semibold">Unlock premium access</h3>
+                  <p className="text-sm text-muted-foreground max-w-sm mx-auto">
+                    Join our community to access members-only content, workshops and priority bookings.
+                  </p>
+                </div>
+                <Button onClick={() => router.push(`/${locale}/membership`)} size="lg" className="mt-2">
                   View Plans
                 </Button>
-              )}
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+          )}
         </TabsContent>
 
         <TabsContent value="events" className="mt-6">

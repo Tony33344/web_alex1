@@ -154,11 +154,44 @@ export default function AdminMembersPage() {
                       )}
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className="flex flex-col items-end gap-2">
                     {member.subscription_plan && (
                       <Badge variant={member.subscription_plan === 'yearly' ? 'default' : 'outline'}>
                         {member.subscription_plan.charAt(0).toUpperCase() + member.subscription_plan.slice(1)}
                       </Badge>
+                    )}
+                    {member.subscription_status !== 'active' ? (
+                      <Button
+                        size="sm"
+                        onClick={async () => {
+                          const res = await fetch('/api/admin/members/activate', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ userId: member.id, plan: member.subscription_plan || 'monthly' }),
+                          });
+                          if (res.ok) fetchMembers();
+                          else alert('Failed to activate');
+                        }}
+                      >
+                        Activate
+                      </Button>
+                    ) : (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={async () => {
+                          if (!confirm('Deactivate this member?')) return;
+                          const res = await fetch('/api/admin/members/activate', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ userId: member.id, action: 'deactivate' }),
+                          });
+                          if (res.ok) fetchMembers();
+                          else alert('Failed to deactivate');
+                        }}
+                      >
+                        Deactivate
+                      </Button>
                     )}
                   </div>
                 </div>

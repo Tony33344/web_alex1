@@ -1,3 +1,5 @@
+'use client';
+
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { ArrowRight, Calendar, Users, Crown } from 'lucide-react';

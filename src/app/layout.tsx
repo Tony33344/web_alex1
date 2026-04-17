@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Infinity Role Teachers — Holistic Wellness & Coach Training",
-  description: "Transform your life through holistic wellness, Sunyoga, Acupresura, and certified coach training programs by Infinity Role Teachers.",
+  description: "Transform your life through holistic wellness, Sunyoga, Acupressure, and certified coach training programs by Infinity Role Teachers.",
 };
 
 export default function RootLayout({

@@ -50,7 +50,7 @@ export function Footer({ locale }: FooterProps) {
           <h3 className="text-sm font-semibold uppercase tracking-wider text-background/90">Programs</h3>
           <ul className="space-y-2 text-sm text-background/70">
             <li><Link href={p('/coach-training/sunyoga-training')} className="hover:text-background transition-colors">Sunyoga Coach Training</Link></li>
-            <li><Link href={p('/coach-training/acupresura-training')} className="hover:text-background transition-colors">Acupresura Coach Training</Link></li>
+            <li><Link href={p('/coach-training/acupresura-training')} className="hover:text-background transition-colors">Acupressure Coach Training</Link></li>
             <li><Link href={p('/coach-training/awaken-inner-compass')} className="hover:text-background transition-colors">Awaken Your Inner Compass</Link></li>
           </ul>
         </div>

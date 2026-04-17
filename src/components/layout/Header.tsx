@@ -35,7 +35,7 @@ const healthLinks = [
 
 const programLinks = [
   { label: 'Sunyoga Coach Training', slug: 'sunyoga-training' },
-  { label: 'Acupresura Coach Training', slug: 'acupresura-training' },
+  { label: 'Acupressure Coach Training', slug: 'acupresura-training' },
   { label: 'Awaken Your Inner Compass', slug: 'awaken-inner-compass' },
 ];
 

@@ -341,7 +341,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 { icon: Heart, title: 'Yoga', description: 'Balance body, mind, and spirit through ancient practice' },
                 { icon: Brain, title: 'Meditation', description: 'Cultivate inner peace and clarity of mind' },
                 { icon: Dumbbell, title: 'Power Training', description: 'Build strength with conscious movement' },
-                { icon: Hand, title: 'Acupresura', description: 'Activate healing points for holistic wellbeing' },
+                { icon: Hand, title: 'Acupressure', description: 'Activate healing points for holistic wellbeing' },
               ].map((item, i) => {
                 const palette = colorPalette[i % colorPalette.length];
                 return (

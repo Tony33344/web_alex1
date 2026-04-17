@@ -31,7 +31,10 @@ export function EventRegisterButton({ eventId, locale, label, isFree, isFull, pr
 
   async function handleClick() {
     if (!user) {
-      router.push(`/${locale}/login?redirect=/${locale}/events`);
+      const currentUrl = typeof window !== 'undefined'
+        ? `${window.location.pathname}${window.location.search}`
+        : `/${locale}/events`;
+      router.push(`/${locale}/login?redirect=${encodeURIComponent(currentUrl)}`);
       return;
     }
 

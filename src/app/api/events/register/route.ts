@@ -123,7 +123,7 @@ export async function POST(request: Request) {
 
       const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
       const stripeMetadata = { user_id: user.id, event_id: eventId, type: 'event' };
-      const successUrl = `${appUrl}/en/events?payment=success`;
+      const successUrl = `${appUrl}/en/events?payment=success&session_id={CHECKOUT_SESSION_ID}`;
       const cancelUrl = `${appUrl}/en/events?payment=cancelled`;
 
       let session;

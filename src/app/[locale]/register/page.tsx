@@ -2,11 +2,11 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import { Loader2, Mail, Lock, User as UserIcon } from 'lucide-react';
+import { Loader2, Mail, Lock, User as UserIcon, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -21,6 +21,8 @@ export default function RegisterPage() {
   const params = useParams();
   const locale = params.locale as string;
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get('redirect');
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -49,6 +51,7 @@ export default function RegisterPage() {
       options: {
         data: {
           full_name: data.full_name,
+          phone: data.phone,
           preferred_language: data.preferred_language,
         },
         emailRedirectTo: `${window.location.origin}/${locale}/auth/callback`,
@@ -66,7 +69,7 @@ export default function RegisterPage() {
       await fetch('/api/auth/confirm-email', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: authData.user.id }),
+        body: JSON.stringify({ userId: authData.user.id, phone: data.phone, full_name: data.full_name }),
       });
     }
 
@@ -95,7 +98,7 @@ export default function RegisterPage() {
             <p className="text-sm text-muted-foreground">
               Your account is ready. You can now log in with your email and password.
             </p>
-            <Link href={`/${locale}/login`}>
+            <Link href={`/${locale}/login${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`}>
               <Button className="mt-4">{t('signIn')}</Button>
             </Link>
           </CardContent>
@@ -138,6 +141,15 @@ export default function RegisterPage() {
                 <Input id="email" type="email" className="pl-10" placeholder="you@example.com" {...register('email')} />
               </div>
               {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="phone">Phone</Label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input id="phone" type="tel" className="pl-10" placeholder="+41 79 123 45 67" {...register('phone')} />
+              </div>
+              {errors.phone && <p className="text-xs text-destructive">{errors.phone.message}</p>}
             </div>
 
             <div className="space-y-2">
@@ -198,7 +210,7 @@ export default function RegisterPage() {
 
             <p className="text-center text-sm text-muted-foreground">
               {t('hasAccount')}{' '}
-              <Link href={`/${locale}/login`} className="font-medium text-primary hover:underline">
+              <Link href={`/${locale}/login${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`} className="font-medium text-primary hover:underline">
                 {t('signIn')}
               </Link>
             </p>

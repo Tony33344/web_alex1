@@ -32,17 +32,35 @@ export function PaymentSuccessBanner({
   const isSuccess = searchParams.get(param) === 'success';
 
   useEffect(() => {
-    if (isSuccess) {
-      setVisible(true);
-      // Auto-clean URL after a beat so reloads don't re-trigger
-      const t = setTimeout(() => {
-        const params = new URLSearchParams(searchParams.toString());
-        params.delete(param);
-        const query = params.toString();
-        router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
-      }, 600);
-      return () => clearTimeout(t);
+    if (!isSuccess) return;
+    setVisible(true);
+
+    const sessionId = searchParams.get('session_id');
+
+    async function verifyAndCleanup() {
+      // Activate subscription/registration via Stripe (fallback when webhooks aren't configured)
+      if (sessionId) {
+        try {
+          await fetch('/api/stripe/verify-session', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sessionId }),
+          });
+        } catch {
+          // Non-fatal — webhook may still process it
+        }
+      }
+
+      // Clean URL so reloads don't re-trigger
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete(param);
+      params.delete('session_id');
+      const query = params.toString();
+      router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+      router.refresh();
     }
+
+    verifyAndCleanup();
   }, [isSuccess, param, pathname, router, searchParams]);
 
   if (!visible) return null;

@@ -12,16 +12,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { plan } = await request.json();
+    const { plan, planId } = await request.json();
 
-    // Fetch the membership plan from database
+    // Fetch the membership plan from database — prefer planId, fallback to plan_type
     const adminSupabase = createAdminClient();
-    const { data: membershipPlan } = await adminSupabase
+    const query = adminSupabase
       .from('membership_plans')
       .select('*')
-      .eq('plan_type', plan === 'yearly' ? 'yearly' : 'monthly')
-      .eq('is_active', true)
-      .maybeSingle();
+      .eq('is_active', true);
+
+    if (planId) {
+      query.eq('id', planId);
+    } else {
+      query.eq('plan_type', plan === 'yearly' ? 'yearly' : 'monthly');
+    }
+
+    const { data: plans } = await query.order('display_order', { ascending: true }).limit(1);
+    const membershipPlan = plans?.[0];
 
     if (!membershipPlan) {
       console.error('Membership plan not found for plan_type:', plan === 'yearly' ? 'yearly' : 'monthly');

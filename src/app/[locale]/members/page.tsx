@@ -3,18 +3,32 @@ import { createClient } from '@/lib/supabase/server';
 import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
 import { nl2br } from '@/lib/utils/text';
+import { verifyAndActivateSession } from '@/lib/stripe/verify-session';
 import { Crown, Lock, BookOpen, Video, Download, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PaymentSuccessBanner } from '@/components/payments/PaymentSuccessBanner';
 
-export default async function MembersPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function MembersPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<{ session_id?: string; subscription?: string }>;
+}) {
   const { locale } = await params;
+  const { session_id } = await searchParams;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
     redirect('/login');
+  }
+
+  // If arriving from Stripe checkout, activate the subscription server-side
+  // BEFORE the active-member check, otherwise we'd redirect away too early.
+  if (session_id) {
+    await verifyAndActivateSession(session_id, user.id);
   }
 
   const { data: profile } = await supabase

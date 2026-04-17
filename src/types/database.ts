@@ -10,6 +10,8 @@ export interface Profile {
   subscription_status: 'active' | 'inactive' | 'cancelled' | 'past_due' | 'trialing';
   subscription_plan: 'monthly' | 'yearly' | null;
   subscription_end_date: string | null;
+  survey_completed_at: string | null;
+  gdpr_consent_at: string | null;
   created_at: string;
   updated_at: string;
 }

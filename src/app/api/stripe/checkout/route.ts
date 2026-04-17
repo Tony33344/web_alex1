@@ -45,7 +45,8 @@ export async function POST(request: Request) {
 
     let customerId = profile?.stripe_customer_id;
 
-    if (!customerId) {
+    // Valid Stripe customer IDs start with 'cus_'. Anything else (e.g. bank_pending_*) is bogus and must be replaced.
+    if (!customerId || !customerId.startsWith('cus_')) {
       const customer = await createOrRetrieveCustomer({
         email: user.email!,
         name: profile?.full_name || '',

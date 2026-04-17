@@ -22,15 +22,13 @@ export async function POST(request: Request) {
     // Generate bank transfer reference
     const bankRef = `MEM-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).substring(2, 6).toUpperCase()}`;
 
-    // Update profile with pending subscription and bank transfer reference
+    // Update profile with pending subscription. Do NOT touch stripe_customer_id — that field is reserved
+    // for real Stripe customer IDs (starting with 'cus_'); overwriting it breaks future Stripe checkouts.
     const { error } = await adminSupabase
       .from('profiles')
       .update({
         subscription_status: 'inactive',
         subscription_plan: plan,
-        // Store bank transfer reference in a custom field or we can create a separate table
-        // For now, we'll store it in stripe_customer_id temporarily with a prefix
-        stripe_customer_id: `bank_pending_${bankRef}`,
       })
       .eq('id', user.id);
 

@@ -94,7 +94,7 @@ export async function POST(request: Request) {
       .maybeSingle();
 
     let customerId = profile?.stripe_customer_id;
-    if (!customerId) {
+    if (!customerId || !customerId.startsWith('cus_')) {
       const customer = await createOrRetrieveCustomer({
         email: user.email!,
         name: profile?.full_name || '',

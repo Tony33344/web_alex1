@@ -1,5 +1,5 @@
 -- ============================================
--- SEED: Disclaimer & Privacy Policy pages
+-- SEED: Disclaimer, Privacy Policy & Terms & Conditions pages
 -- Run this in Supabase SQL Editor
 -- Safe to re-run (uses ON CONFLICT)
 -- ============================================

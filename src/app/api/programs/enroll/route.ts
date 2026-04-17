@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
-import { createCheckoutSession, createOrRetrieveCustomer } from '@/lib/stripe/helpers';
+import { createCheckoutSession, createDynamicCheckoutSession, createOrRetrieveCustomer } from '@/lib/stripe/helpers';
 
 // Force redeploy - v2
 export async function POST(request: Request) {
@@ -31,6 +31,14 @@ export async function POST(request: Request) {
       console.error('Program lookup failed:', programError?.message);
       return NextResponse.json({ error: 'Program not found' }, { status: 404 });
     }
+
+    // Clean up any old cancelled enrollments for this user+program to allow fresh enrollment
+    await adminSupabase
+      .from('program_enrollments')
+      .delete()
+      .eq('program_id', program.id)
+      .eq('user_id', user.id)
+      .eq('status', 'cancelled');
 
     const isFree = !program.price || program.price <= 0;
     const method = isFree ? 'free' : (paymentMethod || 'stripe');
@@ -97,20 +105,34 @@ export async function POST(request: Request) {
     }
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    const stripeMetadata = { user_id: user.id, program_id: program.id, type: 'program' };
+    const successUrl = `${appUrl}/en/coach-training?payment=success`;
+    const cancelUrl = `${appUrl}/en/coach-training/${programSlug}?payment=cancelled`;
 
+    let session;
     if (program.stripe_price_id) {
-      const session = await createCheckoutSession({
+      session = await createCheckoutSession({
         customerId,
         priceId: program.stripe_price_id,
         mode: 'payment',
-        successUrl: `${appUrl}/en/coach-training?payment=success`,
-        cancelUrl: `${appUrl}/en/coach-training/${programSlug}?payment=cancelled`,
-        metadata: { user_id: user.id, type: 'program' },
+        successUrl,
+        cancelUrl,
+        metadata: stripeMetadata,
       });
-      return NextResponse.json({ success: true, status: 'enrolled', checkoutUrl: session.url });
+    } else {
+      // Dynamic pricing — uses price from database
+      session = await createDynamicCheckoutSession({
+        customerId,
+        productName: program.name_en,
+        amountInCents: Math.round(program.price * 100),
+        currency: program.currency || 'chf',
+        successUrl,
+        cancelUrl,
+        metadata: stripeMetadata,
+      });
     }
 
-    return NextResponse.json({ success: true, status: 'enrolled', paymentPending: true });
+    return NextResponse.json({ success: true, status: 'enrolled', checkoutUrl: session.url });
   } catch (err) {
     console.error('Program enrollment error:', err instanceof Error ? err.message : String(err));
     return NextResponse.json({ error: 'Internal server error: ' + (err instanceof Error ? err.message : 'Unknown') }, { status: 500 });

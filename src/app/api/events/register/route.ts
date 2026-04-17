@@ -36,16 +36,26 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Event not found' }, { status: 404 });
     }
 
+    // Check for existing ACTIVE registration (cancelled ones allow re-registration)
     const { data: existing } = await adminSupabase
       .from('event_registrations')
-      .select('id')
+      .select('id, status')
       .eq('event_id', eventId)
       .eq('user_id', user.id)
-      .single();
+      .neq('status', 'cancelled')
+      .maybeSingle();
 
     if (existing) {
       return NextResponse.json({ error: 'Already registered' }, { status: 409 });
     }
+
+    // Clean up any old cancelled registrations for this user+event to allow fresh registration
+    await adminSupabase
+      .from('event_registrations')
+      .delete()
+      .eq('event_id', eventId)
+      .eq('user_id', user.id)
+      .eq('status', 'cancelled');
 
     const isFull = event.max_attendees && event.current_attendees >= event.max_attendees;
     const isFree = !event.price || event.price <= 0;

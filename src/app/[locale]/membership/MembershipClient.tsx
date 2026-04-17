@@ -66,7 +66,7 @@ export function MembershipClient({ plans, pageTitle, pageContent, locale, galler
     });
     const data = await res.json();
     if (data.url) return { checkoutUrl: data.url };
-    return { error: 'Could not create checkout session' };
+    return { error: data.error || 'Could not create checkout session' };
   }
 
   const hasMultiplePlans = plans.length > 1;

@@ -62,7 +62,7 @@ export default function LoginPage() {
       }
     }
 
-    router.push(redirect || `/${locale}/profile`);
+    router.push(redirect || `/${locale}/welcome`);
     router.refresh();
   }
 

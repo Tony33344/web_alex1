@@ -108,8 +108,6 @@ export default function ProfilePage() {
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
-      <PaymentSuccessBanner param="subscription" />
-
       {/* Phone missing warning */}
       {!profile.phone && (
         <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950/30">

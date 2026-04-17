@@ -63,7 +63,7 @@ export async function POST(request: Request) {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
     const stripeMetadata = { user_id: user.id, plan, type: 'membership', plan_id: membershipPlan.id };
     // {CHECKOUT_SESSION_ID} is a Stripe placeholder replaced on redirect; lets us verify and activate without a webhook
-    const successUrl = `${appUrl}/en/profile?subscription=success&session_id={CHECKOUT_SESSION_ID}`;
+    const successUrl = `${appUrl}/en/members?subscription=success&session_id={CHECKOUT_SESSION_ID}`;
     const cancelUrl = `${appUrl}/en/membership?cancelled=true`;
 
     let session;

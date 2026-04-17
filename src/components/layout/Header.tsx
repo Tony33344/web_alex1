@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X, ChevronDown, User, LogOut, LayoutDashboard } from 'lucide-react';
+import { Menu, X, ChevronDown, User, LogOut, LayoutDashboard, Crown } from 'lucide-react';
 import { Logo } from './Logo';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { useUser } from '@/hooks/useUser';
@@ -188,18 +188,27 @@ export function Header({ locale, logoUrl }: HeaderProps) {
           {/* Auth / User */}
           {user ? (
             <DropdownMenu>
-              <DropdownMenuTrigger className="flex items-center gap-2 rounded-full focus:outline-none">
+              <DropdownMenuTrigger className="flex items-center gap-2 rounded-full px-1 focus:outline-none hover:bg-muted/60 transition-colors">
                 <Avatar className="h-8 w-8">
                   <AvatarFallback className="bg-primary text-primary-foreground text-xs">
                     {profile?.full_name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || 'U'}
                   </AvatarFallback>
                 </Avatar>
+                <span className="hidden sm:inline text-sm font-medium max-w-[140px] truncate pr-2">
+                  {profile?.full_name || user.email?.split('@')[0]}
+                </span>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem onClick={() => (window.location.href = p('/profile'))}>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuItem onClick={() => (window.location.href = p('/welcome'))}>
                   <User className="mr-2 h-4 w-4" />
-                  Profile
+                  My Profile
                 </DropdownMenuItem>
+                {profile?.subscription_status === 'active' && (
+                  <DropdownMenuItem onClick={() => (window.location.href = p('/members'))}>
+                    <Crown className="mr-2 h-4 w-4 text-amber-500" />
+                    Members Area
+                  </DropdownMenuItem>
+                )}
                 {isAdmin && (
                   <DropdownMenuItem onClick={() => (window.location.href = '/admin')}>
                     <LayoutDashboard className="mr-2 h-4 w-4" />

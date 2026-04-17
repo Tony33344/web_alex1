@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
@@ -23,6 +23,11 @@ export default function ProfilePage() {
   const params = useParams();
   const locale = params.locale as string;
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const tabParam = searchParams.get('tab');
+  const initialTab = ['profile', 'subscription', 'events', 'settings'].includes(tabParam || '')
+    ? (tabParam as string)
+    : 'profile';
   const { user, profile, loading: userLoading } = useUser();
 
   const [saving, setSaving] = useState(false);
@@ -135,7 +140,7 @@ export default function ProfilePage() {
         )}
       </div>
 
-      <Tabs defaultValue="profile" className="mt-8">
+      <Tabs defaultValue={initialTab} className="mt-8">
         <TabsList>
           <TabsTrigger value="profile"><UserIcon className="mr-2 h-4 w-4" />Profile</TabsTrigger>
           <TabsTrigger value="subscription"><CreditCard className="mr-2 h-4 w-4" />Subscription</TabsTrigger>

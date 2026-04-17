@@ -1,11 +1,15 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
+import { getPage } from '@/lib/queries/pages';
+import { getLocalizedField } from '@/lib/localization';
+import { nl2br } from '@/lib/utils/text';
 import { Crown, Lock, BookOpen, Video, Download, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PaymentSuccessBanner } from '@/components/payments/PaymentSuccessBanner';
 
-export default async function MembersPage() {
+export default async function MembersPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -22,6 +26,9 @@ export default async function MembersPage() {
   if (!profile || profile.subscription_status !== 'active') {
     redirect('/membership');
   }
+
+  const page = await getPage('members');
+  const content = page ? (getLocalizedField(page, 'content', locale) || page.content_en) : null;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 via-background to-background dark:from-amber-950/20 dark:via-background dark:to-background">
@@ -45,83 +52,82 @@ export default async function MembersPage() {
             </div>
           </div>
 
-          {/* Content Grid */}
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            <Card className="hover:shadow-lg transition-shadow border-amber-200 dark:border-amber-800">
-              <CardHeader>
-                <BookOpen className="h-10 w-10 text-amber-500 mb-2" />
-                <CardTitle>Exclusive Resources</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Access downloadable guides, templates, and member-only materials.
-                </p>
-                <Button variant="outline" className="w-full">
-                  Browse Resources
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow border-amber-200 dark:border-amber-800">
-              <CardHeader>
-                <Video className="h-10 w-10 text-amber-500 mb-2" />
-                <CardTitle>Video Library</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Watch recorded workshops, training sessions, and exclusive video content.
-                </p>
-                <Button variant="outline" className="w-full">
-                  Watch Videos
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow border-amber-200 dark:border-amber-800">
-              <CardHeader>
-                <Calendar className="h-10 w-10 text-amber-500 mb-2" />
-                <CardTitle>Member Events</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-4">
-                  Join exclusive member-only events, Q&A sessions, and networking meetups.
-                </p>
-                <Button variant="outline" className="w-full">
-                  View Events
-                </Button>
-              </CardContent>
-            </Card>
-
-            <Card className="hover:shadow-lg transition-shadow border-amber-200 dark:border-amber-800 md:col-span-2 lg:col-span-3">
-              <CardHeader>
-                <Download className="h-10 w-10 text-amber-500 mb-2" />
-                <CardTitle>Quick Downloads</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-6">
-                  Get instant access to our most popular member resources.
-                </p>
-                <div className="grid gap-4 md:grid-cols-3">
-                  <Button variant="secondary" className="w-full">
-                    📄 Member Handbook
+          {/* Content */}
+          {content ? (
+            <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground">
+              <div dangerouslySetInnerHTML={{ __html: nl2br(content) }} />
+            </div>
+          ) : (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              <Card className="hover:shadow-lg transition-shadow border-amber-200 dark:border-amber-800">
+                <CardHeader>
+                  <BookOpen className="h-10 w-10 text-amber-500 mb-2" />
+                  <CardTitle>Exclusive Resources</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Access downloadable guides, templates, and member-only materials.
+                  </p>
+                  <Button variant="outline" className="w-full">
+                    Browse Resources
                   </Button>
-                  <Button variant="secondary" className="w-full">
-                    📋 Event Templates
-                  </Button>
-                  <Button variant="secondary" className="w-full">
-                    🎯 Training Materials
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                </CardContent>
+              </Card>
 
-          {/* Coming Soon */}
-          <div className="mt-12 text-center">
-            <p className="text-sm text-muted-foreground">
-              More exclusive content coming soon! Check back regularly for updates.
-            </p>
-          </div>
+              <Card className="hover:shadow-lg transition-shadow border-amber-200 dark:border-amber-800">
+                <CardHeader>
+                  <Video className="h-10 w-10 text-amber-500 mb-2" />
+                  <CardTitle>Video Library</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Watch recorded workshops, training sessions, and exclusive video content.
+                  </p>
+                  <Button variant="outline" className="w-full">
+                    Watch Videos
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-lg transition-shadow border-amber-200 dark:border-amber-800">
+                <CardHeader>
+                  <Calendar className="h-10 w-10 text-amber-500 mb-2" />
+                  <CardTitle>Member Events</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Join exclusive member-only events, Q&A sessions, and networking meetups.
+                  </p>
+                  <Button variant="outline" className="w-full">
+                    View Events
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-lg transition-shadow border-amber-200 dark:border-amber-800 md:col-span-2 lg:col-span-3">
+                <CardHeader>
+                  <Download className="h-10 w-10 text-amber-500 mb-2" />
+                  <CardTitle>Quick Downloads</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-6">
+                    Get instant access to our most popular member resources.
+                  </p>
+                  <div className="grid gap-4 md:grid-cols-3">
+                    <Button variant="secondary" className="w-full">
+                      📄 Member Handbook
+                    </Button>
+                    <Button variant="secondary" className="w-full">
+                      📋 Event Templates
+                    </Button>
+                    <Button variant="secondary" className="w-full">
+                      🎯 Training Materials
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          )}
         </div>
       </div>
     </div>

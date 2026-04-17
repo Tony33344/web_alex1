@@ -40,7 +40,7 @@ export const newsletterSchema = z.object({
 
 export const profileSchema = z.object({
   full_name: z.string().min(2, 'Full name is required'),
-  phone: z.string().optional(),
+  phone: z.string().min(6, 'Please enter a valid phone number'),
   preferred_language: z.enum(['en', 'de', 'it', 'fr', 'hi', 'si']),
 });
 

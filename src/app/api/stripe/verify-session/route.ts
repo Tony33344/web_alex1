@@ -19,16 +19,29 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing sessionId' }, { status: 400 });
     }
 
+    console.log('verify-session: retrieving session', sessionId);
+
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
       expand: ['subscription'],
     });
 
+    console.log('verify-session: session retrieved', {
+      payment_status: session.payment_status,
+      status: session.status,
+      mode: session.mode,
+      type: session.metadata?.type,
+      metadata: session.metadata,
+      subscriptionId: session.subscription,
+    });
+
     // Security: session must belong to this user
     if (session.metadata?.user_id && session.metadata.user_id !== user.id) {
+      console.error('verify-session: user mismatch', { sessionUserId: session.metadata.user_id, currentUserId: user.id });
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
     if (session.payment_status !== 'paid' && session.status !== 'complete') {
+      console.log('verify-session: payment not complete', { payment_status: session.payment_status, status: session.status });
       return NextResponse.json({ success: false, status: session.status });
     }
 
@@ -41,7 +54,14 @@ export async function POST(request: Request) {
         ? sub.current_period_end
         : null;
 
-      await admin
+      console.log('verify-session: updating profile', {
+        userId: user.id,
+        plan: session.metadata?.plan,
+        endTs,
+        subId: sub?.id,
+      });
+
+      const { error } = await admin
         .from('profiles')
         .update({
           subscription_status: 'active',
@@ -51,6 +71,12 @@ export async function POST(request: Request) {
         })
         .eq('id', user.id);
 
+      if (error) {
+        console.error('verify-session: profile update error', error);
+        return NextResponse.json({ error: error.message }, { status: 500 });
+      }
+
+      console.log('verify-session: profile updated successfully');
       return NextResponse.json({ success: true, type: 'membership' });
     }
 

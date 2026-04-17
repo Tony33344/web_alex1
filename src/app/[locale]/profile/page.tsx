@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import { Loader2, User as UserIcon, Settings, Calendar, CreditCard, MapPin, Crown, CheckCircle2, Sparkles } from 'lucide-react';
+import { Loader2, User as UserIcon, Settings, Calendar, CreditCard, MapPin, Crown, CheckCircle2, Sparkles, AlertTriangle, Phone } from 'lucide-react';
 import { PaymentSuccessBanner } from '@/components/payments/PaymentSuccessBanner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -80,7 +80,7 @@ export default function ProfilePage() {
       .from('profiles')
       .update({
         full_name: data.full_name,
-        phone: data.phone || null,
+        phone: data.phone,
         preferred_language: data.preferred_language,
         updated_at: new Date().toISOString(),
       })
@@ -109,6 +109,22 @@ export default function ProfilePage() {
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
       <PaymentSuccessBanner param="subscription" />
+
+      {/* Phone missing warning */}
+      {!profile.phone && (
+        <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950/30">
+          <div className="flex items-start gap-3">
+            <AlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+            <div className="flex-1 space-y-1">
+              <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">Phone number required</p>
+              <p className="text-sm text-amber-800/80 dark:text-amber-300/80">
+                Please add your phone number to your profile. It's required for event registrations and important communications.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">My Profile</h1>
@@ -148,14 +164,18 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="full_name">Full Name</Label>
-                  <Input id="full_name" {...register('full_name')} />
-                  {errors.full_name && <p className="text-xs text-destructive">{errors.full_name.message}</p>}
+                  <Label htmlFor="phone">Phone</Label>
+                  <div className="relative">
+                    <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                    <Input id="phone" className="pl-10" placeholder="+41 79 123 45 67" {...register('phone')} />
+                  </div>
+                  {errors.phone && <p className="text-xs text-destructive">{errors.phone.message}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="phone">Phone</Label>
-                  <Input id="phone" {...register('phone')} />
+                  <Label htmlFor="full_name">Full Name</Label>
+                  <Input id="full_name" {...register('full_name')} />
+                  {errors.full_name && <p className="text-xs text-destructive">{errors.full_name.message}</p>}
                 </div>
 
                 <div className="space-y-2">

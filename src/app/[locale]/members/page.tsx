@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getPage } from '@/lib/queries/pages';
@@ -33,7 +34,7 @@ export default async function MembersPage({
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('subscription_status, subscription_plan, full_name')
+    .select('subscription_status, subscription_plan, full_name, survey_completed_at')
     .eq('id', user.id)
     .single();
 
@@ -43,6 +44,7 @@ export default async function MembersPage({
 
   const page = await getPage('members');
   const content = page ? (getLocalizedField(page, 'content', locale) || page.content_en) : null;
+  const surveyCompleted = !!profile.survey_completed_at;
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 via-background to-background dark:from-amber-950/20 dark:via-background dark:to-background">
@@ -63,6 +65,32 @@ export default async function MembersPage({
             <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 text-sm font-medium">
               <Lock className="h-4 w-4" />
               {profile.subscription_plan === 'yearly' ? 'Yearly Member' : 'Monthly Member'}
+            </div>
+          </div>
+
+          {/* Personalized plan CTA */}
+          <div className="mb-10 rounded-2xl border border-amber-200 dark:border-amber-800 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/20 p-6 sm:p-8">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 justify-between">
+              <div className="flex items-start gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white dark:bg-background shadow-sm shrink-0">
+                  <span className="text-2xl">✨</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-lg mb-1">
+                    {surveyCompleted ? 'Update your personalized plan profile' : 'Get your personalized 1-month plan'}
+                  </h3>
+                  <p className="text-sm text-muted-foreground max-w-xl">
+                    {surveyCompleted
+                      ? 'Your answers are saved. One of our Infinity Role Teachers will be in touch. Update anytime.'
+                      : 'Answer a few quick questions. One of our Infinity Role Teachers will then contact you (phone, Zoom, Signal or WhatsApp) to co-create a 1-month plan for body, mind and spirit.'}
+                  </p>
+                </div>
+              </div>
+              <Link href="/members/survey">
+                <Button className="bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 shrink-0">
+                  {surveyCompleted ? 'Edit answers' : 'Start questionnaire'}
+                </Button>
+              </Link>
             </div>
           </div>
 

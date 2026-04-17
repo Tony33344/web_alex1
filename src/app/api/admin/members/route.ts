@@ -26,7 +26,7 @@ export async function GET() {
     // Fetch all members (users with active or pending subscriptions)
     const { data: members } = await admin
       .from('profiles')
-      .select('id, full_name, email, subscription_status, subscription_plan, subscription_end_date, created_at, phone')
+      .select('id, full_name, email, subscription_status, subscription_plan, subscription_end_date, created_at, phone, survey_completed_at')
       .not('subscription_status', 'is', null)
       .order('created_at', { ascending: false });
 

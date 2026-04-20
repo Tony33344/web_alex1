@@ -29,7 +29,7 @@ export async function POST() {
     });
     console.log('Portal: session created', session.url);
 
-    return NextResponse.redirect(session.url);
+    return NextResponse.redirect(session.url, 303);
   } catch (error) {
     console.error('Portal error:', error);
     return NextResponse.json({ error: 'Failed to create portal session' }, { status: 500 });

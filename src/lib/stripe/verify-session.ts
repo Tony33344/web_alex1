@@ -37,7 +37,6 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
           subscription_status: 'active',
           subscription_plan: session.metadata?.plan || null,
           subscription_end_date: endTs ? new Date(endTs * 1000).toISOString() : null,
-          stripe_subscription_id: sub?.id || null,
         })
         .eq('id', userId);
 

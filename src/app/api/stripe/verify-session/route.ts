@@ -67,7 +67,6 @@ export async function POST(request: Request) {
           subscription_status: 'active',
           subscription_plan: session.metadata?.plan || null,
           subscription_end_date: endTs ? new Date(endTs * 1000).toISOString() : null,
-          stripe_subscription_id: sub?.id || null,
         })
         .eq('id', user.id);
 

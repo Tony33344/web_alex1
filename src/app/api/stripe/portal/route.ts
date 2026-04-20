@@ -22,10 +22,12 @@ export async function POST() {
     }
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+    console.log('Portal: creating session for customer', profile.stripe_customer_id);
     const session = await createPortalSession({
       customerId: profile.stripe_customer_id,
       returnUrl: `${appUrl}/en/profile`,
     });
+    console.log('Portal: session created', session.url);
 
     return NextResponse.redirect(session.url);
   } catch (error) {

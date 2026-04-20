@@ -39,7 +39,7 @@ export default async function MembersPage({
     .single();
 
   if (!profile || profile.subscription_status !== 'active') {
-    redirect('/membership');
+    redirect(`/${locale}/membership`);
   }
 
   const page = await getPage('members');

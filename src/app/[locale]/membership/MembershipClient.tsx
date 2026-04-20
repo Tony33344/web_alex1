@@ -62,7 +62,7 @@ export function MembershipClient({ plans, pageTitle, pageContent, locale, galler
     const res = await fetch('/api/stripe/checkout', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan: activePlan.plan_type, planId: activePlan.id }),
+      body: JSON.stringify({ plan: activePlan.plan_type, planId: activePlan.id, locale }),
     });
     const data = await res.json();
     if (data.url) return { checkoutUrl: data.url };

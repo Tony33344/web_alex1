@@ -8,17 +8,27 @@ import { stripe } from '@/lib/stripe/client';
  */
 export async function verifyAndActivateSession(sessionId: string, userId: string): Promise<boolean> {
   try {
+    console.log('verifyAndActivateSession: START', { sessionId, userId });
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
       expand: ['subscription'],
     });
 
+    console.log('verifyAndActivateSession: session retrieved', {
+      payment_status: session.payment_status,
+      status: session.status,
+      mode: session.mode,
+      type: session.metadata?.type,
+      user_id: session.metadata?.user_id,
+    });
+
     // Security: session must belong to this user
     if (session.metadata?.user_id && session.metadata.user_id !== userId) {
-      console.error('verify-session: user mismatch');
+      console.error('verifyAndActivateSession: user mismatch', { sessionUserId: session.metadata.user_id, currentUserId: userId });
       return false;
     }
 
     if (session.payment_status !== 'paid' && session.status !== 'complete') {
+      console.log('verifyAndActivateSession: payment not complete', { payment_status: session.payment_status, status: session.status });
       return false;
     }
 
@@ -44,13 +54,14 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
         console.error('verify-session: profile update error', error);
         return false;
       }
+      console.log('verify-session: membership activated successfully', { userId, plan: session.metadata?.plan });
       return true;
     }
 
     if (type === 'event') {
       const eventId = session.metadata?.event_id;
       if (eventId) {
-        await admin
+        const { error } = await admin
           .from('event_registrations')
           .update({ payment_status: 'paid', status: 'confirmed', confirmed_at: new Date().toISOString() })
           .eq('event_id', eventId)

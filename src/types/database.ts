@@ -38,6 +38,8 @@ export interface Page {
   meta_description_hi: string | null;
   meta_description_si: string | null;
   background_color: string | null;
+  banner_gradient_to: string | null;
+  banner_width: 'full' | 'contained';
   hero_image_url: string | null;
   header_logo_url: string | null;
   is_published: boolean;

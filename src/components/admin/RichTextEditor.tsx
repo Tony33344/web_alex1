@@ -1,7 +1,9 @@
 'use client';
 
 import { useEditor, EditorContent } from '@tiptap/react';
+import { Node as TiptapNode, mergeAttributes } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
+import { createClient } from '@/lib/supabase/client';
 import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Link from '@tiptap/extension-link';
@@ -29,8 +31,30 @@ import {
   Unlink,
   Minus,
   Youtube as YoutubeIcon,
+  Film,
+  Loader2,
 } from 'lucide-react';
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef, useState } from 'react';
+
+// Custom TipTap node: <video controls src="..." />
+const Video = TiptapNode.create({
+  name: 'video',
+  group: 'block',
+  atom: true,
+  draggable: true,
+  addAttributes() {
+    return {
+      src: { default: null },
+      controls: { default: true },
+    };
+  },
+  parseHTML() {
+    return [{ tag: 'video[src]' }];
+  },
+  renderHTML({ HTMLAttributes }) {
+    return ['video', mergeAttributes(HTMLAttributes, { controls: 'true', class: 'rounded-lg w-full' })];
+  },
+});
 
 interface RichTextEditorProps {
   value: string;
@@ -303,6 +327,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         height: 360,
         HTMLAttributes: { class: 'rounded-lg w-full aspect-video' },
       }),
+      Video,
     ],
     content: value || '',
     editorProps: {
@@ -331,6 +356,41 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
     const url = window.prompt('Paste YouTube URL');
     if (!url) return;
     editor.commands.setYoutubeVideo({ src: url });
+  }, [editor]);
+
+  const videoInputRef = useRef<HTMLInputElement>(null);
+  const [uploadingVideo, setUploadingVideo] = useState(false);
+  const [videoError, setVideoError] = useState('');
+
+  const handleVideoUpload = useCallback(async (file: File) => {
+    if (!editor) return;
+    if (!file.type.startsWith('video/')) {
+      setVideoError('Only video files are allowed');
+      return;
+    }
+    if (file.size > 100 * 1024 * 1024) {
+      setVideoError('Video must be under 100MB');
+      return;
+    }
+    setUploadingVideo(true);
+    setVideoError('');
+    try {
+      const supabase = createClient();
+      const ext = file.name.split('.').pop() || 'mp4';
+      const fileName = `videos/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from('images')
+        .upload(fileName, file, { cacheControl: '3600', upsert: false, contentType: file.type });
+      if (upErr) {
+        setVideoError(upErr.message);
+      } else {
+        const { data: { publicUrl } } = supabase.storage.from('images').getPublicUrl(fileName);
+        editor.chain().focus().insertContent({ type: 'video', attrs: { src: publicUrl } }).run();
+      }
+    } catch {
+      setVideoError('Upload failed');
+    }
+    setUploadingVideo(false);
   }, [editor]);
 
   const setLink = useCallback(() => {
@@ -477,6 +537,24 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         <ToolbarButton onClick={addYoutube} title="Embed YouTube video">
           <YoutubeIcon className="h-4 w-4" />
         </ToolbarButton>
+        <ToolbarButton
+          onClick={() => videoInputRef.current?.click()}
+          title="Upload video from your device"
+          disabled={uploadingVideo}
+        >
+          {uploadingVideo ? <Loader2 className="h-4 w-4 animate-spin" /> : <Film className="h-4 w-4" />}
+        </ToolbarButton>
+        <input
+          ref={videoInputRef}
+          type="file"
+          accept="video/*"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) handleVideoUpload(f);
+            if (videoInputRef.current) videoInputRef.current.value = '';
+          }}
+        />
 
         <Separator />
 
@@ -502,6 +580,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
 
       {/* Editor */}
       <EditorContent editor={editor} />
+      {videoError && <p className="px-4 py-2 text-xs text-destructive">{videoError}</p>}
     </div>
   );
 }

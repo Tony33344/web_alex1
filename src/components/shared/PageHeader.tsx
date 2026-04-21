@@ -3,6 +3,8 @@ interface PageHeaderProps {
   subtitle?: string;
   backgroundImage?: string;
   backgroundColor?: string | null;
+  gradientTo?: string | null;
+  width?: 'full' | 'contained' | null;
 }
 
 function stripHtml(html: string): string {
@@ -10,19 +12,22 @@ function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
 }
 
-export function PageHeader({ title, subtitle, backgroundImage, backgroundColor }: PageHeaderProps) {
+export function PageHeader({ title, subtitle, backgroundImage, backgroundColor, gradientTo, width }: PageHeaderProps) {
   const cleanSubtitle = subtitle ? stripHtml(subtitle) : '';
-  const style = backgroundImage
+  const style: React.CSSProperties | undefined = backgroundImage
     ? { backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-    : backgroundColor
-      ? { backgroundColor }
-      : undefined;
-  
+    : backgroundColor && gradientTo
+      ? { backgroundImage: `linear-gradient(135deg, ${backgroundColor}, ${gradientTo})` }
+      : backgroundColor
+        ? { backgroundColor }
+        : undefined;
+
+  const sectionClass = width === 'contained'
+    ? 'relative mx-auto my-6 flex min-h-[240px] max-w-7xl items-center justify-center overflow-hidden rounded-2xl bg-primary/5'
+    : 'relative flex min-h-[240px] items-center justify-center overflow-hidden bg-primary/5';
+
   return (
-    <section
-      className="relative flex min-h-[240px] items-center justify-center overflow-hidden bg-primary/5"
-      style={style}
-    >
+    <section className={sectionClass} style={style}>
       {backgroundImage && <div className="absolute inset-0 bg-primary/60" />}
       <div className="relative z-10 mx-auto max-w-4xl px-4 py-16 text-center">
         <h1 className={`text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl ${backgroundImage ? 'text-white' : 'text-foreground'}`}>

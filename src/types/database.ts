@@ -40,6 +40,7 @@ export interface Page {
   background_color: string | null;
   banner_gradient_to: string | null;
   banner_width: 'full' | 'contained';
+  banner_height: string;
   hero_image_url: string | null;
   header_logo_url: string | null;
   is_published: boolean;

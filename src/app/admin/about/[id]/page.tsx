@@ -64,6 +64,9 @@ export default function AdminAboutEditPage() {
           content_si: page.content_si,
           meta_description_en: page.meta_description_en,
           background_color: page.background_color,
+          banner_gradient_to: page.banner_gradient_to,
+          banner_width: page.banner_width,
+          banner_height: page.banner_height,
           hero_image_url: page.hero_image_url,
           is_published: page.is_published,
           updated_at: new Date().toISOString(),
@@ -227,6 +230,31 @@ export default function AdminAboutEditPage() {
                   )}
                 </div>
                 <p className="text-xs text-muted-foreground">Controls the banner/hero color behind the page title.</p>
+                <div className="mt-3 space-y-1">
+                  <Label className="text-xs text-muted-foreground">Banner min height</Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      value={page.banner_height || ''}
+                      onChange={(e) => updateField('banner_height', e.target.value)}
+                      placeholder="240px"
+                      className="max-w-[120px]"
+                    />
+                    <div className="flex gap-1">
+                      {(['240px','300px','400px','500px'] as const).map((h) => (
+                        <button
+                          key={h}
+                          type="button"
+                          onClick={() => updateField('banner_height', h)}
+                          className={`rounded-md px-2 py-1 text-xs font-medium transition-colors ${
+                            (page.banner_height || '240px') === h ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground bg-muted'
+                          }`}
+                        >
+                          {h}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
               <div className="space-y-2">
                 <Label>Hero Image</Label>

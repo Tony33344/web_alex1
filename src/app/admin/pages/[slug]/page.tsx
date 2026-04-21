@@ -65,6 +65,7 @@ export default function AdminPageEditPage() {
           background_color: page.background_color,
           banner_gradient_to: page.banner_gradient_to,
           banner_width: page.banner_width,
+          banner_height: page.banner_height,
           hero_image_url: page.hero_image_url,
           header_logo_url: page.header_logo_url,
           is_published: page.is_published,
@@ -252,6 +253,31 @@ export default function AdminPageEditPage() {
                         {w === 'full' ? 'Full width' : 'Contained'}
                       </button>
                     ))}
+                  </div>
+                </div>
+                <div className="mt-3 space-y-1">
+                  <Label className="text-xs text-muted-foreground">Banner min height</Label>
+                  <div className="flex items-center gap-2">
+                    <Input
+                      value={page.banner_height || ''}
+                      onChange={(e) => updateField('banner_height', e.target.value)}
+                      placeholder="240px"
+                      className="max-w-[120px]"
+                    />
+                    <div className="flex gap-1">
+                      {(['240px','300px','400px','500px'] as const).map((h) => (
+                        <button
+                          key={h}
+                          type="button"
+                          onClick={() => updateField('banner_height', h)}
+                          className={`rounded-md px-2 py-1 text-xs font-medium transition-colors ${
+                            (page.banner_height || '240px') === h ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground bg-muted'
+                          }`}
+                        >
+                          {h}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>

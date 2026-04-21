@@ -30,7 +30,7 @@ export default async function CoachTrainingPage({ params, searchParams }: CoachT
 
   return (
     <>
-      <PageHeader title={pageTitle} subtitle={pageContent} />
+      <PageHeader title={pageTitle} subtitle={pageContent} backgroundColor={page?.background_color} />
 
       <PaymentSuccessBanner
         param="payment"

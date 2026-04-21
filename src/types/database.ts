@@ -37,6 +37,7 @@ export interface Page {
   meta_description_fr: string | null;
   meta_description_hi: string | null;
   meta_description_si: string | null;
+  background_color: string | null;
   hero_image_url: string | null;
   header_logo_url: string | null;
   is_published: boolean;

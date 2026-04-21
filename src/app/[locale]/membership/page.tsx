@@ -29,7 +29,7 @@ export default async function MembershipPage({ params }: { params: Promise<{ loc
 
   return (
     <>
-      <PageHeader title={pageTitle} subtitle={pageContent} />
+      <PageHeader title={pageTitle} subtitle={pageContent} backgroundColor={membershipPage?.background_color} />
       <MembershipClient 
         plans={plans} 
         pageTitle={pageTitle} 

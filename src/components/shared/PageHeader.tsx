@@ -2,6 +2,7 @@ interface PageHeaderProps {
   title: string;
   subtitle?: string;
   backgroundImage?: string;
+  backgroundColor?: string | null;
 }
 
 function stripHtml(html: string): string {
@@ -9,13 +10,18 @@ function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
 }
 
-export function PageHeader({ title, subtitle, backgroundImage }: PageHeaderProps) {
+export function PageHeader({ title, subtitle, backgroundImage, backgroundColor }: PageHeaderProps) {
   const cleanSubtitle = subtitle ? stripHtml(subtitle) : '';
+  const style = backgroundImage
+    ? { backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+    : backgroundColor
+      ? { backgroundColor }
+      : undefined;
   
   return (
     <section
       className="relative flex min-h-[240px] items-center justify-center overflow-hidden bg-primary/5"
-      style={backgroundImage ? { backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}
+      style={style}
     >
       {backgroundImage && <div className="absolute inset-0 bg-primary/60" />}
       <div className="relative z-10 mx-auto max-w-4xl px-4 py-16 text-center">

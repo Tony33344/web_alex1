@@ -33,7 +33,7 @@ export default async function HealthPage({ params }: { params: Promise<{ locale:
 
   return (
     <>
-      <PageHeader title={pageTitle} subtitle={pageContent} />
+      <PageHeader title={pageTitle} subtitle={pageContent} backgroundColor={page?.background_color} />
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         {categories.length === 0 ? (

@@ -29,7 +29,7 @@ export default async function EventsPage({ params, searchParams }: EventsPagePro
 
   return (
     <>
-      <PageHeader title={pageTitle} subtitle={pageContent} />
+      <PageHeader title={pageTitle} subtitle={pageContent} backgroundColor={page?.background_color} />
 
       <PaymentSuccessBanner param="payment" />
 

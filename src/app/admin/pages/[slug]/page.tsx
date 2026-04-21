@@ -62,6 +62,7 @@ export default function AdminPageEditPage() {
           content_hi: page.content_hi,
           content_si: page.content_si,
           meta_description_en: page.meta_description_en,
+          background_color: page.background_color,
           hero_image_url: page.hero_image_url,
           header_logo_url: page.header_logo_url,
           is_published: page.is_published,
@@ -188,6 +189,31 @@ export default function AdminPageEditPage() {
               <div className="space-y-2">
                 <Label>Slug</Label>
                 <Input value={page.slug} disabled className="bg-muted" />
+              </div>
+              <div className="space-y-2 rounded-lg border-2 border-primary/30 bg-primary/5 p-3">
+                <Label className="flex items-center gap-2 text-primary">
+                  <span className="inline-block h-4 w-4 rounded-full border" style={{ backgroundColor: page.background_color || '#f3f4f6' }} />
+                  Banner Background Color
+                </Label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={page.background_color || '#f3f4f6'}
+                    onChange={(e) => updateField('background_color', e.target.value)}
+                    className="h-10 w-14 shrink-0 cursor-pointer rounded border bg-transparent"
+                  />
+                  <Input
+                    value={page.background_color || ''}
+                    onChange={(e) => updateField('background_color', e.target.value)}
+                    placeholder="#f3f4f6"
+                  />
+                  {page.background_color && (
+                    <button type="button" onClick={() => updateField('background_color', '')} className="text-xs text-muted-foreground hover:text-foreground">
+                      Clear
+                    </button>
+                  )}
+                </div>
+                <p className="text-xs text-muted-foreground">Controls the banner/hero color behind the page title (e.g. behind &ldquo;Events&rdquo;).</p>
               </div>
               <div className="space-y-2">
                 <Label>Hero Image</Label>

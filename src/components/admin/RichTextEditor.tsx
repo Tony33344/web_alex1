@@ -7,6 +7,7 @@ import TextAlign from '@tiptap/extension-text-align';
 import Link from '@tiptap/extension-link';
 import { TextStyle } from '@tiptap/extension-text-style';
 import Color from '@tiptap/extension-color';
+import Youtube from '@tiptap/extension-youtube';
 import {
   Bold,
   Italic,
@@ -27,6 +28,7 @@ import {
   Link as LinkIcon,
   Unlink,
   Minus,
+  Youtube as YoutubeIcon,
 } from 'lucide-react';
 import { useEffect, useCallback } from 'react';
 
@@ -294,6 +296,13 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
       }),
       TextStyle,
       Color,
+      Youtube.configure({
+        controls: true,
+        nocookie: true,
+        width: 640,
+        height: 360,
+        HTMLAttributes: { class: 'rounded-lg w-full aspect-video' },
+      }),
     ],
     content: value || '',
     editorProps: {
@@ -316,6 +325,13 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
+
+  const addYoutube = useCallback(() => {
+    if (!editor) return;
+    const url = window.prompt('Paste YouTube URL');
+    if (!url) return;
+    editor.commands.setYoutubeVideo({ src: url });
+  }, [editor]);
 
   const setLink = useCallback(() => {
     if (!editor) return;
@@ -457,6 +473,9 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
           title="Remove Link"
         >
           <Unlink className="h-4 w-4" />
+        </ToolbarButton>
+        <ToolbarButton onClick={addYoutube} title="Embed YouTube video">
+          <YoutubeIcon className="h-4 w-4" />
         </ToolbarButton>
 
         <Separator />

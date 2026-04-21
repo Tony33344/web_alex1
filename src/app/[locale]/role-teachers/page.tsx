@@ -22,7 +22,7 @@ export default async function RoleTeachersPage({ params }: { params: Promise<{ l
 
   return (
     <>
-      <PageHeader title={pageTitle} subtitle={pageContent} />
+      <PageHeader title={pageTitle} subtitle={pageContent} backgroundColor={page?.background_color} />
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         {teachers.length === 0 ? (

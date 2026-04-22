@@ -18,7 +18,8 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   const { locale } = await params;
   const t = await getTranslations();
 
-  const [mission, vision, donate, volunteer] = await Promise.all([
+  const [aboutPage, mission, vision, donate, volunteer] = await Promise.all([
+    getPage('about'),
     getPage('mission'),
     getPage('vision'),
     getPage('donate'),
@@ -26,6 +27,9 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   ]);
 
   const pages = { mission, vision, donate, volunteer };
+
+  const pageTitle = aboutPage ? (getLocalizedField(aboutPage, 'title', locale) || 'About Us') : 'About Us';
+  const pageContent = aboutPage ? (getLocalizedField(aboutPage, 'content', locale) || '') : '';
 
   const cardDefs = [
     { slug: 'mission', fallbackTitle: 'Our Mission', fallbackExcerpt: 'Discover the purpose and driving force behind everything we do.', icon: Target, gradient: 'from-primary/10 via-primary/5 to-secondary/10' },
@@ -51,8 +55,12 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   return (
     <>
       <PageHeader
-        title="About Us"
-        subtitle="Learn about our mission, vision, and the values that guide our community"
+        title={pageTitle}
+        subtitle={pageContent}
+        backgroundColor={aboutPage?.background_color}
+        gradientTo={aboutPage?.banner_gradient_to}
+        width={aboutPage?.banner_width}
+        height={aboutPage?.banner_height}
       />
 
       <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">

@@ -6,19 +6,33 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { getBlogPosts } from '@/lib/queries/blog';
+import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
 
 export default async function BlogPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations();
-  const { posts } = await getBlogPosts({ limit: 20 });
+  const [{ posts }, blogPage] = await Promise.all([
+    getBlogPosts({ limit: 20 }),
+    getPage('blog'),
+  ]);
+
+  const pageTitle = blogPage ? (getLocalizedField(blogPage, 'title', locale) || t('navigation.blog')) : t('navigation.blog');
+  const pageContent = blogPage ? (getLocalizedField(blogPage, 'content', locale) || '') : '';
 
   const featuredPosts = posts.filter((p) => p.is_featured);
   const regularPosts = posts.filter((p) => !p.is_featured);
 
   return (
     <>
-      <PageHeader title={t('navigation.blog')} subtitle="Insights, stories, and wellness tips from our teachers" />
+      <PageHeader
+        title={pageTitle}
+        subtitle={pageContent}
+        backgroundColor={blogPage?.background_color}
+        gradientTo={blogPage?.banner_gradient_to}
+        width={blogPage?.banner_width}
+        height={blogPage?.banner_height}
+      />
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         {posts.length === 0 ? (

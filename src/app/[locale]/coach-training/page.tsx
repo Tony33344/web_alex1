@@ -10,7 +10,7 @@ import { getPrograms } from '@/lib/queries/programs';
 import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
 import { createBriefDescription } from '@/lib/utils/html';
-import { formatDateRange, parseDurationDays, computeEndDate } from '@/lib/utils/dates';
+import { formatDateRange, formatDateRangeWithTime, parseDurationDays, computeEndDate } from '@/lib/utils/dates';
 import { getActivePricing } from '@/lib/utils/pricing';
 import { PriceTag } from '@/components/shared/PriceTag';
 
@@ -85,7 +85,7 @@ export default async function CoachTrainingPage({ params, searchParams }: CoachT
                           const days = parseDurationDays(program.duration);
                           const end = program.end_date || (days && days > 1 ? computeEndDate(program.start_date, days).toISOString() : null);
                           return (
-                            <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" />{formatDateRange(program.start_date, end, locale)}</span>
+                            <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" />{formatDateRangeWithTime(program.start_date, end, locale)}</span>
                           );
                         })()}
                         {program.duration && (

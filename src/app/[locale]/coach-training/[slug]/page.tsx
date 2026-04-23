@@ -9,7 +9,7 @@ import { GalleryGrid } from '@/components/shared/GalleryGrid';
 import { getProgram } from '@/lib/queries/programs';
 import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
-import { formatDateRange, parseDurationDays, computeEndDate } from '@/lib/utils/dates';
+import { formatDateRange, formatDateRangeWithTime, parseDurationDays, computeEndDate } from '@/lib/utils/dates';
 import { EnrollButton } from '@/components/sections/EnrollButton';
 
 export const revalidate = 0;
@@ -96,7 +96,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
                   const days = parseDurationDays(program.duration);
                   const end = program.end_date || (days && days > 1 ? computeEndDate(program.start_date, days).toISOString() : null);
                   return (
-                    <div className="flex items-center gap-3"><Calendar className="h-4 w-4 text-primary" />{formatDateRange(program.start_date, end, locale)}</div>
+                    <div className="flex items-center gap-3"><Calendar className="h-4 w-4 text-primary" />{formatDateRangeWithTime(program.start_date, end, locale)}</div>
                   );
                 })()}
                 {program.duration && (

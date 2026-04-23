@@ -1,6 +1,8 @@
+'use client';
+
 import Link from 'next/link';
-import { Logo } from './Logo';
-import { Instagram, Facebook, Twitter, Linkedin, Youtube } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Instagram, Facebook, Twitter, Linkedin, Youtube, Phone, Mail } from 'lucide-react';
 
 interface FooterProps {
   locale: string;
@@ -9,6 +11,14 @@ interface FooterProps {
 export function Footer({ locale }: FooterProps) {
   const p = (path: string) => `/${locale}${path}`;
   const year = new Date().getFullYear();
+  const [settings, setSettings] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    fetch('/api/settings')
+      .then(r => r.json())
+      .then(data => setSettings(data))
+      .catch(() => {});
+  }, []);
 
   return (
     <footer className="mt-auto border-t bg-foreground text-background">
@@ -59,8 +69,22 @@ export function Footer({ locale }: FooterProps) {
         <div className="space-y-4">
           <h3 className="text-sm font-semibold uppercase tracking-wider text-background/90">Contact</h3>
           <ul className="space-y-2 text-sm text-background/70">
-            <li>info@infinityroleteachers.com</li>
-            <li>+41 XX XXX XX XX</li>
+            <li className="flex items-center gap-2">
+              <Mail className="h-3 w-3" />
+              {settings.contact_email || 'info@infinityroleteachers.com'}
+            </li>
+            {settings.contact_phone && (
+              <li className="flex items-center gap-2">
+                <Phone className="h-3 w-3" />
+                {settings.contact_phone}
+              </li>
+            )}
+            {settings.contact_phone_2 && (
+              <li className="flex items-center gap-2">
+                <Phone className="h-3 w-3" />
+                {settings.contact_phone_2}
+              </li>
+            )}
           </ul>
           <Link
             href={p('/contact')}

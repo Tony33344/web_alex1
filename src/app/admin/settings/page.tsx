@@ -57,7 +57,7 @@ export default function AdminSettingsPage() {
 
   const groups = {
     'General': ['site_name', 'site_description', 'default_currency'],
-    'Contact': ['contact_email', 'contact_phone'],
+    'Contact': ['contact_email', 'contact_phone', 'contact_phone_2'],
     'Social Media': ['social_instagram', 'social_facebook', 'social_twitter', 'social_linkedin', 'social_youtube'],
     'Bank Details': ['bank_company', 'bank_iban', 'bank_bic', 'bank_name'],
   };

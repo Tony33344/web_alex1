@@ -5,6 +5,7 @@ import { PageHeader } from '@/components/shared/PageHeader';
 import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
 import { ContactForm } from './ContactForm';
+import { ContactInfo } from './ContactInfo';
 
 export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -50,37 +51,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
 
           {/* Contact Info Sidebar */}
           <div className="space-y-6 lg:col-span-2">
-            <Card>
-              <CardContent className="space-y-6 pt-6">
-                <div className="flex gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                    <Mail className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold">Email</h4>
-                    <p className="text-sm text-muted-foreground">info@infinityroleteachers.com</p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                    <Phone className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold">Phone</h4>
-                    <p className="text-sm text-muted-foreground">+41 XX XXX XX XX</p>
-                  </div>
-                </div>
-                <div className="flex gap-4">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
-                    <MapPin className="h-5 w-5 text-primary" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-semibold">Address</h4>
-                    <p className="text-sm text-muted-foreground">AMS4EVER AG<br />Switzerland</p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <ContactInfo />
           </div>
         </div>
       </section>

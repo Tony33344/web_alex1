@@ -7,7 +7,7 @@ import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
 import { nl2br } from '@/lib/utils/text';
-import { DonateForm } from '../../donate/DonateForm';
+import { DonateForm } from './DonateForm';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;

@@ -32,6 +32,7 @@ import {
   Minus,
   Youtube as YoutubeIcon,
   Film,
+  Trash2,
   Loader2,
 } from 'lucide-react';
 import { useEffect, useCallback, useRef, useState } from 'react';
@@ -543,6 +544,17 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
           disabled={uploadingVideo}
         >
           {uploadingVideo ? <Loader2 className="h-4 w-4 animate-spin" /> : <Film className="h-4 w-4" />}
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => {
+            if (editor.isActive('video') || editor.isActive('youtube')) {
+              editor.chain().focus().deleteSelection().run();
+            }
+          }}
+          disabled={!(editor.isActive('video') || editor.isActive('youtube'))}
+          title="Remove selected video"
+        >
+          <Trash2 className="h-4 w-4" />
         </ToolbarButton>
         <input
           ref={videoInputRef}

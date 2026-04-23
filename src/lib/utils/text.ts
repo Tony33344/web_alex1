@@ -5,7 +5,7 @@
 export function nl2br(text: string): string {
   if (!text) return '';
   // If text already contains HTML block elements, assume it's formatted HTML
-  if (/<\/?(?:p|div|br|ul|ol|li|h[1-6]|table|blockquote)\b/i.test(text)) {
+  if (/<\/?(?:p|div|br|ul|ol|li|h[1-6]|table|blockquote|video)\b/i.test(text)) {
     return text;
   }
   // Convert double newlines to paragraph breaks, single newlines to <br>
@@ -13,6 +13,15 @@ export function nl2br(text: string): string {
     .split(/\n\n+/)
     .map((paragraph) => `<p>${paragraph.replace(/\n/g, '<br>')}</p>`)
     .join('');
+}
+
+function decodeHtmlEntities(text: string): string {
+  return text
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&amp;/g, '&');
 }
 
 /**
@@ -64,12 +73,14 @@ export function embedVideos(text: string): string {
 export function processContent(text: string): string {
   if (!text) return '';
 
+  const decoded = decodeHtmlEntities(text);
+
   // Preserve explicit HTML content as-is, but still allow embedded media URLs.
-  if (/<\/?(?:p|div|br|ul|ol|li|h[1-6]|table|blockquote|iframe|video)\b/i.test(text)) {
-    return embedVideos(text);
+  if (/<\/?(?:p|div|br|ul|ol|li|h[1-6]|table|blockquote|iframe|video)\b/i.test(decoded)) {
+    return embedVideos(decoded);
   }
 
-  return text
+  return decoded
     .split(/\n\n+/)
     .map((paragraph) => {
       const embedded = embedVideos(paragraph.trim());

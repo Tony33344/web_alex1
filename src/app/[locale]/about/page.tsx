@@ -59,34 +59,37 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   return (
     <>
       {/* Hero Banner */}
-      <div className={`relative overflow-hidden rounded-2xl ${aboutPage?.banner_width === 'contained' ? 'mx-auto max-w-7xl my-6' : ''}`}>
+      <div className={`relative overflow-hidden rounded-2xl ${aboutPage?.banner_width === 'contained' ? 'mx-auto max-w-7xl my-6' : ''}`} style={{ minHeight: aboutPage?.banner_height || '240px' }}>
         {aboutPage?.hero_image_url ? (
           <div className="relative aspect-[21/9]">
             <img src={aboutPage.hero_image_url} alt={pageTitle} className="h-full w-full object-cover" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
-              <h1 className="text-3xl font-bold text-white sm:text-4xl lg:text-5xl tracking-tight">{pageTitle}</h1>
+            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 text-center">
+              <h1 className="text-3xl font-bold text-white sm:text-4xl lg:text-5xl tracking-tight text-center">{pageTitle}</h1>
             </div>
           </div>
         ) : (
           <div
-            className={`p-8 sm:p-12 lg:p-16 ${
+            className={`p-8 sm:p-12 lg:p-16 text-center flex flex-col items-center justify-center ${
               aboutPage?.background_color && aboutPage?.banner_gradient_to
                 ? `bg-gradient-to-br from-[${aboutPage.background_color}] to-[${aboutPage.banner_gradient_to}]`
                 : aboutPage?.background_color
                 ? `bg-[${aboutPage.background_color}]`
                 : 'bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10'
             }`}
-            style={
-              aboutPage?.background_color && aboutPage?.banner_gradient_to
-                ? { background: `linear-gradient(135deg, ${aboutPage.background_color}, ${aboutPage.banner_gradient_to})` }
-                : aboutPage?.background_color
-                ? { backgroundColor: aboutPage.background_color }
-                : undefined
-            }
+            style={{
+              minHeight: aboutPage?.banner_height || '240px',
+              ...(
+                aboutPage?.background_color && aboutPage?.banner_gradient_to
+                  ? { background: `linear-gradient(135deg, ${aboutPage.background_color}, ${aboutPage.banner_gradient_to})` }
+                  : aboutPage?.background_color
+                  ? { backgroundColor: aboutPage.background_color }
+                  : undefined
+              ),
+            }}
           >
-            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">{pageTitle}</h1>
-            {pageContent && <p className="mt-4 text-lg text-muted-foreground">{stripHtml(pageContent)}</p>}
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl text-center">{pageTitle}</h1>
+            {pageContent && <p className="mt-4 text-lg text-muted-foreground text-center">{stripHtml(pageContent)}</p>}
           </div>
         )}
       </div>

@@ -129,7 +129,7 @@ export default function AdminRegistrationsPage() {
     return Array.from(map.values()).sort((a, b) => {
       const da = a.event?.start_date ?? '';
       const db = b.event?.start_date ?? '';
-      return da > db ? -1 : 1;
+      return da < db ? -1 : 1;
     });
   }, [regs]);
 

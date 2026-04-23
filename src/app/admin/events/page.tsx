@@ -13,7 +13,7 @@ export default function AdminEventsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/admin/data?table=events&orderBy=start_date')
+    fetch('/api/admin/data?table=events&orderBy=start_date&orderDir=asc')
       .then(r => r.json()).then(d => { setEvents(Array.isArray(d) ? d : []); setLoading(false); })
       .catch(() => setLoading(false));
   }, []);

@@ -46,7 +46,7 @@ export default async function MembersPage({
   const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : 'Members';
   const content = page ? (getLocalizedField(page, 'content', locale) || page.content_en) : null;
   const surveyCompleted = !!profile.survey_completed_at;
-  const textColor = page?.text_color || '#404040';
+  const textColor = page?.text_color || '#1a1a1a';
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-amber-50 via-background to-background dark:from-amber-950/20 dark:via-background dark:to-background">

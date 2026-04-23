@@ -284,20 +284,20 @@ export default function AdminPageEditPage() {
               </div>
               <div className="space-y-2 rounded-lg border-2 border-slate-300/40 bg-slate-50 p-3 dark:border-slate-700 dark:bg-slate-950/20">
                 <Label className="flex items-center gap-2 text-slate-700 dark:text-slate-200">
-                  <span className="inline-block h-4 w-4 rounded-full border" style={{ backgroundColor: page.text_color || '#404040' }} />
+                  <span className="inline-block h-4 w-4 rounded-full border" style={{ backgroundColor: page.text_color || '#1a1a1a' }} />
                   Text Color
                 </Label>
                 <div className="flex items-center gap-2">
                   <input
                     type="color"
-                    value={page.text_color || '#404040'}
+                    value={page.text_color || '#1a1a1a'}
                     onChange={(e) => updateField('text_color', e.target.value)}
                     className="h-10 w-14 shrink-0 cursor-pointer rounded border bg-transparent"
                   />
                   <Input
                     value={page.text_color || ''}
                     onChange={(e) => updateField('text_color', e.target.value)}
-                    placeholder="#404040"
+                    placeholder="#1a1a1a"
                   />
                   {page.text_color && (
                     <button type="button" onClick={() => updateField('text_color', '')} className="text-xs text-muted-foreground hover:text-foreground">

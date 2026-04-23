@@ -25,7 +25,7 @@ export default async function DisclaimerPage({ params }: { params: Promise<{ loc
 
   const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : 'Disclaimer';
   const content = page ? (getLocalizedField(page, 'content', locale) || page.content_en) : null;
-  const textColor = page?.text_color || '#404040';
+  const textColor = page?.text_color || '#1a1a1a';
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">

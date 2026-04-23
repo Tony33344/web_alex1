@@ -33,7 +33,7 @@ export default async function TeacherDetailPage({ params }: { params: Promise<{ 
   const title = getLocalizedField(teacher, 'title', locale) || 'Role Teacher';
   const bio = getLocalizedField(teacher, 'bio', locale) || '';
   const galleryImages = await getGalleryImages('teacher', teacher.id);
-  const contentTextColor = '#404040';
+  const contentTextColor = '#1a1a1a';
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">

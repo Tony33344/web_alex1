@@ -27,7 +27,7 @@ export default async function MissionPage({ params }: { params: Promise<{ locale
 
   const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : 'Our Mission';
   const content = page ? (getLocalizedField(page, 'content', locale) || page.content_en) : null;
-  const textColor = page?.text_color || '#404040';
+  const textColor = page?.text_color || '#1a1a1a';
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">

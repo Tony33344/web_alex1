@@ -57,7 +57,6 @@ export function PaymentSuccessBanner({
       params.delete('session_id');
       const query = params.toString();
       router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
-      router.refresh();
     }
 
     verifyAndCleanup();

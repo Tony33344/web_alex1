@@ -18,6 +18,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const requestUrl = new URL(request.url);
+    const appUrl = requestUrl.origin || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
     const { eventId, paymentMethod } = await request.json();
 
     if (!eventId) {
@@ -121,7 +123,6 @@ export async function POST(request: Request) {
         await adminSupabase.from('profiles').update({ stripe_customer_id: customerId }).eq('id', user.id);
       }
 
-      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
       const stripeMetadata = { user_id: user.id, event_id: eventId, type: 'event' };
       const successUrl = `${appUrl}/en/events?payment=success&session_id={CHECKOUT_SESSION_ID}`;
       const cancelUrl = `${appUrl}/en/events?payment=cancelled`;

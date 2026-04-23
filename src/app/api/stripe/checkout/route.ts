@@ -12,6 +12,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const requestUrl = new URL(request.url);
+    const appUrl = requestUrl.origin || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
     const { plan, planId, locale = 'en' } = await request.json();
 
     // Fetch the membership plan from database — prefer planId, fallback to plan_type
@@ -60,7 +62,6 @@ export async function POST(request: Request) {
         .eq('id', user.id);
     }
 
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
     const stripeMetadata = { user_id: user.id, plan, type: 'membership', plan_id: membershipPlan.id };
     // {CHECKOUT_SESSION_ID} is a Stripe placeholder replaced on redirect; lets us verify and activate without a webhook
     const successUrl = `${appUrl}/${locale}/members?subscription=success&session_id={CHECKOUT_SESSION_ID}`;

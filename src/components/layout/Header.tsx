@@ -22,6 +22,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/
 interface HeaderProps {
   locale: string;
   logoUrl?: string;
+  programs?: { slug: string; label: string }[];
 }
 
 const healthLinks = [
@@ -33,13 +34,14 @@ const healthLinks = [
   { key: 'acupressura', slug: 'acupressura' },
 ];
 
-const programLinks = [
+const defaultProgramLinks = [
   { label: 'Sunyoga Coach Training', slug: 'sunyoga-training' },
   { label: 'Acupressure Coach Training', slug: 'acupresura-training' },
   { label: 'Awaken Your Inner Compass', slug: 'awaken-inner-compass' },
 ];
 
-export function Header({ locale, logoUrl }: HeaderProps) {
+export function Header({ locale, logoUrl, programs }: HeaderProps) {
+  const programLinks = programs && programs.length > 0 ? programs : defaultProgramLinks;
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();

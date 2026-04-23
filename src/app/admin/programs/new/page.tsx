@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { RichTextEditor } from '@/components/admin/RichTextEditor';
 import { Card, CardContent } from '@/components/ui/card';
 import { ImageUpload } from '@/components/admin/ImageUpload';
+import { parseDurationDays, computeEndDate } from '@/lib/utils/dates';
 
 export default function NewProgramPage() {
   const router = useRouter();
@@ -23,13 +24,23 @@ export default function NewProgramPage() {
     const fd = new FormData(e.currentTarget);
     const slug = (fd.get('name_en') as string).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 
+    const startStr = (fd.get('start_date') as string) || '';
+    let endStr = (fd.get('end_date') as string) || '';
+    if (!endStr && startStr) {
+      const days = parseDurationDays(fd.get('duration') as string | null);
+      if (days && days > 1) {
+        endStr = computeEndDate(startStr, days).toISOString().slice(0, 16);
+      }
+    }
+
     const res = await fetch('/api/admin/data', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ table: 'programs', data: {
         slug, name_en: fd.get('name_en'), name_de: fd.get('name_de') || null,
         description_en: fd.get('description_en') || null,
         duration: fd.get('duration') || null,
-        start_date: fd.get('start_date') || null,
+        start_date: startStr || null,
+        end_date: endStr || null,
         price: parseFloat(fd.get('price') as string) || null,
         stripe_price_id: fd.get('stripe_price_id') || null,
         max_participants: parseInt(fd.get('max_participants') as string) || null,
@@ -77,6 +88,10 @@ export default function NewProgramPage() {
               <div className="space-y-2">
                 <Label htmlFor="start_date">Start Date</Label>
                 <Input id="start_date" name="start_date" type="datetime-local" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="end_date">End Date <span className="text-xs text-muted-foreground font-normal">(auto from duration if empty)</span></Label>
+                <Input id="end_date" name="end_date" type="datetime-local" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="max_participants">Max Participants</Label>

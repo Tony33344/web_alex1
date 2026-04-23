@@ -9,6 +9,7 @@ import { GalleryGrid } from '@/components/shared/GalleryGrid';
 import { getProgram } from '@/lib/queries/programs';
 import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
+import { formatDateRange, parseDurationDays, computeEndDate } from '@/lib/utils/dates';
 import { EnrollButton } from '@/components/sections/EnrollButton';
 
 export const revalidate = 0;
@@ -91,9 +92,13 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
             <CardContent className="space-y-4 pt-6">
               <div className="text-3xl font-bold text-primary">{priceLabel}</div>
               <div className="space-y-3 text-sm text-muted-foreground">
-                {program.start_date && (
-                  <div className="flex items-center gap-3"><Calendar className="h-4 w-4 text-primary" />{new Date(program.start_date).toLocaleDateString(locale, { dateStyle: 'long' })}</div>
-                )}
+                {program.start_date && (() => {
+                  const days = parseDurationDays(program.duration);
+                  const end = program.end_date || (days && days > 1 ? computeEndDate(program.start_date, days).toISOString() : null);
+                  return (
+                    <div className="flex items-center gap-3"><Calendar className="h-4 w-4 text-primary" />{formatDateRange(program.start_date, end, locale)}</div>
+                  );
+                })()}
                 {program.duration && (
                   <div className="flex items-start gap-3"><Clock className="mt-0.5 h-4 w-4 shrink-0 text-primary" /><span className="whitespace-pre-line">{program.duration}</span></div>
                 )}

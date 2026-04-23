@@ -10,6 +10,7 @@ import { getPrograms } from '@/lib/queries/programs';
 import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
 import { createBriefDescription } from '@/lib/utils/html';
+import { formatDateRange, parseDurationDays, computeEndDate } from '@/lib/utils/dates';
 
 interface CoachTrainingPageProps {
   params: Promise<{ locale: string }>;
@@ -78,9 +79,13 @@ export default async function CoachTrainingPage({ params, searchParams }: CoachT
                       </div>
                       <p className="mt-3 text-muted-foreground line-clamp-3">{createBriefDescription(description, 200)}</p>
                       <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">
-                        {program.start_date && (
-                          <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" />{new Date(program.start_date).toLocaleDateString(locale, { dateStyle: 'medium' })}</span>
-                        )}
+                        {program.start_date && (() => {
+                          const days = parseDurationDays(program.duration);
+                          const end = program.end_date || (days && days > 1 ? computeEndDate(program.start_date, days).toISOString() : null);
+                          return (
+                            <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" />{formatDateRange(program.start_date, end, locale)}</span>
+                          );
+                        })()}
                         {program.duration && (
                           <span className="flex items-start gap-1.5"><Clock className="mt-0.5 h-4 w-4 shrink-0" /><span className="whitespace-pre-line">{program.duration}</span></span>
                         )}

@@ -31,39 +31,32 @@ function decodeHtmlEntities(text: string): string {
 export function embedVideos(text: string): string {
   if (!text) return '';
 
-  // Match YouTube URLs (various formats)
-  const youtubePattern = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/i;
+  // If text already contains embedded video/iframe tags, leave them alone.
+  // This prevents re-wrapping URLs that are already inside src="..." attributes.
+  if (/<(?:video|iframe)\b/i.test(text)) {
+    return text;
+  }
 
-  // Match Supabase storage video URLs
-  const supabasePattern = /https?:\/\/[a-zA-Z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/[^\s<>"]+/i;
+  // Match YouTube URLs (various formats) — only when preceded by whitespace, `>`, or start
+  const youtubePattern = /(^|[\s>])((?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)[a-zA-Z0-9_-]{11})/gi;
 
-  // Match direct video URLs
-  const videoPattern = /https?:\/\/[^\s<>"]+\.(?:mp4|webm|ogg|mov)(?:\?[^\s<>"]*)?/i;
+  // Match Supabase storage video URLs — only bare URLs (not inside attributes)
+  const supabasePattern = /(^|[\s>])(https?:\/\/[a-zA-Z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/[^\s<>"]+)/gi;
 
-  const withYouTube = text.replace(youtubePattern, (_match, videoId) => {
-    return `<iframe
-      class="my-4 aspect-video w-full max-w-3xl rounded-lg"
-      src="https://www.youtube.com/embed/${videoId}"
-      title="YouTube video player"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-      allowfullscreen
-    ></iframe>`;
+  // Match direct video URLs — only bare URLs
+  const videoPattern = /(^|[\s>])(https?:\/\/[^\s<>"]+\.(?:mp4|webm|ogg|mov)(?:\?[^\s<>"]*)?)/gi;
+
+  const withYouTube = text.replace(youtubePattern, (_match, prefix, url) => {
+    const videoId = url.match(/([a-zA-Z0-9_-]{11})$/)?.[1] || '';
+    return `${prefix}<iframe class="my-4 aspect-video w-full max-w-3xl rounded-lg" src="https://www.youtube.com/embed/${videoId}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
   });
 
-  const withSupabase = withYouTube.replace(supabasePattern, (url) => {
-    return `<video controls class="my-4 aspect-video w-full max-w-3xl rounded-lg" preload="metadata">
-      <source src="${url}" type="video/mp4">
-      Your browser does not support the video tag. <a href="${url}" target="_blank" rel="noopener noreferrer">Click here to view the video</a>.
-    </video>`;
-  });
+  const videoTag = (url: string) =>
+    `<video controls class="my-4 aspect-video w-full max-w-3xl rounded-lg" preload="metadata"><source src="${url}" type="video/mp4">Your browser does not support the video tag. <a href="${url}" target="_blank" rel="noopener noreferrer">Click here to view the video</a>.</video>`;
 
-  return withSupabase.replace(videoPattern, (url) => {
-    return `<video controls class="my-4 aspect-video w-full max-w-3xl rounded-lg" preload="metadata">
-      <source src="${url}" type="video/mp4">
-      Your browser does not support the video tag. <a href="${url}" target="_blank" rel="noopener noreferrer">Click here to view the video</a>.
-    </video>`;
-  });
+  const withSupabase = withYouTube.replace(supabasePattern, (_m, prefix, url) => `${prefix}${videoTag(url)}`);
+
+  return withSupabase.replace(videoPattern, (_m, prefix, url) => `${prefix}${videoTag(url)}`);
 }
 
 /**

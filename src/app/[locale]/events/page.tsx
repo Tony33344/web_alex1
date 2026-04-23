@@ -82,7 +82,7 @@ export default async function EventsPage({ params, searchParams }: EventsPagePro
                           <div className="flex items-center gap-2"><Users className="h-4 w-4" />{spotsLeft > 0 ? `${spotsLeft} spots left` : t('common.eventFull')}</div>
                         )}
                       </div>
-                      <Button className="w-full">{t('common.registerNow')}</Button>
+                      <Button className="w-full">{t('common.enrollNow')}</Button>
                     </CardContent>
                   </Card>
                 </Link>

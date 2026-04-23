@@ -93,7 +93,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
               <EventRegisterButton
                 eventId={event.id}
                 locale={locale}
-                label={t('common.registerNow')}
+                label={t('common.enrollNow')}
                 isFree={!event.price || event.price <= 0}
                 isFull={!!(event.max_attendees && event.current_attendees >= event.max_attendees)}
                 price={event.price}

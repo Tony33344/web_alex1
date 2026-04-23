@@ -29,6 +29,7 @@ export default function NewProgramPage() {
         slug, name_en: fd.get('name_en'), name_de: fd.get('name_de') || null,
         description_en: fd.get('description_en') || null,
         duration: fd.get('duration') || null,
+        start_date: fd.get('start_date') || null,
         price: parseFloat(fd.get('price') as string) || null,
         stripe_price_id: fd.get('stripe_price_id') || null,
         max_participants: parseInt(fd.get('max_participants') as string) || null,
@@ -72,6 +73,10 @@ export default function NewProgramPage() {
               <div className="space-y-2">
                 <Label htmlFor="duration">Duration</Label>
                 <Input id="duration" name="duration" placeholder="e.g. 6 months" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="start_date">Start Date</Label>
+                <Input id="start_date" name="start_date" type="datetime-local" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="max_participants">Max Participants</Label>

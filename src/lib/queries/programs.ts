@@ -7,6 +7,7 @@ export async function getPrograms(): Promise<Program[]> {
     .from('programs')
     .select('*')
     .eq('is_active', true)
+    .order('start_date', { ascending: true, nullsFirst: false })
     .order('display_order', { ascending: true });
 
   if (error) {

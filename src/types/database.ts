@@ -185,6 +185,7 @@ export interface Program {
   image_url: string | null;
   cover_image_url: string | null;
   duration: string | null;
+  start_date: string | null;
   price: number | null;
   currency: string;
   stripe_price_id: string | null;

@@ -188,6 +188,9 @@ export interface Program {
   start_date: string | null;
   end_date: string | null;
   price: number | null;
+  early_bird_price: number | null;
+  early_bird_deadline: string | null;
+  early_bird_stripe_price_id: string | null;
   currency: string;
   stripe_price_id: string | null;
   max_participants: number | null;
@@ -238,6 +241,9 @@ export interface Event {
   is_online: boolean;
   online_link: string | null;
   price: number | null;
+  early_bird_price: number | null;
+  early_bird_deadline: string | null;
+  early_bird_stripe_price_id: string | null;
   currency: string;
   stripe_price_id: string | null;
   max_attendees: number | null;

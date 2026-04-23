@@ -39,6 +39,9 @@ export default function NewEventPage() {
         is_online: fd.get('is_online') === 'on',
         price: parseFloat(fd.get('price') as string) || null,
         stripe_price_id: fd.get('stripe_price_id') || null,
+        early_bird_price: parseFloat(fd.get('early_bird_price') as string) || null,
+        early_bird_deadline: fd.get('early_bird_deadline') || null,
+        early_bird_stripe_price_id: fd.get('early_bird_stripe_price_id') || null,
         max_attendees: parseInt(fd.get('max_attendees') as string) || null,
         is_published: fd.get('is_published') === 'on',
         is_featured: fd.get('is_featured') === 'on',
@@ -130,6 +133,26 @@ export default function NewEventPage() {
               <div className="space-y-2">
                 <Label htmlFor="max_attendees">Max Attendees</Label>
                 <Input id="max_attendees" name="max_attendees" type="number" />
+              </div>
+            </div>
+            <div className="rounded-lg border-2 border-amber-300/40 bg-amber-50 p-4 dark:border-amber-800/50 dark:bg-amber-950/20 space-y-3">
+              <div>
+                <Label className="text-amber-900 dark:text-amber-200">Early-bird discount <span className="text-xs font-normal text-muted-foreground">(optional)</span></Label>
+                <p className="text-xs text-muted-foreground">If set and the deadline is still in the future, visitors see the discounted price with a strikethrough original.</p>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="space-y-2">
+                  <Label htmlFor="early_bird_price" className="text-xs">Early-bird price</Label>
+                  <Input id="early_bird_price" name="early_bird_price" type="number" step="0.01" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="early_bird_deadline" className="text-xs">Deadline</Label>
+                  <Input id="early_bird_deadline" name="early_bird_deadline" type="datetime-local" />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="early_bird_stripe_price_id" className="text-xs">Stripe Price ID (early-bird)</Label>
+                  <Input id="early_bird_stripe_price_id" name="early_bird_stripe_price_id" placeholder="price_..." />
+                </div>
               </div>
             </div>
             <div className="flex flex-wrap gap-6">

@@ -55,6 +55,9 @@ export default function EditProgramPage() {
         end_date: endStr || null,
         price: parseFloat(fd.get('price') as string) || null,
         stripe_price_id: fd.get('stripe_price_id') || null,
+        early_bird_price: parseFloat(fd.get('early_bird_price') as string) || null,
+        early_bird_deadline: fd.get('early_bird_deadline') || null,
+        early_bird_stripe_price_id: fd.get('early_bird_stripe_price_id') || null,
         max_participants: parseInt(fd.get('max_participants') as string) || null,
         image_url: fd.get('image_url') || null,
         what_you_learn: (fd.get('what_you_learn') as string).split('\n').map((s: string) => s.trim()).filter(Boolean),
@@ -121,6 +124,26 @@ export default function EditProgramPage() {
               <div className="space-y-2">
                 <Label htmlFor="stripe_price_id">Stripe Price ID</Label>
                 <Input id="stripe_price_id" name="stripe_price_id" placeholder="price_..." defaultValue={program.stripe_price_id || ''} />
+              </div>
+            </div>
+            <div className="rounded-lg border-2 border-amber-300/40 bg-amber-50 p-4 dark:border-amber-800/50 dark:bg-amber-950/20 space-y-3">
+              <div>
+                <Label className="text-amber-900 dark:text-amber-200">Early-bird discount <span className="text-xs font-normal text-muted-foreground">(optional)</span></Label>
+                <p className="text-xs text-muted-foreground">If set and the deadline is still in the future, visitors see the discounted price with a strikethrough original.</p>
+              </div>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div className="space-y-2">
+                  <Label htmlFor="early_bird_price" className="text-xs">Early-bird price</Label>
+                  <Input id="early_bird_price" name="early_bird_price" type="number" step="0.01" defaultValue={program.early_bird_price ?? ''} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="early_bird_deadline" className="text-xs">Deadline</Label>
+                  <Input id="early_bird_deadline" name="early_bird_deadline" type="datetime-local" defaultValue={program.early_bird_deadline ? program.early_bird_deadline.slice(0, 16) : ''} />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="early_bird_stripe_price_id" className="text-xs">Stripe Price ID (early-bird)</Label>
+                  <Input id="early_bird_stripe_price_id" name="early_bird_stripe_price_id" placeholder="price_..." defaultValue={program.early_bird_stripe_price_id || ''} />
+                </div>
               </div>
             </div>
             <div className="space-y-2">

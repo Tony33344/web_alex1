@@ -11,6 +11,8 @@ import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
 import { createBriefDescription } from '@/lib/utils/html';
 import { formatDateRange, parseDurationDays, computeEndDate } from '@/lib/utils/dates';
+import { getActivePricing } from '@/lib/utils/pricing';
+import { PriceTag } from '@/components/shared/PriceTag';
 
 interface CoachTrainingPageProps {
   params: Promise<{ locale: string }>;
@@ -59,7 +61,7 @@ export default async function CoachTrainingPage({ params, searchParams }: CoachT
             {programs.map((program) => {
               const name = getLocalizedField(program, 'name', locale) || program.name_en;
               const description = getLocalizedField(program, 'description', locale) || '';
-              const priceLabel = program.price ? `${program.currency} ${program.price}` : t('common.free');
+              const pricing = getActivePricing(program);
 
               return (
                 <Card key={program.slug} className="overflow-hidden">
@@ -75,7 +77,7 @@ export default async function CoachTrainingPage({ params, searchParams }: CoachT
                           {program.is_featured && <Badge className="mb-3 bg-secondary text-secondary-foreground">Featured Program</Badge>}
                           <CardTitle className="text-2xl">{name}</CardTitle>
                         </div>
-                        <span className="shrink-0 whitespace-nowrap text-2xl font-bold text-primary">{priceLabel}</span>
+                        <PriceTag pricing={pricing} freeLabel={t('common.free')} locale={locale} size="lg" />
                       </div>
                       <p className="mt-3 text-muted-foreground line-clamp-3">{createBriefDescription(description, 200)}</p>
                       <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">

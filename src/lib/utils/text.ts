@@ -16,20 +16,46 @@ export function nl2br(text: string): string {
 }
 
 /**
- * Embed video URLs as HTML video tags.
- * Supports MP4 videos from Supabase storage and other direct video URLs.
+ * Embed video URLs as HTML video tags or YouTube iframes.
+ * Supports YouTube URLs and MP4 videos from Supabase storage and other direct video URLs.
  */
 export function embedVideos(text: string): string {
   if (!text) return '';
   
-  // Match video URLs (MP4, WebM, OGG) from Supabase storage and other sources
-  // Pattern matches URLs ending with video extensions
+  // Match YouTube URLs (various formats)
+  const youtubePattern = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/gi;
+  
+  // Match Supabase storage video URLs
+  const supabasePattern = /(https?:\/\/[a-zA-Z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/[^\s<>"]+)/gi;
+  
+  // Match video URLs (MP4, WebM, OGG) from other sources
   const videoPattern = /(https?:\/\/[^\s<>"]+\.(?:mp4|webm|ogg|mov)(?:\?[^\s<>"]*)?)/gi;
   
-  return text.replace(videoPattern, (url) => {
-    return `<video controls class="w-full max-w-3xl rounded-lg my-4" preload="metadata">
+  // First handle YouTube URLs
+  text = text.replace(youtubePattern, (match, videoId) => {
+    return `<iframe
+      class="w-full max-w-3xl rounded-lg my-4 aspect-video"
+      src="https://www.youtube.com/embed/${videoId}"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+    ></iframe>`;
+  });
+  
+  // Then handle Supabase storage URLs with proper video tag
+  text = text.replace(supabasePattern, (url) => {
+    return `<video controls class="w-full max-w-3xl rounded-lg my-4 aspect-video" preload="metadata">
       <source src="${url}" type="video/mp4">
-      Your browser does not support the video tag.
+      Your browser does not support the video tag. <a href="${url}" target="_blank" rel="noopener noreferrer">Click here to view the video</a>.
+    </video>`;
+  });
+  
+  // Then handle direct video URLs
+  return text.replace(videoPattern, (url) => {
+    return `<video controls class="w-full max-w-3xl rounded-lg my-4 aspect-video" preload="metadata">
+      <source src="${url}" type="video/mp4">
+      Your browser does not support the video tag. <a href="${url}" target="_blank" rel="noopener noreferrer">Click here to view the video</a>.
     </video>`;
   });
 }

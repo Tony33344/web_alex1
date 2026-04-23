@@ -32,6 +32,7 @@ export async function POST(request: Request) {
       const type = session.metadata?.type;
       const eventId = session.metadata?.event_id;
       const programId = session.metadata?.program_id;
+      const message = session.metadata?.message;
 
       // Subscription payment (membership)
       if ((type === 'membership' || !type) && userId && session.subscription) {
@@ -74,6 +75,21 @@ export async function POST(request: Request) {
           })
           .eq('program_id', programId)
           .eq('user_id', userId);
+      }
+
+      // One-time donation payment
+      if (type === 'donation' && userId) {
+        await supabase
+          .from('donations')
+          .update({
+            payment_status: 'paid',
+            stripe_payment_intent_id: session.payment_intent as string || null,
+            paid_at: new Date().toISOString(),
+          })
+          .eq('user_id', userId)
+          .eq('payment_status', 'pending')
+          .order('created_at', { ascending: false })
+          .limit(1);
       }
 
       break;

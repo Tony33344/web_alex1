@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { Instagram, Facebook, Twitter, Linkedin, Youtube, Phone, Mail } from 'lucide-react';
+import { Instagram, Facebook, Twitter, Linkedin, Youtube, Phone, Mail, Heart } from 'lucide-react';
 
 interface FooterProps {
   locale: string;
@@ -86,12 +86,21 @@ export function Footer({ locale }: FooterProps) {
               </li>
             )}
           </ul>
-          <Link
-            href={p('/contact')}
-            className="inline-block rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/90"
-          >
-            Contact Us
-          </Link>
+          <div className="flex gap-2">
+            <Link
+              href={p('/donate')}
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
+            >
+              <Heart className="h-4 w-4" />
+              Donate
+            </Link>
+            <Link
+              href={p('/contact')}
+              className="inline-block rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/90"
+            >
+              Contact Us
+            </Link>
+          </div>
         </div>
       </div>
 

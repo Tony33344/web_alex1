@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { ArrowLeft, Clock, Users, Award, Check } from 'lucide-react';
+import { ArrowLeft, Clock, Users, Award, Check, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
@@ -91,8 +91,11 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
             <CardContent className="space-y-4 pt-6">
               <div className="text-3xl font-bold text-primary">{priceLabel}</div>
               <div className="space-y-3 text-sm text-muted-foreground">
+                {program.start_date && (
+                  <div className="flex items-center gap-3"><Calendar className="h-4 w-4 text-primary" />{new Date(program.start_date).toLocaleDateString(locale, { dateStyle: 'long' })}</div>
+                )}
                 {program.duration && (
-                  <div className="flex items-center gap-3"><Clock className="h-4 w-4 text-primary" />{program.duration}</div>
+                  <div className="flex items-start gap-3"><Clock className="mt-0.5 h-4 w-4 shrink-0 text-primary" /><span className="whitespace-pre-line">{program.duration}</span></div>
                 )}
                 {program.max_participants && (
                   <div className="flex items-center gap-3"><Users className="h-4 w-4 text-primary" />Max {program.max_participants} participants</div>

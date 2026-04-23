@@ -72,7 +72,7 @@ export default function NewProgramPage() {
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="duration">Duration</Label>
-                <Input id="duration" name="duration" placeholder="e.g. 6 months" />
+                <Textarea id="duration" name="duration" rows={3} placeholder="e.g. 6 months&#10;2 days, 11. & 12. July" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="start_date">Start Date</Label>

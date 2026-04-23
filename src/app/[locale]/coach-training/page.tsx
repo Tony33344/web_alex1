@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
-import { ArrowRight, Clock, Users, Award, XCircle } from 'lucide-react';
+import { ArrowRight, Clock, Users, Award, XCircle, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -78,8 +78,11 @@ export default async function CoachTrainingPage({ params, searchParams }: CoachT
                       </div>
                       <p className="mt-3 text-muted-foreground line-clamp-3">{createBriefDescription(description, 200)}</p>
                       <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">
+                        {program.start_date && (
+                          <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" />{new Date(program.start_date).toLocaleDateString(locale, { dateStyle: 'medium' })}</span>
+                        )}
                         {program.duration && (
-                          <span className="flex items-center gap-1.5"><Clock className="h-4 w-4" />{program.duration}</span>
+                          <span className="flex items-start gap-1.5"><Clock className="mt-0.5 h-4 w-4 shrink-0" /><span className="whitespace-pre-line">{program.duration}</span></span>
                         )}
                         {program.max_participants && (
                           <span className="flex items-center gap-1.5"><Users className="h-4 w-4" />Max {program.max_participants} participants</span>

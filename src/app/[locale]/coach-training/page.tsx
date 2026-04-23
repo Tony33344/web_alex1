@@ -74,7 +74,7 @@ export default async function CoachTrainingPage({ params, searchParams }: CoachT
                           {program.is_featured && <Badge className="mb-3 bg-secondary text-secondary-foreground">Featured Program</Badge>}
                           <CardTitle className="text-2xl">{name}</CardTitle>
                         </div>
-                        <span className="text-2xl font-bold text-primary">{priceLabel}</span>
+                        <span className="shrink-0 whitespace-nowrap text-2xl font-bold text-primary">{priceLabel}</span>
                       </div>
                       <p className="mt-3 text-muted-foreground line-clamp-3">{createBriefDescription(description, 200)}</p>
                       <div className="mt-4 flex flex-wrap gap-4 text-sm text-muted-foreground">

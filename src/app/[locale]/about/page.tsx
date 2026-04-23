@@ -3,9 +3,13 @@ import { getTranslations } from 'next-intl/server';
 import { ArrowRight, Target, Compass, Heart, HandHeart } from 'lucide-react';
 import Link from 'next/link';
 import { Card, CardContent } from '@/components/ui/card';
-import { PageHeader } from '@/components/shared/PageHeader';
 import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
+
+function stripHtml(html: string): string {
+  if (!html) return '';
+  return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
+}
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
@@ -54,16 +58,40 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
 
   return (
     <>
-      <PageHeader
-        title={pageTitle}
-        subtitle={pageContent}
-        backgroundColor={aboutPage?.background_color}
-        gradientTo={aboutPage?.banner_gradient_to}
-        width={aboutPage?.banner_width}
-        height={aboutPage?.banner_height}
-      />
+      {/* Hero Banner */}
+      <div className={`relative overflow-hidden rounded-2xl ${aboutPage?.banner_width === 'contained' ? 'mx-auto max-w-7xl my-6' : ''}`}>
+        {aboutPage?.hero_image_url ? (
+          <div className="relative aspect-[21/9]">
+            <img src={aboutPage.hero_image_url} alt={pageTitle} className="h-full w-full object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10">
+              <h1 className="text-3xl font-bold text-white sm:text-4xl lg:text-5xl tracking-tight">{pageTitle}</h1>
+            </div>
+          </div>
+        ) : (
+          <div
+            className={`p-8 sm:p-12 lg:p-16 ${
+              aboutPage?.background_color && aboutPage?.banner_gradient_to
+                ? `bg-gradient-to-br from-[${aboutPage.background_color}] to-[${aboutPage.banner_gradient_to}]`
+                : aboutPage?.background_color
+                ? `bg-[${aboutPage.background_color}]`
+                : 'bg-gradient-to-br from-primary/10 via-primary/5 to-secondary/10'
+            }`}
+            style={
+              aboutPage?.background_color && aboutPage?.banner_gradient_to
+                ? { background: `linear-gradient(135deg, ${aboutPage.background_color}, ${aboutPage.banner_gradient_to})` }
+                : aboutPage?.background_color
+                ? { backgroundColor: aboutPage.background_color }
+                : undefined
+            }
+          >
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">{pageTitle}</h1>
+            {pageContent && <p className="mt-4 text-lg text-muted-foreground">{stripHtml(pageContent)}</p>}
+          </div>
+        )}
+      </div>
 
-      <section className="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+      <section className="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="grid gap-8 md:grid-cols-2">
           {cards.map((card) => {
             const Icon = card.icon;

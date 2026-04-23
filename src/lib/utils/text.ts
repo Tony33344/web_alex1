@@ -21,43 +21,39 @@ export function nl2br(text: string): string {
  */
 export function embedVideos(text: string): string {
   if (!text) return '';
-  
+
   // Match YouTube URLs (various formats)
-  const youtubePattern = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/gi;
-  
+  const youtubePattern = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/i;
+
   // Match Supabase storage video URLs
-  const supabasePattern = /(https?:\/\/[a-zA-Z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/[^\s<>"]+)/gi;
-  
-  // Match video URLs (MP4, WebM, OGG) from other sources
-  const videoPattern = /(https?:\/\/[^\s<>"]+\.(?:mp4|webm|ogg|mov)(?:\?[^\s<>"]*)?)/gi;
-  
-  // First handle YouTube URLs
-  text = text.replace(youtubePattern, (match, videoId) => {
-    return `<iframe
-      class="w-full max-w-3xl rounded-lg my-4 aspect-video"
-      src="https://www.youtube.com/embed/${videoId}"
-      title="YouTube video player"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-      allowfullscreen
-    ></iframe>`;
-  });
-  
-  // Then handle Supabase storage URLs with proper video tag
-  text = text.replace(supabasePattern, (url) => {
-    return `<video controls class="w-full max-w-3xl rounded-lg my-4 aspect-video" preload="metadata">
-      <source src="${url}" type="video/mp4">
-      Your browser does not support the video tag. <a href="${url}" target="_blank" rel="noopener noreferrer">Click here to view the video</a>.
+  const supabasePattern = /https?:\/\/[a-zA-Z0-9-]+\.supabase\.co\/storage\/v1\/object\/public\/[^\s<>"]+/i;
+
+  // Match direct video URLs
+  const videoPattern = /https?:\/\/[^\s<>"]+\.(?:mp4|webm|ogg|mov)(?:\?[^\s<>"]*)?/i;
+
+  if (youtubePattern.test(text)) {
+    const match = text.match(youtubePattern);
+    if (match?.[1]) {
+      return `<iframe
+        class="my-4 aspect-video w-full max-w-3xl rounded-lg"
+        src="https://www.youtube.com/embed/${match[1]}"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+      ></iframe>`;
+    }
+  }
+
+  const videoUrl = text.match(supabasePattern)?.[0] || text.match(videoPattern)?.[0];
+  if (videoUrl) {
+    return `<video controls class="my-4 aspect-video w-full max-w-3xl rounded-lg" preload="metadata">
+      <source src="${videoUrl}" type="video/mp4">
+      Your browser does not support the video tag. <a href="${videoUrl}" target="_blank" rel="noopener noreferrer">Click here to view the video</a>.
     </video>`;
-  });
-  
-  // Then handle direct video URLs
-  return text.replace(videoPattern, (url) => {
-    return `<video controls class="w-full max-w-3xl rounded-lg my-4 aspect-video" preload="metadata">
-      <source src="${url}" type="video/mp4">
-      Your browser does not support the video tag. <a href="${url}" target="_blank" rel="noopener noreferrer">Click here to view the video</a>.
-    </video>`;
-  });
+  }
+
+  return text;
 }
 
 /**
@@ -66,10 +62,20 @@ export function embedVideos(text: string): string {
  */
 export function processContent(text: string): string {
   if (!text) return '';
-  
-  // First embed videos
-  const withVideos = embedVideos(text);
-  
-  // Then apply nl2br
-  return nl2br(withVideos);
+
+  // Preserve explicit HTML content as-is, but still allow embedded media URLs.
+  if (/<\/?(?:p|div|br|ul|ol|li|h[1-6]|table|blockquote|iframe|video)\b/i.test(text)) {
+    return embedVideos(text);
+  }
+
+  const lines = text.split(/\n+/).map((line) => line.trim());
+
+  return lines
+    .filter(Boolean)
+    .map((line) => {
+      const embedded = embedVideos(line);
+      if (embedded !== line) return embedded;
+      return `<p>${line.replace(/\n/g, '<br>')}</p>`;
+    })
+    .join('');
 }

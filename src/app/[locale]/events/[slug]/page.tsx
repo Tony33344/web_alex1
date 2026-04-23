@@ -10,7 +10,6 @@ import { GalleryGrid } from '@/components/shared/GalleryGrid';
 import { getEvent } from '@/lib/queries/events';
 import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
-import { nl2br } from '@/lib/utils/text';
 import { EventRegisterButton } from '@/components/sections/EventRegisterButton';
 import { ExpandableContent } from '@/components/shared/ExpandableContent';
 

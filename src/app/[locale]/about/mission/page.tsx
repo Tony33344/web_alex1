@@ -6,7 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
-import { nl2br } from '@/lib/utils/text';
+import { processContent } from '@/lib/utils/text';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
@@ -68,7 +68,7 @@ export default async function MissionPage({ params }: { params: Promise<{ locale
             <div className="lg:col-span-2">
               <div
                 className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground"
-                dangerouslySetInnerHTML={{ __html: nl2br(content) }}
+                dangerouslySetInnerHTML={{ __html: processContent(content) }}
               />
             </div>
             <div className="space-y-4">

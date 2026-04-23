@@ -12,7 +12,6 @@ import { getFeaturedEvent, getEvents } from '@/lib/queries/events';
 import { getHealthCategories } from '@/lib/queries/health';
 import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
-import { nl2br } from '@/lib/utils/text';
 import { processHtmlContent, createBriefDescription } from '@/lib/utils/html';
 import { NewsletterSection } from '@/components/sections/NewsletterSection';
 

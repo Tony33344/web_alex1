@@ -9,7 +9,7 @@ import { GalleryGrid } from '@/components/shared/GalleryGrid';
 import { getTeacher } from '@/lib/queries/teachers';
 import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
-import { nl2br } from '@/lib/utils/text';
+import { processContent } from '@/lib/utils/text';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
@@ -54,7 +54,7 @@ export default async function TeacherDetailPage({ params }: { params: Promise<{ 
             <h1 className="text-3xl font-bold">{teacher.name}</h1>
             <p className="text-primary text-lg">{title}</p>
             {bio ? (
-              <div dangerouslySetInnerHTML={{ __html: nl2br(bio) }} />
+              <div dangerouslySetInnerHTML={{ __html: processContent(bio) }} />
             ) : (
               <p>Full biography coming soon.</p>
             )}

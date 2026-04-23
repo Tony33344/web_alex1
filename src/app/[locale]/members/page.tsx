@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
-import { nl2br } from '@/lib/utils/text';
+import { processContent } from '@/lib/utils/text';
 import { verifyAndActivateSession } from '@/lib/stripe/verify-session';
 import { Crown, Lock, BookOpen, Video, Download, Calendar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -97,7 +97,7 @@ export default async function MembersPage({
           {/* Content */}
           {content ? (
             <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground">
-              <div dangerouslySetInnerHTML={{ __html: nl2br(content) }} />
+              <div dangerouslySetInnerHTML={{ __html: processContent(content) }} />
             </div>
           ) : (
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">

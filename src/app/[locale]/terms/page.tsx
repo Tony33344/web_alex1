@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { FileText } from 'lucide-react';
 import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
-import { nl2br } from '@/lib/utils/text';
+import { processContent } from '@/lib/utils/text';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -43,7 +43,7 @@ export default async function TermsPage({ params }: { params: Promise<{ locale: 
         {/* Content */}
         {content ? (
           <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground">
-            <div dangerouslySetInnerHTML={{ __html: nl2br(content) }} />
+            <div dangerouslySetInnerHTML={{ __html: processContent(content) }} />
           </div>
         ) : (
           <div className="rounded-lg border border-dashed p-16 text-center">

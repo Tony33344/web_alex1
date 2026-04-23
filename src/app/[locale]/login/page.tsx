@@ -45,7 +45,12 @@ export default function LoginPage() {
     });
 
     if (authError) {
-      setError(authError.message);
+      // Better error message for unconfirmed email
+      if (authError.message?.toLowerCase().includes('email not confirmed')) {
+        setError('Please confirm your email address before logging in. Check your inbox for the confirmation link.');
+      } else {
+        setError(authError.message);
+      }
       setLoading(false);
       return;
     }

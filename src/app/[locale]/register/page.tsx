@@ -54,7 +54,7 @@ export default function RegisterPage() {
           phone: data.phone,
           preferred_language: data.preferred_language,
         },
-        emailRedirectTo: `${window.location.origin}/${locale}/auth/callback`,
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL || window.location.origin}/${locale}/auth/callback`,
       },
     });
 
@@ -62,15 +62,6 @@ export default function RegisterPage() {
       setError(authError.message);
       setLoading(false);
       return;
-    }
-
-    // Auto-confirm email via admin API so users can log in immediately
-    if (authData?.user?.id) {
-      await fetch('/api/auth/confirm-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: authData.user.id, phone: data.phone, full_name: data.full_name }),
-      });
     }
 
     // Subscribe to newsletter if opted in
@@ -94,9 +85,12 @@ export default function RegisterPage() {
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
               <Mail className="h-8 w-8 text-primary" />
             </div>
-            <h2 className="text-xl font-bold">Account Created!</h2>
+            <h2 className="text-xl font-bold">Check Your Email!</h2>
             <p className="text-sm text-muted-foreground">
-              Your account is ready. You can now log in with your email and password.
+              We&apos;ve sent a confirmation link to your email. Please click it to activate your account before logging in.
+            </p>
+            <p className="text-xs text-muted-foreground">
+              Didn&apos;t receive it? Check your spam folder or try logging in to resend.
             </p>
             <Link href={`/${locale}/login${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`}>
               <Button className="mt-4">{t('signIn')}</Button>

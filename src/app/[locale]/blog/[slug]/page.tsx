@@ -16,6 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   if (!post) return { title: 'Post Not Found' };
   const title = getLocalizedField(post, 'title', locale) || post.title_en;
   const excerpt = getLocalizedField(post, 'excerpt', locale) || '';
+  const textColor = '#404040';
   return {
     title,
     description: excerpt.slice(0, 160),
@@ -32,6 +33,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
 
   const title = getLocalizedField(post, 'title', locale) || post.title_en;
   const content = getLocalizedField(post, 'content', locale) || '';
+  const textColor = '#404040';
   const date = post.published_at ? new Date(post.published_at).toLocaleDateString(locale, { dateStyle: 'long' }) : '';
 
   return (
@@ -55,7 +57,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
       </div>
 
       {content ? (
-        <div className="prose prose-lg mt-8 max-w-none text-muted-foreground" dangerouslySetInnerHTML={{ __html: processContent(content) }} />
+        <div className="prose prose-lg mt-8 max-w-none" style={{ color: textColor }} dangerouslySetInnerHTML={{ __html: processContent(content) }} />
       ) : (
         <div className="prose prose-lg mt-8 max-w-none text-muted-foreground">
           <p>Content coming soon.</p>

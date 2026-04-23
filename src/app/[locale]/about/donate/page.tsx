@@ -28,6 +28,7 @@ export default async function DonatePage({ params }: { params: Promise<{ locale:
 
   const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : 'Donate';
   const content = page ? (getLocalizedField(page, 'content', locale) || page.content_en) : null;
+  const textColor = page?.text_color || '#404040';
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
@@ -68,7 +69,8 @@ export default async function DonatePage({ params }: { params: Promise<{ locale:
           <div className="grid gap-10 lg:grid-cols-3">
             <div className="lg:col-span-2">
               <div
-                className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground"
+                className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:leading-relaxed prose-li:leading-relaxed prose-strong:text-foreground"
+                style={{ color: textColor }}
                 dangerouslySetInnerHTML={{ __html: processContent(content) }}
               />
             </div>

@@ -84,7 +84,7 @@ export function DonateForm({ locale }: { locale: string }) {
       <Card>
         <CardContent className="flex flex-col items-center justify-center py-12 text-center">
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
-            <Heart className="h-8 w-8 text-primary" />
+            <Heart className="h-8 w-8 fill-red-500 text-red-600" />
           </div>
           <h3 className="text-xl font-semibold mb-2">Thank You!</h3>
           <p className="text-muted-foreground mb-6">Your donation has been received. We appreciate your support.</p>
@@ -123,7 +123,7 @@ export function DonateForm({ locale }: { locale: string }) {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <Heart className="h-5 w-5 text-primary" />
+          <Heart className="h-5 w-5 fill-red-500 text-red-600" />
           Make a Donation
         </CardTitle>
         <CardDescription>Support our mission with a one-time donation</CardDescription>
@@ -166,7 +166,7 @@ export function DonateForm({ locale }: { locale: string }) {
               className="flex-1 gap-2"
               disabled={loading || !donationAmount || donationAmount < 1}
             >
-              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Heart className="h-4 w-4" />}
+              {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Heart className="h-4 w-4 fill-red-500 text-red-600" />}
               Donate
             </Button>
           </div>

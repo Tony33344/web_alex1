@@ -33,6 +33,7 @@ export default async function TeacherDetailPage({ params }: { params: Promise<{ 
   const title = getLocalizedField(teacher, 'title', locale) || 'Role Teacher';
   const bio = getLocalizedField(teacher, 'bio', locale) || '';
   const galleryImages = await getGalleryImages('teacher', teacher.id);
+  const contentTextColor = '#404040';
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
@@ -50,7 +51,7 @@ export default async function TeacherDetailPage({ params }: { params: Promise<{ 
       <div className="mt-8 grid gap-12 lg:grid-cols-3">
         {/* Main content - 2/3 width */}
         <div className="lg:col-span-2 space-y-8">
-          <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:text-muted-foreground prose-li:text-muted-foreground prose-strong:text-foreground">
+          <div className="prose prose-lg max-w-none dark:prose-invert prose-headings:tracking-tight prose-p:leading-relaxed prose-li:leading-relaxed prose-strong:text-foreground" style={{ color: contentTextColor }}>
             <h1 className="text-3xl font-bold">{teacher.name}</h1>
             <p className="text-primary text-lg">{title}</p>
             {bio ? (

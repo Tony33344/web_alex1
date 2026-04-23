@@ -31,29 +31,30 @@ export function embedVideos(text: string): string {
   // Match direct video URLs
   const videoPattern = /https?:\/\/[^\s<>"]+\.(?:mp4|webm|ogg|mov)(?:\?[^\s<>"]*)?/i;
 
-  if (youtubePattern.test(text)) {
-    const match = text.match(youtubePattern);
-    if (match?.[1]) {
-      return `<iframe
-        class="my-4 aspect-video w-full max-w-3xl rounded-lg"
-        src="https://www.youtube.com/embed/${match[1]}"
-        title="YouTube video player"
-        frameborder="0"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-        allowfullscreen
-      ></iframe>`;
-    }
-  }
+  const withYouTube = text.replace(youtubePattern, (_match, videoId) => {
+    return `<iframe
+      class="my-4 aspect-video w-full max-w-3xl rounded-lg"
+      src="https://www.youtube.com/embed/${videoId}"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen
+    ></iframe>`;
+  });
 
-  const videoUrl = text.match(supabasePattern)?.[0] || text.match(videoPattern)?.[0];
-  if (videoUrl) {
+  const withSupabase = withYouTube.replace(supabasePattern, (url) => {
     return `<video controls class="my-4 aspect-video w-full max-w-3xl rounded-lg" preload="metadata">
-      <source src="${videoUrl}" type="video/mp4">
-      Your browser does not support the video tag. <a href="${videoUrl}" target="_blank" rel="noopener noreferrer">Click here to view the video</a>.
+      <source src="${url}" type="video/mp4">
+      Your browser does not support the video tag. <a href="${url}" target="_blank" rel="noopener noreferrer">Click here to view the video</a>.
     </video>`;
-  }
+  });
 
-  return text;
+  return withSupabase.replace(videoPattern, (url) => {
+    return `<video controls class="my-4 aspect-video w-full max-w-3xl rounded-lg" preload="metadata">
+      <source src="${url}" type="video/mp4">
+      Your browser does not support the video tag. <a href="${url}" target="_blank" rel="noopener noreferrer">Click here to view the video</a>.
+    </video>`;
+  });
 }
 
 /**
@@ -68,14 +69,14 @@ export function processContent(text: string): string {
     return embedVideos(text);
   }
 
-  const lines = text.split(/\n+/).map((line) => line.trim());
-
-  return lines
-    .filter(Boolean)
-    .map((line) => {
-      const embedded = embedVideos(line);
-      if (embedded !== line) return embedded;
-      return `<p>${line.replace(/\n/g, '<br>')}</p>`;
+  return text
+    .split(/\n\n+/)
+    .map((paragraph) => {
+      const embedded = embedVideos(paragraph.trim());
+      if (!embedded) return '';
+      if (embedded.includes('<iframe') || embedded.includes('<video')) return embedded;
+      return `<p>${embedded.replace(/\n/g, '<br>')}</p>`;
     })
+    .filter(Boolean)
     .join('');
 }

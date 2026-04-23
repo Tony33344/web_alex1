@@ -8,9 +8,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import type { Page } from '@/types/database';
 
-const ABOUT_SLUGS = ['mission', 'vision', 'donate', 'volunteer'];
+const ABOUT_SLUGS = ['about', 'mission', 'vision', 'donate', 'volunteer'];
 
 const SLUG_META: Record<string, { icon: typeof Target; label: string; description: string }> = {
+  about: { icon: Target, label: 'About Us', description: 'Main about page banner and intro content' },
   mission: { icon: Target, label: 'Our Mission', description: 'Why we exist and what drives us' },
   vision: { icon: Compass, label: 'Our Vision', description: 'Where we are heading and the future we see' },
   donate: { icon: Heart, label: 'Donate', description: 'How supporters can contribute to our cause' },
@@ -80,7 +81,7 @@ export default function AdminAboutPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold">About</h1>
-        <p className="text-muted-foreground">Manage your Mission, Vision, Donate, and Volunteer pages</p>
+        <p className="text-muted-foreground">Manage your About Us, Mission, Vision, Donate, and Volunteer pages</p>
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">

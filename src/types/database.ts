@@ -39,6 +39,7 @@ export interface Page {
   meta_description_si: string | null;
   background_color: string | null;
   banner_gradient_to: string | null;
+  text_color: string | null;
   banner_width: 'full' | 'contained';
   banner_height: string;
   hero_image_url: string | null;
@@ -102,6 +103,7 @@ export interface Teacher {
   short_bio_si: string | null;
   photo_url: string | null;
   cover_image_url: string | null;
+  text_color: string | null;
   specialties: string[];
   social_links: Record<string, string>;
   display_order: number;

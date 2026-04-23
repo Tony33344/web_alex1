@@ -91,7 +91,7 @@ export function Footer({ locale }: FooterProps) {
               href={p('/about/donate')}
               className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
-              <Heart className="h-4 w-4" />
+              <Heart className="h-4 w-4 fill-red-500 text-red-600" />
               Donate
             </Link>
             <Link

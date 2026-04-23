@@ -232,6 +232,44 @@ export default function AdminAboutEditPage() {
                 </div>
                 <p className="text-xs text-muted-foreground">Controls the banner/hero color behind the page title.</p>
                 <div className="mt-3 space-y-1">
+                  <Label className="text-xs text-muted-foreground">Optional gradient to color</Label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={page.banner_gradient_to || '#ffffff'}
+                      onChange={(e) => updateField('banner_gradient_to', e.target.value)}
+                      className="h-10 w-14 shrink-0 cursor-pointer rounded border bg-transparent"
+                    />
+                    <Input
+                      value={page.banner_gradient_to || ''}
+                      onChange={(e) => updateField('banner_gradient_to', e.target.value)}
+                      placeholder="Leave empty for solid color"
+                    />
+                    {page.banner_gradient_to && (
+                      <button type="button" onClick={() => updateField('banner_gradient_to', '')} className="text-xs text-muted-foreground hover:text-foreground">
+                        Clear
+                      </button>
+                    )}
+                  </div>
+                </div>
+                <div className="mt-3 space-y-1">
+                  <Label className="text-xs text-muted-foreground">Banner width</Label>
+                  <div className="flex gap-1 rounded-lg border p-1 w-fit">
+                    {(['full','contained'] as const).map((w) => (
+                      <button
+                        key={w}
+                        type="button"
+                        onClick={() => updateField('banner_width', w)}
+                        className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
+                          (page.banner_width || 'full') === w ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'
+                        }`}
+                      >
+                        {w === 'full' ? 'Full width' : 'Contained'}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+                <div className="mt-3 space-y-1">
                   <Label className="text-xs text-muted-foreground">Banner min height</Label>
                   <div className="flex items-center gap-2">
                     <Input

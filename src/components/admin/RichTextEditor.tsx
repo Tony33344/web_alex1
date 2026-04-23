@@ -570,6 +570,28 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
 
         <Separator />
 
+        <label
+          className="flex h-8 items-center gap-1 rounded px-1.5 text-muted-foreground hover:bg-muted hover:text-foreground cursor-pointer"
+          title="Text color"
+        >
+          <span className="inline-block h-4 w-4 rounded border" style={{ backgroundColor: (editor.getAttributes('textStyle').color as string) || '#000000' }} />
+          <input
+            type="color"
+            value={(editor.getAttributes('textStyle').color as string) || '#000000'}
+            onChange={(e) => editor.chain().focus().setColor(e.target.value).run()}
+            className="sr-only"
+          />
+        </label>
+        <ToolbarButton
+          onClick={() => editor.chain().focus().unsetColor().run()}
+          disabled={!editor.getAttributes('textStyle').color}
+          title="Reset color"
+        >
+          <span className="text-xs font-semibold">A</span>
+        </ToolbarButton>
+
+        <Separator />
+
         <ToolbarButton
           onClick={() => editor.chain().focus().unsetAllMarks().clearNodes().run()}
           title="Clear Formatting"

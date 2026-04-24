@@ -118,6 +118,7 @@ export async function POST(request: Request) {
         successUrl,
         cancelUrl,
         metadata: stripeMetadata,
+        customerEmail: user.email,
       });
     } else {
       // Dynamic pricing — uses price from database
@@ -129,6 +130,7 @@ export async function POST(request: Request) {
         successUrl,
         cancelUrl,
         metadata: stripeMetadata,
+        customerEmail: user.email,
       });
     }
 

@@ -110,6 +110,7 @@ export function Footer({ locale }: FooterProps) {
           <span>&copy; {year} Infinity Role Teachers. All rights reserved.</span>
           <span className="font-medium text-background/60">AMS4EVER AG</span>
           <div className="flex gap-4">
+            <Link href={p('/support')} className="hover:text-background transition-colors">Support</Link>
             <Link href={p('/terms')} className="hover:text-background transition-colors">Terms &amp; Conditions</Link>
             <Link href={p('/privacy')} className="hover:text-background transition-colors">Privacy Policy</Link>
             <Link href={p('/disclaimer')} className="hover:text-background transition-colors">Disclaimer</Link>

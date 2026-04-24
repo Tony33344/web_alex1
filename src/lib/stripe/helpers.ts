@@ -7,7 +7,6 @@ export async function createCheckoutSession({
   successUrl,
   cancelUrl,
   metadata,
-  customerEmail,
 }: {
   customerId: string;
   priceId: string;
@@ -15,7 +14,6 @@ export async function createCheckoutSession({
   successUrl: string;
   cancelUrl: string;
   metadata?: Record<string, string>;
-  customerEmail?: string;
 }) {
   const session = await stripe.checkout.sessions.create({
     customer: customerId,
@@ -24,7 +22,6 @@ export async function createCheckoutSession({
     success_url: successUrl,
     cancel_url: cancelUrl,
     metadata,
-    ...(customerEmail && { customer_email: customerEmail }),
     ...(mode === 'subscription' && {
       subscription_data: { metadata },
     }),
@@ -45,7 +42,6 @@ export async function createDynamicCheckoutSession({
   successUrl,
   cancelUrl,
   metadata,
-  customerEmail,
 }: {
   customerId: string;
   productName: string;
@@ -54,7 +50,6 @@ export async function createDynamicCheckoutSession({
   successUrl: string;
   cancelUrl: string;
   metadata?: Record<string, string>;
-  customerEmail?: string;
 }) {
   const session = await stripe.checkout.sessions.create({
     customer: customerId,
@@ -73,7 +68,6 @@ export async function createDynamicCheckoutSession({
     success_url: successUrl,
     cancel_url: cancelUrl,
     metadata,
-    ...(customerEmail && { customer_email: customerEmail }),
   });
 
   return session;
@@ -92,7 +86,6 @@ export async function createDynamicSubscriptionSession({
   successUrl,
   cancelUrl,
   metadata,
-  customerEmail,
 }: {
   customerId: string;
   productName: string;
@@ -102,7 +95,6 @@ export async function createDynamicSubscriptionSession({
   successUrl: string;
   cancelUrl: string;
   metadata?: Record<string, string>;
-  customerEmail?: string;
 }) {
   const session = await stripe.checkout.sessions.create({
     customer: customerId,
@@ -123,7 +115,6 @@ export async function createDynamicSubscriptionSession({
     cancel_url: cancelUrl,
     metadata,
     subscription_data: { metadata },
-    ...(customerEmail && { customer_email: customerEmail }),
   });
 
   return session;

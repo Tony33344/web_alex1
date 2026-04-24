@@ -77,7 +77,6 @@ export async function POST(request: Request) {
         successUrl,
         cancelUrl,
         metadata: stripeMetadata,
-        customerEmail: user.email,
       });
     } else {
       // Dynamic subscription price — works for any membership price
@@ -90,7 +89,6 @@ export async function POST(request: Request) {
         successUrl,
         cancelUrl,
         metadata: stripeMetadata,
-        customerEmail: user.email,
       });
     }
 

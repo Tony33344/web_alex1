@@ -137,7 +137,6 @@ export async function POST(request: Request) {
           successUrl,
           cancelUrl,
           metadata: stripeMetadata,
-          customerEmail: user.email,
         });
       } else {
         // Dynamic price — works for any event price without Stripe dashboard setup
@@ -149,7 +148,6 @@ export async function POST(request: Request) {
           successUrl,
           cancelUrl,
           metadata: stripeMetadata,
-          customerEmail: user.email,
         });
       }
 

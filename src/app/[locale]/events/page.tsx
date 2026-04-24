@@ -9,6 +9,8 @@ import { PaymentSuccessBanner } from '@/components/payments/PaymentSuccessBanner
 import { getEvents } from '@/lib/queries/events';
 import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
+import { getActivePricing } from '@/lib/utils/pricing';
+import { PriceTag } from '@/components/shared/PriceTag';
 
 interface EventsPageProps {
   params: Promise<{ locale: string }>;
@@ -53,7 +55,7 @@ export default async function EventsPage({ params, searchParams }: EventsPagePro
             {events.map((event) => {
               const title = getLocalizedField(event, 'title', locale) || event.title_en;
               const spotsLeft = event.max_attendees ? event.max_attendees - event.current_attendees : null;
-              const priceLabel = event.price && event.price > 0 ? `${event.currency} ${event.price}` : t('common.free');
+              const pricing = getActivePricing(event);
               const startDate = new Date(event.start_date).toLocaleDateString(locale, { dateStyle: 'medium' });
 
               return (
@@ -70,7 +72,7 @@ export default async function EventsPage({ params, searchParams }: EventsPagePro
                     <CardHeader>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground">
                         <Badge variant="outline">{event.is_online ? t('common.online') : t('common.inPerson')}</Badge>
-                        <span className="font-semibold text-primary">{priceLabel}</span>
+                        <PriceTag pricing={pricing} freeLabel={t('common.free')} locale={locale} size="md" />
                       </div>
                       <CardTitle className="text-lg group-hover:text-primary transition-colors">{title}</CardTitle>
                     </CardHeader>

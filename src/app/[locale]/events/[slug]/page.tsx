@@ -12,6 +12,8 @@ import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
 import { EventRegisterButton } from '@/components/sections/EventRegisterButton';
 import { ExpandableContent } from '@/components/shared/ExpandableContent';
+import { getActivePricing } from '@/lib/utils/pricing';
+import { PriceTag } from '@/components/shared/PriceTag';
 
 export const revalidate = 0;
 
@@ -41,7 +43,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
   const startDate = new Date(event.start_date).toLocaleDateString(locale, { dateStyle: 'long' });
   const startTime = new Date(event.start_date).toLocaleTimeString(locale, { timeStyle: 'short' });
   const spotsLeft = event.max_attendees ? event.max_attendees - event.current_attendees : null;
-  const priceLabel = event.price && event.price > 0 ? `${event.currency} ${event.price}` : t('common.free');
+  const pricing = getActivePricing(event);
   const galleryImages = await getGalleryImages('event', event.id);
 
   return (
@@ -87,16 +89,16 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
                 )}
               </div>
               <div className="border-t pt-4">
-                <div className="text-2xl font-bold text-primary">{priceLabel}</div>
+                <PriceTag pricing={pricing} freeLabel={t('common.free')} locale={locale} size="lg" />
               </div>
               <EventRegisterButton
                 eventId={event.id}
                 locale={locale}
                 label={t('common.enrollNow')}
-                isFree={!event.price || event.price <= 0}
+                isFree={!pricing.activePrice || pricing.activePrice <= 0}
                 isFull={!!(event.max_attendees && event.current_attendees >= event.max_attendees)}
-                price={event.price}
-                currency={event.currency}
+                price={pricing.activePrice}
+                currency={pricing.currency}
                 eventTitle={title}
               />
             </CardContent>

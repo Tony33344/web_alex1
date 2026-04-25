@@ -3,6 +3,8 @@ import { headers } from 'next/headers';
 import Stripe from 'stripe';
 import { stripe } from '@/lib/stripe/client';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { sendEmail } from '@/lib/email/transporter';
+import { prepareEmail, EmailTemplates } from '@/lib/email/templates';
 
 export async function POST(request: Request) {
   const body = await request.text();
@@ -23,6 +25,57 @@ export async function POST(request: Request) {
   }
 
   const supabase = createAdminClient();
+
+  // Helper to get user profile with email and name
+  async function getUserProfile(userId: string) {
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('email, full_name')
+      .eq('id', userId)
+      .single();
+    return profile;
+  }
+
+  // Helper to safely send confirmation email
+  async function sendConfirmationEmail(
+    template: string,
+    userId: string,
+    subject: string,
+    variables: Record<string, string>
+  ) {
+    try {
+      const profile = await getUserProfile(userId);
+      if (!profile?.email) {
+        console.warn('No email found for user:', userId);
+        return;
+      }
+
+      const { html } = prepareEmail({
+        to: profile.email,
+        template: template as any,
+        subject,
+        variables: {
+          ...variables,
+          user_name: profile.full_name || 'Valued Member',
+        },
+      });
+
+      const result = await sendEmail({
+        to: profile.email,
+        subject,
+        html,
+      });
+
+      if (result.success) {
+        console.log(`✉️ Confirmation email sent to ${profile.email}`);
+      } else {
+        console.error('Email send failed:', result.error);
+      }
+    } catch (err) {
+      console.error('Failed to send confirmation email:', err);
+      // Don't throw - webhook should not fail due to email
+    }
+  }
 
   switch (event.type) {
     case 'checkout.session.completed': {
@@ -47,6 +100,22 @@ export async function POST(request: Request) {
             updated_at: new Date().toISOString(),
           })
           .eq('id', userId);
+
+        // Send membership confirmation email
+        const amount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';
+        await sendConfirmationEmail(
+          EmailTemplates.MEMBERSHIP_CONFIRMATION,
+          userId,
+          'Welcome to Infinity Role Teachers Membership',
+          {
+            membership_name: plan === 'yearly' ? 'Annual Membership' : 'Monthly Membership',
+            billing_cycle: plan === 'yearly' ? 'Yearly' : 'Monthly',
+            next_billing_date: new Date(sub.current_period_end * 1000).toLocaleDateString('en-US', { 
+              year: 'numeric', month: 'long', day: 'numeric' 
+            }),
+            payment_amount: `CHF ${amount}`,
+          }
+        );
       }
 
       // One-time event payment
@@ -61,6 +130,35 @@ export async function POST(request: Request) {
           })
           .eq('event_id', eventId)
           .eq('user_id', userId);
+
+        // Get event details and send confirmation email
+        const { data: eventData } = await supabase
+          .from('events')
+          .select('title, start_date, location')
+          .eq('id', eventId)
+          .single();
+        
+        if (eventData) {
+          const amount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';
+          const orderId = session.id.slice(-8).toUpperCase();
+          await sendConfirmationEmail(
+            EmailTemplates.EVENT_REGISTRATION,
+            userId,
+            `Registration Confirmed: ${eventData.title}`,
+            {
+              event_title: eventData.title,
+              event_date: new Date(eventData.start_date).toLocaleDateString('en-US', { 
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+              }),
+              event_time: new Date(eventData.start_date).toLocaleTimeString('en-US', { 
+                hour: '2-digit', minute: '2-digit' 
+              }),
+              event_location: eventData.location || 'TBD',
+              order_id: orderId,
+              payment_amount: `CHF ${amount}`,
+            }
+          );
+        }
       }
 
       // One-time program payment
@@ -75,6 +173,32 @@ export async function POST(request: Request) {
           })
           .eq('program_id', programId)
           .eq('user_id', userId);
+
+        // Get program details and send confirmation email
+        const { data: programData } = await supabase
+          .from('programs')
+          .select('title_en, start_date, duration_days')
+          .eq('id', programId)
+          .single();
+        
+        if (programData) {
+          const amount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';
+          const orderId = session.id.slice(-8).toUpperCase();
+          await sendConfirmationEmail(
+            EmailTemplates.COACH_TRAINING_REGISTRATION,
+            userId,
+            `Enrollment Confirmed: ${programData.title_en}`,
+            {
+              program_name: programData.title_en,
+              start_date: programData.start_date ? new Date(programData.start_date).toLocaleDateString('en-US', { 
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+              }) : 'TBD',
+              program_duration: programData.duration_days ? `${programData.duration_days} days` : 'See details',
+              order_id: orderId,
+              payment_amount: `CHF ${amount}`,
+            }
+          );
+        }
       }
 
       // One-time donation payment

@@ -20,7 +20,7 @@ export async function POST(request: Request) {
 
     const requestUrl = new URL(request.url);
     const appUrl = requestUrl.origin || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-    const { eventId, paymentMethod } = await request.json();
+    const { eventId, paymentMethod, locale = 'en' } = await request.json();
 
     if (!eventId) {
       return NextResponse.json({ error: 'Missing eventId' }, { status: 400 });
@@ -124,8 +124,8 @@ export async function POST(request: Request) {
       }
 
       const stripeMetadata = { user_id: user.id, event_id: eventId, type: 'event' };
-      const successUrl = `${appUrl}/en/events?payment=success&session_id={CHECKOUT_SESSION_ID}`;
-      const cancelUrl = `${appUrl}/en/events?payment=cancelled`;
+      const successUrl = `${appUrl}/${locale}/events?payment=success&session_id={CHECKOUT_SESSION_ID}`;
+      const cancelUrl = `${appUrl}/${locale}/events?payment=cancelled`;
 
       let session;
       if (event.stripe_price_id) {

@@ -67,7 +67,7 @@ export function EventRegisterButton({ eventId, locale, label, isFree, isFull, pr
       const res = await fetch('/api/events/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ eventId, paymentMethod }),
+        body: JSON.stringify({ eventId, paymentMethod, locale }),
       });
       const data = await res.json();
       if (!res.ok) {

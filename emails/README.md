@@ -94,24 +94,27 @@ Beautiful, responsive HTML email templates for all user communications.
 
 ## Design System
 
-### Colors
-- **Primary Gradient**: `#667eea` to `#764ba2` (Purple/Blue)
-- **Secondary Gradient**: `#f093fb` to `#f5576c` (Pink/Red) - For coach training
-- **Membership Gradient**: `#4facfe` to `#00f2fe` (Blue/Teal)
-- **Success**: `#22c55e` (Green)
-- **Warning**: `#f59e0b` (Orange)
-- **Danger**: `#ff6b6b` (Red) - For password reset
+### Color Palette (Earth Tones - Matching Logo)
+- **Primary**: `#8b7355` (Warm Brown - Brand color)
+- **Secondary**: `#5c4a3a` (Dark Brown - Text/Headings)
+- **Accent**: `#c4a77d` (Gold/Tan - Borders/Highlights)
+- **Background**: `#faf8f5` (Warm Off-White)
+- **Card Background**: `#f9f6f2` (Light Cream)
+- **Border**: `#e8e0d5` (Light Tan)
+- **Text**: `#3d3d3d` (Dark Gray)
+- **Muted Text**: `#666666` (Medium Gray)
 
 ### Typography
-- **Font Family**: System font stack (Apple, Google, Windows compatible)
-- **Headings**: 20-28px, font-weight 600-700
-- **Body**: 14-16px, line-height 1.6-1.8
-- **Labels**: 12-14px, uppercase, letter-spacing 1px
+- **Headings**: Georgia serif, 18-26px, font-weight 400
+- **Body**: Georgia serif, 15px, line-height 1.8
+- **UI Elements**: Arial sans-serif, 11-14px, uppercase, letter-spacing 1-2px
+- **Labels**: Uppercase, letter-spacing 2px, font-weight 500
 
 ### Logo
 - **URL**: `https://nchbiryeykludxrrdfaw.supabase.co/storage/v1/object/public/images/pages/home/logo%20small%20transparent.png`
-- **Size**: 80x80px in header, 50x50px in footer
-- **Style**: Rounded, with subtle shadow
+- **Header Size**: 85-95px width, `height: auto` (preserves natural aspect ratio)
+- **Footer Size**: 45-50px width, `height: auto`
+- **Style**: Natural aspect ratio, no forced circular crop
 
 ---
 

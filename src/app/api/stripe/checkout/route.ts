@@ -45,8 +45,11 @@ export async function POST(request: Request) {
       .eq('id', user.id)
       .single();
 
+    console.log('Membership checkout - user profile:', { userId: user.id, subscription_status: profile?.subscription_status });
+
     // Prevent duplicate membership if user already has active subscription
     if (profile?.subscription_status === 'active') {
+      console.log('BLOCKING: User already has active membership');
       return NextResponse.json({ 
         error: 'You already have an active membership. Visit your profile to manage your subscription.',
         hasActiveMembership: true 

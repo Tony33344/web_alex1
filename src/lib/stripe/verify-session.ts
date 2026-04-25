@@ -66,6 +66,7 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
       console.log('verify-session: membership activated successfully', { userId, plan: session.metadata?.plan });
 
       // Send membership confirmation email
+      console.log('🔍 Preparing membership confirmation email for user:', userId);
       if (profile?.email) {
         try {
           const amount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';

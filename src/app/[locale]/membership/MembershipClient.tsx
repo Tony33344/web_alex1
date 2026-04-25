@@ -28,6 +28,7 @@ export function MembershipClient({ plans, pageTitle, pageContent, locale, galler
   const { user, profile } = useUser();
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [showCheckout, setShowCheckout] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string>('');
 
   const monthlyPlan = plans.find(p => p.plan_type === 'monthly');
   const yearlyPlan = plans.find(p => p.plan_type === 'yearly');
@@ -42,6 +43,12 @@ export function MembershipClient({ plans, pageTitle, pageContent, locale, galler
       router.push(`/${locale}/login?redirect=/${locale}/membership`);
       return;
     }
+    // Check if user already has active membership
+    if (profile?.subscription_status === 'active') {
+      setCheckoutError('You already have an active membership. Visit your profile to manage your subscription.');
+      return;
+    }
+    setCheckoutError('');
     setShowCheckout(true);
   }
 
@@ -88,6 +95,13 @@ export function MembershipClient({ plans, pageTitle, pageContent, locale, galler
           className="h-48 w-auto"
         />
       </div>
+
+      {/* Error message */}
+      {checkoutError && (
+        <div className="mb-6 rounded-md bg-destructive/10 p-4 text-sm text-destructive">
+          {checkoutError}
+        </div>
+      )}
 
       {/* Billing Toggle */}
       {hasMultiplePlans && (

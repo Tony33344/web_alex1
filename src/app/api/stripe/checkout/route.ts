@@ -45,6 +45,14 @@ export async function POST(request: Request) {
       .eq('id', user.id)
       .single();
 
+    // Prevent duplicate membership if user already has active subscription
+    if (profile?.subscription_status === 'active') {
+      return NextResponse.json({ 
+        error: 'You already have an active membership. Visit your profile to manage your subscription.',
+        hasActiveMembership: true 
+      }, { status: 400 });
+    }
+
     let customerId = profile?.stripe_customer_id;
 
     // Valid Stripe customer IDs start with 'cus_'. Anything else (e.g. bank_pending_*) is bogus and must be replaced.

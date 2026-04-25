@@ -25,6 +25,7 @@ export async function POST(request: Request) {
   }
 
   const supabase = createAdminClient();
+  console.log(`🔔 Stripe webhook received: ${event.type}`);
 
   // Helper to get user profile with email and name
   async function getUserProfile(userId: string) {
@@ -44,11 +45,14 @@ export async function POST(request: Request) {
     variables: Record<string, string>
   ) {
     try {
+      console.log(`🔍 Attempting to send email to user ${userId} with template ${template}`);
       const profile = await getUserProfile(userId);
       if (!profile?.email) {
-        console.warn('No email found for user:', userId);
+        console.warn('⚠️ No email found for user:', userId);
         return;
       }
+
+      console.log(`📧 User email found: ${profile.email}, name: ${profile.full_name || 'N/A'}`);
 
       const { html } = prepareEmail({
         to: profile.email,
@@ -60,6 +64,7 @@ export async function POST(request: Request) {
         },
       });
 
+      console.log(`📝 Email template prepared, sending...`);
       const result = await sendEmail({
         to: profile.email,
         subject,
@@ -67,12 +72,12 @@ export async function POST(request: Request) {
       });
 
       if (result.success) {
-        console.log(`✉️ Confirmation email sent to ${profile.email}`);
+        console.log(`✅ Confirmation email sent to ${profile.email}, messageId: ${result.messageId}`);
       } else {
-        console.error('Email send failed:', result.error);
+        console.error(`❌ Email send failed to ${profile.email}:`, result.error);
       }
     } catch (err) {
-      console.error('Failed to send confirmation email:', err);
+      console.error('❌ Failed to send confirmation email:', err);
       // Don't throw - webhook should not fail due to email
     }
   }

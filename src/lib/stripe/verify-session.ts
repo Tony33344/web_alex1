@@ -1,5 +1,7 @@
 import { createAdminClient } from '@/lib/supabase/admin';
 import { stripe } from '@/lib/stripe/client';
+import { sendEmail } from '@/lib/email/transporter';
+import { prepareEmail, EmailTemplates } from '@/lib/email/templates';
 
 /**
  * Verifies a Stripe Checkout Session and activates the matching record.
@@ -35,6 +37,13 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
     const admin = createAdminClient();
     const type = session.metadata?.type;
 
+    // Get user profile for email
+    const { data: profile } = await admin
+      .from('profiles')
+      .select('email, full_name')
+      .eq('id', userId)
+      .single();
+
     if (type === 'membership' && session.mode === 'subscription') {
       const sub = typeof session.subscription === 'object' ? session.subscription : null;
       const endTs = sub && 'current_period_end' in sub && typeof sub.current_period_end === 'number'
@@ -55,6 +64,30 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
         return false;
       }
       console.log('verify-session: membership activated successfully', { userId, plan: session.metadata?.plan });
+
+      // Send membership confirmation email
+      if (profile?.email) {
+        try {
+          const amount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';
+          const { html } = prepareEmail({
+            to: profile.email,
+            template: EmailTemplates.MEMBERSHIP_CONFIRMATION,
+            subject: 'Welcome to Infinity Role Teachers Membership',
+            variables: {
+              user_name: profile.full_name || 'Valued Member',
+              membership_name: session.metadata?.plan === 'yearly' ? 'Annual Membership' : 'Monthly Membership',
+              billing_cycle: session.metadata?.plan === 'yearly' ? 'Yearly' : 'Monthly',
+              next_billing_date: endTs ? new Date(endTs * 1000).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'N/A',
+              payment_amount: `CHF ${amount}`,
+            },
+          });
+          await sendEmail({ to: profile.email, subject: 'Welcome to Infinity Role Teachers Membership', html });
+          console.log('✅ Membership confirmation email sent to', profile.email);
+        } catch (emailError) {
+          console.error('Failed to send membership email:', emailError);
+        }
+      }
+
       return true;
     }
 
@@ -66,6 +99,38 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
           .update({ payment_status: 'paid', status: 'confirmed', confirmed_at: new Date().toISOString() })
           .eq('event_id', eventId)
           .eq('user_id', userId);
+
+        // Get event details for email
+        const { data: event } = await admin
+          .from('events')
+          .select('title_en, title_de, start_date, location, is_online')
+          .eq('id', eventId)
+          .single();
+
+        // Send event confirmation email
+        if (profile?.email && event) {
+          try {
+            const amount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';
+            const { html } = prepareEmail({
+              to: profile.email,
+              template: EmailTemplates.EVENT_REGISTRATION,
+              subject: 'Event Registration Confirmed - Infinity Role Teachers',
+              variables: {
+                user_name: profile.full_name || 'Valued Member',
+                event_title: event.title_en || event.title_de || 'Event',
+                event_date: new Date(event.start_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
+                event_time: new Date(event.start_date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
+                event_location: event.is_online ? 'Online' : event.location || 'TBA',
+                order_id: session.id,
+                payment_amount: `CHF ${amount}`,
+              },
+            });
+            await sendEmail({ to: profile.email, subject: 'Event Registration Confirmed - Infinity Role Teachers', html });
+            console.log('✅ Event confirmation email sent to', profile.email);
+          } catch (emailError) {
+            console.error('Failed to send event email:', emailError);
+          }
+        }
       }
       return true;
     }
@@ -78,6 +143,37 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
           .update({ payment_status: 'paid', status: 'confirmed', confirmed_at: new Date().toISOString() })
           .eq('program_id', programId)
           .eq('user_id', userId);
+
+        // Get program details for email
+        const { data: program } = await admin
+          .from('programs')
+          .select('name_en, name_de, duration, start_date')
+          .eq('id', programId)
+          .single();
+
+        // Send program confirmation email
+        if (profile?.email && program) {
+          try {
+            const amount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';
+            const { html } = prepareEmail({
+              to: profile.email,
+              template: EmailTemplates.COACH_TRAINING_REGISTRATION,
+              subject: 'Coach Training Enrollment Confirmed - Infinity Role Teachers',
+              variables: {
+                user_name: profile.full_name || 'Valued Member',
+                program_name: program.name_en || program.name_de || 'Program',
+                start_date: program.start_date ? new Date(program.start_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : 'TBA',
+                program_duration: program.duration || 'TBA',
+                order_id: session.id,
+                payment_amount: `CHF ${amount}`,
+              },
+            });
+            await sendEmail({ to: profile.email, subject: 'Coach Training Enrollment Confirmed - Infinity Role Teachers', html });
+            console.log('✅ Program confirmation email sent to', profile.email);
+          } catch (emailError) {
+            console.error('Failed to send program email:', emailError);
+          }
+        }
       }
       return true;
     }

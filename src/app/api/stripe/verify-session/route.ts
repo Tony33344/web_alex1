@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
-import { createAdminClient } from '@/lib/supabase/admin';
-import { stripe } from '@/lib/stripe/client';
+import { verifyAndActivateSession } from '@/lib/stripe/verify-session';
 
 /**
  * Verifies a completed Stripe Checkout Session and activates the matching record.
  * Called from the success page as a fallback for when webhooks aren't configured.
  * Idempotent — safe to call multiple times.
+ * This version uses verifyAndActivateSession which also sends confirmation emails.
  */
 export async function POST(request: Request) {
   try {
@@ -19,93 +19,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing sessionId' }, { status: 400 });
     }
 
-    console.log('verify-session: retrieving session', sessionId);
+    console.log('verify-session API: calling verifyAndActivateSession for user', user.id);
 
-    const session = await stripe.checkout.sessions.retrieve(sessionId, {
-      expand: ['subscription'],
-    });
+    const success = await verifyAndActivateSession(sessionId, user.id);
 
-    console.log('verify-session: session retrieved', {
-      payment_status: session.payment_status,
-      status: session.status,
-      mode: session.mode,
-      type: session.metadata?.type,
-      metadata: session.metadata,
-      subscriptionId: session.subscription,
-    });
-
-    // Security: session must belong to this user
-    if (session.metadata?.user_id && session.metadata.user_id !== user.id) {
-      console.error('verify-session: user mismatch', { sessionUserId: session.metadata.user_id, currentUserId: user.id });
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    if (success) {
+      return NextResponse.json({ success: true });
+    } else {
+      return NextResponse.json({ success: false, error: 'Session verification failed' }, { status: 400 });
     }
-
-    if (session.payment_status !== 'paid' && session.status !== 'complete') {
-      console.log('verify-session: payment not complete', { payment_status: session.payment_status, status: session.status });
-      return NextResponse.json({ success: false, status: session.status });
-    }
-
-    const admin = createAdminClient();
-    const type = session.metadata?.type;
-
-    if (type === 'membership' && session.mode === 'subscription') {
-      const sub = typeof session.subscription === 'object' ? session.subscription : null;
-      const endTs = sub && 'current_period_end' in sub && typeof sub.current_period_end === 'number'
-        ? sub.current_period_end
-        : null;
-
-      console.log('verify-session: updating profile', {
-        userId: user.id,
-        plan: session.metadata?.plan,
-        endTs,
-        subId: sub?.id,
-      });
-
-      const { error } = await admin
-        .from('profiles')
-        .update({
-          subscription_status: 'active',
-          subscription_plan: session.metadata?.plan || null,
-          subscription_end_date: endTs ? new Date(endTs * 1000).toISOString() : null,
-        })
-        .eq('id', user.id);
-
-      if (error) {
-        console.error('verify-session: profile update error', error);
-        return NextResponse.json({ error: error.message }, { status: 500 });
-      }
-
-      console.log('verify-session: profile updated successfully');
-      return NextResponse.json({ success: true, type: 'membership' });
-    }
-
-    if (type === 'event') {
-      const eventId = session.metadata?.event_id;
-      if (eventId) {
-        await admin
-          .from('event_registrations')
-          .update({ payment_status: 'paid', status: 'confirmed', confirmed_at: new Date().toISOString() })
-          .eq('event_id', eventId)
-          .eq('user_id', user.id);
-      }
-      return NextResponse.json({ success: true, type: 'event' });
-    }
-
-    if (type === 'program') {
-      const programId = session.metadata?.program_id;
-      if (programId) {
-        await admin
-          .from('program_enrollments')
-          .update({ payment_status: 'paid', status: 'confirmed', confirmed_at: new Date().toISOString() })
-          .eq('program_id', programId)
-          .eq('user_id', user.id);
-      }
-      return NextResponse.json({ success: true, type: 'program' });
-    }
-
-    return NextResponse.json({ success: true });
   } catch (err) {
-    console.error('verify-session error:', err);
+    console.error('verify-session API error:', err);
     const message = err instanceof Error ? err.message : 'Unknown error';
     return NextResponse.json({ error: message }, { status: 500 });
   }

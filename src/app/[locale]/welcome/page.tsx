@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
+import { useEffect } from 'react';
 import {
   ArrowRight, Calendar, Users, Crown, UserCog, CreditCard,
   Sparkles, Settings, Shield,
@@ -22,11 +23,30 @@ type HubCard = {
 
 export default function WelcomePage() {
   const params = useParams();
+  const searchParams = useSearchParams();
   const locale = params.locale as string;
   const { user, profile, isAdmin } = useUser();
 
   const isActiveMember = profile?.subscription_status === 'active';
   const name = profile?.full_name || user?.email?.split('@')[0] || 'friend';
+
+  // Verify session if session_id in URL (after Stripe payment)
+  useEffect(() => {
+    const sessionId = searchParams.get('session_id');
+    if (sessionId && user) {
+      fetch('/api/stripe/verify-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId }),
+      }).then(res => res.json()).then(data => {
+        console.log('Session verification result:', data);
+        // Reload user data to reflect subscription status
+        window.location.reload();
+      }).catch(err => {
+        console.error('Session verification failed:', err);
+      });
+    }
+  }, [searchParams, user]);
 
   // Personal (account-related) cards
   const personalCards: HubCard[] = [

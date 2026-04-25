@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import { Loader2, Mail, Lock } from 'lucide-react';
+import { Loader2, Mail, Lock, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -22,9 +22,19 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect');
+  const confirmed = searchParams.get('confirmed');
+  const urlError = searchParams.get('error');
+  const message = searchParams.get('message');
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Show error from URL query params
+  useEffect(() => {
+    if (urlError === 'email_confirmation_failed') {
+      setError(message || 'Email confirmation failed. Please try again or contact support.');
+    }
+  }, [urlError, message]);
 
   const {
     register,
@@ -85,6 +95,15 @@ export default function LoginPage() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {confirmed && (
+              <div className="rounded-md bg-green-50 p-3 text-sm text-green-700 border border-green-200">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="h-4 w-4" />
+                  <span className="font-medium">Email confirmed!</span>
+                </div>
+                <p className="mt-1 ml-6">Your email has been verified. Please sign in to continue.</p>
+              </div>
+            )}
             {error && (
               <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</div>
             )}

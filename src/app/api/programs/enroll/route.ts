@@ -13,7 +13,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { programSlug, paymentMethod } = await request.json();
+    const { programSlug, paymentMethod, locale = 'en' } = await request.json();
 
     if (!programSlug) {
       return NextResponse.json({ error: 'Missing programSlug' }, { status: 400 });
@@ -106,8 +106,8 @@ export async function POST(request: Request) {
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
     const stripeMetadata = { user_id: user.id, program_id: program.id, type: 'program' };
-    const successUrl = `${appUrl}/en/coach-training?payment=success&session_id={CHECKOUT_SESSION_ID}`;
-    const cancelUrl = `${appUrl}/en/coach-training/${programSlug}?payment=cancelled`;
+    const successUrl = `${appUrl}/${locale}/coach-training?payment=success&session_id={CHECKOUT_SESSION_ID}`;
+    const cancelUrl = `${appUrl}/${locale}/coach-training/${programSlug}?payment=cancelled`;
 
     let session;
     if (program.stripe_price_id) {

@@ -63,7 +63,7 @@ export function EnrollButton({ locale, programSlug, label, price, currency, prog
       const res = await fetch('/api/programs/enroll', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ programSlug, paymentMethod }),
+        body: JSON.stringify({ programSlug, paymentMethod, locale }),
       });
       const data = await res.json();
       if (!res.ok) {

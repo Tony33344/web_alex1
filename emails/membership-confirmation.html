@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to Infinity Role Teachers Membership</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f8f9fa;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+    }
+    .header {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      padding: 50px 20px;
+      text-align: center;
+    }
+    .logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .header h1 {
+      color: #ffffff;
+      font-size: 28px;
+      margin: 0;
+      font-weight: 700;
+    }
+    .header-subtitle {
+      color: #ffffff;
+      font-size: 18px;
+      margin-top: 10px;
+      font-weight: 300;
+      opacity: 0.95;
+    }
+    .welcome-badge {
+      display: inline-block;
+      background-color: #ffffff;
+      color: #4facfe;
+      padding: 10px 25px;
+      border-radius: 25px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .content {
+      padding: 40px 30px;
+      color: #333333;
+    }
+    .greeting {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #1a1a1a;
+    }
+    .welcome-message {
+      font-size: 16px;
+      line-height: 1.8;
+      margin-bottom: 30px;
+      color: #555555;
+    }
+    .membership-card {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      border-radius: 16px;
+      padding: 35px;
+      margin: 30px 0;
+      color: #ffffff;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(79, 172, 254, 0.3);
+    }
+    .membership-tier {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      opacity: 0.9;
+      margin-bottom: 10px;
+    }
+    .membership-name {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+    .membership-details {
+      background-color: rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+    }
+    .membership-detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.2);
+      font-size: 15px;
+    }
+    .membership-detail-row:last-child {
+      border-bottom: none;
+    }
+    .detail-value {
+      font-weight: 600;
+    }
+    .benefits-section {
+      margin: 35px 0;
+    }
+    .benefits-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    .benefit-item {
+      background-color: #f0f9ff;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+    }
+    .benefit-icon {
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    .benefit-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 5px;
+    }
+    .benefit-desc {
+      font-size: 12px;
+      color: #666666;
+    }
+    .button-container {
+      text-align: center;
+      margin: 35px 0;
+    }
+    .primary-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+      color: #ffffff;
+      text-decoration: none;
+      padding: 16px 45px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+    }
+    .secondary-button {
+      display: inline-block;
+      background-color: #ffffff;
+      color: #4facfe;
+      text-decoration: none;
+      padding: 14px 35px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      border: 2px solid #4facfe;
+      margin-left: 10px;
+    }
+    .account-info {
+      background-color: #f8f9fa;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 30px 0;
+    }
+    .account-info h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 15px;
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      font-size: 14px;
+      color: #555555;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .info-row:last-child {
+      border-bottom: none;
+    }
+    .info-label {
+      font-weight: 500;
+      color: #333333;
+    }
+    .next-steps {
+      background-color: #ecfdf5;
+      border-left: 4px solid #10b981;
+      padding: 20px;
+      margin: 25px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .next-steps h4 {
+      font-weight: 600;
+      color: #065f46;
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+    .next-steps ol {
+      margin: 0;
+      padding-left: 20px;
+      color: #047857;
+    }
+    .next-steps li {
+      margin-bottom: 8px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .support-note {
+      text-align: center;
+      margin-top: 30px;
+      padding: 20px;
+      background-color: #f8f9fa;
+      border-radius: 8px;
+      font-size: 14px;
+      color: #666666;
+    }
+    .support-note a {
+      color: #4facfe;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .footer {
+      background-color: #1a1a2e;
+      padding: 40px 30px;
+      text-align: center;
+    }
+    .footer-logo {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      margin-bottom: 15px;
+      opacity: 0.9;
+    }
+    .footer-text {
+      font-size: 14px;
+      color: #a0aec0;
+      margin-bottom: 8px;
+    }
+    .company-name {
+      font-weight: 600;
+      color: #ffffff;
+      font-size: 16px;
+    }
+    .social-links {
+      margin-top: 20px;
+    }
+    .social-links a {
+      display: inline-block;
+      margin: 0 8px;
+      color: #a0aec0;
+      text-decoration: none;
+      font-size: 13px;
+    }
+    .footer-bottom {
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid #2d3748;
+    }
+    .footer-bottom a {
+      color: #718096;
+      text-decoration: none;
+      font-size: 12px;
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid #e9ecef;
+      margin: 30px 0;
+    }
+    @media only screen and (max-width: 600px) {
+      .content {
+        padding: 30px 20px;
+      }
+      .benefits-grid {
+        grid-template-columns: 1fr;
+      }
+      .membership-detail-row {
+        flex-direction: column;
+        text-align: center;
+      }
+      .primary-button, .secondary-button {
+        display: block;
+        margin: 10px 0;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+    <tr>
+      <td align="center" style="padding: 20px 0;">
+        <table role="presentation" class="container" cellspacing="0" cellpadding="0" border="0" width="600">
+          <!-- Header -->
+          <tr>
+            <td class="header">
+              <img src="https://nchbiryeykludxrrdfaw.supabase.co/storage/v1/object/public/images/pages/home/logo%20small%20transparent.png" 
+                   alt="Infinity Role Teachers" 
+                   class="logo">
+              <h1>Welcome to the Family!</h1>
+              <p class="header-subtitle">Your Membership is Active</p>
+              <span class="welcome-badge">✨ Member</span>
+            </td>
+          </tr>
+          
+          <!-- Content -->
+          <tr>
+            <td class="content">
+              <p class="greeting">Hello {{user_name}},</p>
+              
+              <p class="welcome-message">
+                We're absolutely thrilled to welcome you to the Infinity Role Teachers community! 
+                Your membership is now active, and you have access to a world of wellness, learning, and transformation.
+              </p>
+              
+              <!-- Membership Card -->
+              <div class="membership-card">
+                <p class="membership-tier">Active Membership</p>
+                <h2 class="membership-name">{{membership_name}}</h2>
+                
+                <div class="membership-details">
+                  <div class="membership-detail-row">
+                    <span>Plan</span>
+                    <span class="detail-value">{{plan_type}}</span>
+                  </div>
+                  <div class="membership-detail-row">
+                    <span>Billing</span>
+                    <span class="detail-value">{{billing_cycle}}</span>
+                  </div>
+                  <div class="membership-detail-row">
+                    <span>Amount</span>
+                    <span class="detail-value">{{payment_amount}}</span>
+                  </div>
+                  <div class="membership-detail-row">
+                    <span>Start Date</span>
+                    <span class="detail-value">{{start_date}}</span>
+                  </div>
+                  <div class="membership-detail-row">
+                    <span>Next Billing</span>
+                    <span class="detail-value">{{next_billing_date}}</span>
+                  </div>
+                  <div class="membership-detail-row">
+                    <span>Member ID</span>
+                    <span class="detail-value">#{{member_id}}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Benefits -->
+              <div class="benefits-section">
+                <h3 class="benefits-title">Your Member Benefits</h3>
+                <div class="benefits-grid">
+                  <div class="benefit-item">
+                    <div class="benefit-icon">🎓</div>
+                    <div class="benefit-title">Exclusive Content</div>
+                    <div class="benefit-desc">Premium articles & videos</div>
+                  </div>
+                  <div class="benefit-item">
+                    <div class="benefit-icon">🎯</div>
+                    <div class="benefit-title">Member Discounts</div>
+                    <div class="benefit-desc">20% off all programs</div>
+                  </div>
+                  <div class="benefit-item">
+                    <div class="benefit-icon">👥</div>
+                    <div class="benefit-title">Community Access</div>
+                    <div class="benefit-desc">Private member group</div>
+                  </div>
+                  <div class="benefit-item">
+                    <div class="benefit-icon">📅</div>
+                    <div class="benefit-title">Priority Booking</div>
+                    <div class="benefit-desc">Early access to events</div>
+                  </div>
+                  <div class="benefit-item">
+                    <div class="benefit-icon">💬</div>
+                    <div class="benefit-title">Direct Support</div>
+                    <div class="benefit-desc">Priority email support</div>
+                  </div>
+                  <div class="benefit-item">
+                    <div class="benefit-icon">📚</div>
+                    <div class="benefit-title">Resource Library</div>
+                    <div class="benefit-desc">Downloadable guides</div>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Action Buttons -->
+              <div class="button-container">
+                <a href="{{dashboard_url}}" class="primary-button">Go to Dashboard</a>
+                <a href="{{programs_url}}" class="secondary-button">Explore Programs</a>
+              </div>
+              
+              <!-- Account Info -->
+              <div class="account-info">
+                <h3>Account Summary</h3>
+                <div class="info-row">
+                  <span class="info-label">Member Name</span>
+                  <span>{{user_name}}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Email</span>
+                  <span>{{user_email}}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Plan</span>
+                  <span>{{membership_name}}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Payment Method</span>
+                  <span>{{payment_method}}</span>
+                </div>
+                <div class="info-row">
+                  <span class="info-label">Invoice</span>
+                  <span><a href="{{invoice_url}}" style="color: #4facfe;">View Invoice</a></span>
+                </div>
+              </div>
+              
+              <!-- Next Steps -->
+              <div class="next-steps">
+                <h4>🚀 Get Started in 3 Easy Steps</h4>
+                <ol>
+                  <li><strong>Complete your profile</strong> - Add your photo and preferences</li>
+                  <li><strong>Explore the dashboard</strong> - Check out your exclusive content</li>
+                  <li><strong>Join the community</strong> - Connect with fellow members</li>
+                </ol>
+              </div>
+              
+              <hr class="divider">
+              
+              <p style="font-size: 15px; line-height: 1.8; color: #555555; text-align: center;">
+                Thank you for choosing Infinity Role Teachers. We're honored to be part of your wellness journey.
+              </p>
+              
+              <div class="support-note">
+                Need help getting started?<br>
+                <a href="mailto:support@infinityroleteachers.com">Contact our support team</a> or visit our <a href="{{help_center_url}}">Help Center</a>
+              </div>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td class="footer">
+              <img src="https://nchbiryeykludxrrdfaw.supabase.co/storage/v1/object/public/images/pages/home/logo%20small%20transparent.png" 
+                   alt="Infinity Role Teachers" 
+                   class="footer-logo">
+              <p class="company-name">Infinity Role Teachers</p>
+              <p class="footer-text">AMS4EVER AG, Switzerland</p>
+              <div class="social-links">
+                <a href="#">Instagram</a> • 
+                <a href="#">Facebook</a> • 
+                <a href="#">LinkedIn</a> • 
+                <a href="#">YouTube</a>
+              </div>
+              <div class="footer-bottom">
+                <a href="{{unsubscribe_url}}">Unsubscribe</a> • 
+                <a href="{{privacy_url}}">Privacy Policy</a> • 
+                <a href="{{terms_url}}">Terms of Service</a>
+              </div>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

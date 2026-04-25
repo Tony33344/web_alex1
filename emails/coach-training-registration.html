@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coach Training Enrollment Confirmed - Infinity Role Teachers</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f8f9fa;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+    }
+    .header {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      padding: 40px 20px;
+      text-align: center;
+    }
+    .logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-bottom: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    .header h1 {
+      color: #ffffff;
+      font-size: 26px;
+      margin: 0;
+      font-weight: 600;
+    }
+    .header-subtitle {
+      color: #ffffff;
+      font-size: 16px;
+      margin-top: 10px;
+      opacity: 0.95;
+    }
+    .success-badge {
+      display: inline-block;
+      background-color: #22c55e;
+      color: #ffffff;
+      padding: 8px 20px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 15px;
+    }
+    .content {
+      padding: 40px 30px;
+      color: #333333;
+    }
+    .greeting {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: #1a1a1a;
+    }
+    .welcome-message {
+      font-size: 16px;
+      line-height: 1.7;
+      margin-bottom: 30px;
+      color: #555555;
+      background-color: #fdf2f8;
+      padding: 20px;
+      border-radius: 8px;
+      border-left: 4px solid #f5576c;
+    }
+    .program-card {
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 30px;
+      margin: 30px 0;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      border: 1px solid #e5e7eb;
+    }
+    .program-title {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 20px;
+      line-height: 1.3;
+    }
+    .program-detail {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 15px;
+      font-size: 15px;
+      color: #555555;
+    }
+    .program-detail-icon {
+      width: 28px;
+      margin-right: 12px;
+      text-align: center;
+      font-size: 18px;
+    }
+    .detail-label {
+      font-weight: 600;
+      color: #333333;
+      min-width: 100px;
+    }
+    .detail-content {
+      flex: 1;
+    }
+    .certificate-badge {
+      display: inline-flex;
+      align-items: center;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: #ffffff;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-top: 15px;
+    }
+    .certificate-badge::before {
+      content: "🏆";
+      margin-right: 8px;
+      font-size: 16px;
+    }
+    .enrollment-box {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 12px;
+      padding: 25px;
+      margin: 30px 0;
+      color: #ffffff;
+      text-align: center;
+    }
+    .enrollment-label {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      opacity: 0.9;
+    }
+    .enrollment-number {
+      font-size: 28px;
+      font-weight: 700;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 2px;
+    }
+    .button-container {
+      text-align: center;
+      margin: 30px 0;
+    }
+    .action-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      color: #ffffff;
+      text-decoration: none;
+      padding: 16px 40px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+    }
+    .what-to-expect {
+      background-color: #f8f9fa;
+      border-radius: 12px;
+      padding: 25px;
+      margin: 30px 0;
+    }
+    .what-to-expect h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #1a1a1a;
+      margin-bottom: 15px;
+    }
+    .expect-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .expect-list li {
+      padding: 10px 0;
+      padding-left: 30px;
+      position: relative;
+      font-size: 15px;
+      color: #555555;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    .expect-list li:last-child {
+      border-bottom: none;
+    }
+    .expect-list li::before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #22c55e;
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .important-info {
+      background-color: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      padding: 20px;
+      margin: 25px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    .important-info h4 {
+      font-weight: 600;
+      color: #92400e;
+      margin-bottom: 10px;
+      font-size: 16px;
+    }
+    .important-info ul {
+      margin: 0;
+      padding-left: 20px;
+      color: #78350f;
+    }
+    .important-info li {
+      margin-bottom: 8px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .footer {
+      background-color: #f8f9fa;
+      padding: 30px;
+      text-align: center;
+      border-top: 1px solid #e9ecef;
+    }
+    .footer-text {
+      font-size: 14px;
+      color: #666666;
+      margin-bottom: 10px;
+    }
+    .company-name {
+      font-weight: 600;
+      color: #333333;
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid #e9ecef;
+      margin: 30px 0;
+    }
+    @media only screen and (max-width: 600px) {
+      .content {
+        padding: 30px 20px;
+      }
+      .program-detail {
+        flex-direction: column;
+      }
+      .detail-label {
+        margin-bottom: 5px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+    <tr>
+      <td align="center" style="padding: 20px 0;">
+        <table role="presentation" class="container" cellspacing="0" cellpadding="0" border="0" width="600">
+          <!-- Header -->
+          <tr>
+            <td class="header">
+              <img src="https://nchbiryeykludxrrdfaw.supabase.co/storage/v1/object/public/images/pages/home/logo%20small%20transparent.png" 
+                   alt="Infinity Role Teachers" 
+                   class="logo">
+              <h1>Welcome to Your Journey!</h1>
+              <p class="header-subtitle">Coach Training Program</p>
+              <span class="success-badge">✓ Enrolled</span>
+            </td>
+          </tr>
+          
+          <!-- Content -->
+          <tr>
+            <td class="content">
+              <p class="greeting">Dear {{user_name}},</p>
+              
+              <p class="welcome-message">
+                Congratulations on taking this transformative step! We're thrilled to welcome you to our coach training community. 
+                Your journey to becoming a certified wellness coach starts now.
+              </p>
+              
+              <!-- Program Details -->
+              <div class="program-card">
+                <h2 class="program-title">{{program_name}}</h2>
+                
+                <div class="program-detail">
+                  <span class="program-detail-icon">📅</span>
+                  <span class="detail-label">Duration:</span>
+                  <span class="detail-content">{{program_duration}}</span>
+                </div>
+                
+                <div class="program-detail">
+                  <span class="program-detail-icon">🗓️</span>
+                  <span class="detail-label">Start Date:</span>
+                  <span class="detail-content">{{start_date}}</span>
+                </div>
+                
+                <div class="program-detail">
+                  <span class="program-detail-icon">🕐</span>
+                  <span class="detail-label">Time:</span>
+                  <span class="detail-content">{{program_time}}</span>
+                </div>
+                
+                <div class="program-detail">
+                  <span class="program-detail-icon">📍</span>
+                  <span class="detail-label">Location:</span>
+                  <span class="detail-content">{{location}}</span>
+                </div>
+                
+                <div class="program-detail">
+                  <span class="program-detail-icon">👥</span>
+                  <span class="detail-label">Group Size:</span>
+                  <span class="detail-content">Max {{max_participants}} participants</span>
+                </div>
+                
+                <div class="program-detail">
+                  <span class="program-detail-icon">💳</span>
+                  <span class="detail-label">Investment:</span>
+                  <span class="detail-content">{{payment_amount}}</span>
+                </div>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                  <span class="certificate-badge">Certificate Included</span>
+                </div>
+              </div>
+              
+              <!-- Enrollment Number -->
+              <div class="enrollment-box">
+                <p class="enrollment-label">Your Enrollment ID</p>
+                <p class="enrollment-number">{{enrollment_id}}</p>
+              </div>
+              
+              <!-- What to Expect -->
+              <div class="what-to-expect">
+                <h3>What to Expect</h3>
+                <ul class="expect-list">
+                  <li>Expert-led training sessions with certified instructors</li>
+                  <li>Comprehensive course materials and resources</li>
+                  <li>Hands-on practice and real-world applications</li>
+                  <li>Peer learning and networking opportunities</li>
+                  <li>Official certification upon completion</li>
+                  <li>Ongoing support and alumni community access</li>
+                </ul>
+              </div>
+              
+              <!-- Action Button -->
+              <div class="button-container">
+                <a href="{{program_url}}" class="action-button">Access Your Program</a>
+              </div>
+              
+              <!-- Important Info -->
+              <div class="important-info">
+                <h4>📋 Before You Begin</h4>
+                <ul>
+                  <li>You'll receive detailed course materials 48 hours before the start date</li>
+                  <li>Please bring a notebook and comfortable clothing</li>
+                  <li>Download our companion app for additional resources</li>
+                  <li>Join our private community group for early networking</li>
+                </ul>
+              </div>
+              
+              <hr class="divider">
+              
+              <p style="font-size: 15px; line-height: 1.7; color: #555555;">
+                We're here to support you every step of the way. If you have any questions before the program starts, 
+                please reach out to our dedicated support team.
+              </p>
+              
+              <p style="font-size: 15px; color: #555555; margin-top: 20px;">
+                Welcome to the Infinity Role Teachers family!<br>
+                <strong style="color: #f5576c;">— The IRT Team</strong>
+              </p>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td class="footer">
+              <p class="footer-text">
+                <span class="company-name">Infinity Role Teachers</span><br>
+                AMS4EVER AG, Switzerland
+              </p>
+              <p class="footer-text">
+                Questions? Contact us at <a href="mailto:support@infinityroleteachers.com" style="color: #f5576c;">support@infinityroleteachers.com</a>
+              </p>
+              <p class="footer-text" style="font-size: 12px; margin-top: 20px;">
+                <a href="{{unsubscribe_url}}" style="color: #999999;">Unsubscribe</a> • 
+                <a href="{{privacy_url}}" style="color: #999999;">Privacy Policy</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

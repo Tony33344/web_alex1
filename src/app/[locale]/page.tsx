@@ -1,6 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
-import { ArrowRight, Heart, Sun, Brain, Dumbbell, Hand, Leaf, Star, Calendar, BookOpen, Users, Target, Compass, MapPin, Clock, type LucideIcon } from 'lucide-react';
+import { ArrowRight, Heart, Sun, Brain, Dumbbell, Hand, Leaf, Star, Calendar, BookOpen, Users, Target, Compass, MapPin, Clock, Timer, type LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -14,6 +14,7 @@ import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
 import { processHtmlContent, createBriefDescription } from '@/lib/utils/html';
 import { NewsletterSection } from '@/components/sections/NewsletterSection';
+import { getActivePricing } from '@/lib/utils/pricing';
 
 const healthIconMap: Record<string, LucideIcon> = { Leaf, Sun, Heart, Brain, Dumbbell, Hand };
 
@@ -107,7 +108,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               {upcomingEvents.map((event) => {
                 const evtTitle = getLocalizedField(event, 'title', locale) || event.title_en;
                 const spotsLeft = event.max_attendees ? event.max_attendees - event.current_attendees : null;
-                const priceLabel = event.price && event.price > 0 ? `${event.currency} ${event.price}` : t('common.free');
+                const pricing = getActivePricing(event);
+                const priceLabel = pricing.activePrice && pricing.activePrice > 0 ? `${pricing.currency} ${pricing.activePrice}` : t('common.free');
                 const startDate = new Date(event.start_date).toLocaleDateString(locale, { dateStyle: 'medium' });
                 return (
                   <Link key={event.id} href={`/${locale}/events/${event.slug}`} className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)]">
@@ -119,11 +121,24 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                         {event.is_featured && (
                           <Badge className="absolute left-3 top-3 bg-secondary text-secondary-foreground">Featured</Badge>
                         )}
+                        {pricing.isEarlyBird && (
+                          <Badge className="absolute right-3 top-3 bg-amber-500 text-white gap-1">
+                            <Timer className="h-3 w-3" />
+                            Early Bird
+                          </Badge>
+                        )}
                       </div>
                       <CardHeader>
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           <Badge variant="outline">{event.is_online ? t('common.online') : t('common.inPerson')}</Badge>
-                          <span className="font-semibold text-primary">{priceLabel}</span>
+                          {pricing.isEarlyBird ? (
+                            <div className="flex items-center gap-1">
+                              <span className="line-through text-muted-foreground">{pricing.currency} {pricing.regularPrice}</span>
+                              <span className="font-semibold text-amber-600">{priceLabel}</span>
+                            </div>
+                          ) : (
+                            <span className="font-semibold text-primary">{priceLabel}</span>
+                          )}
                         </div>
                         <CardTitle className="text-lg group-hover:text-primary transition-colors">{evtTitle}</CardTitle>
                       </CardHeader>
@@ -131,6 +146,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                         <div className="space-y-2 text-sm text-muted-foreground">
                           <div className="flex items-center gap-2"><Calendar className="h-4 w-4" />{startDate}</div>
                           <div className="flex items-center gap-2"><MapPin className="h-4 w-4" />{event.is_online ? 'Online' : event.location || 'TBA'}</div>
+                          {pricing.isEarlyBird && pricing.earlyBirdDeadline && (
+                            <div className="flex items-center gap-2 text-amber-600 font-medium">
+                              <Timer className="h-4 w-4" />
+                              Ends {pricing.earlyBirdDeadline.toLocaleDateString(locale, { month: 'short', day: 'numeric' })}
+                            </div>
+                          )}
                           {spotsLeft !== null && (
                             <div className={`flex items-center gap-2 ${spotsLeft <= 10 ? 'text-destructive font-medium' : ''}`}><Users className="h-4 w-4" />{spotsLeft > 0 ? `${spotsLeft} spots left` : t('common.eventFull')}</div>
                           )}
@@ -435,12 +456,19 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             <div className="flex flex-wrap justify-center gap-8">
               {programs.slice(0, 3).map((program) => {
                 const name = getLocalizedField(program, 'name', locale) || program.name_en;
-                const priceLabel = program.price ? `${program.currency} ${program.price}` : t('common.free');
+                const pricing = getActivePricing(program);
+                const priceLabel = pricing.activePrice && pricing.activePrice > 0 ? `${pricing.currency} ${pricing.activePrice}` : t('common.free');
                 return (
                   <Link key={program.slug} href={`/${locale}/coach-training/${program.slug}`} className="w-full md:w-[calc(33.333%-1.5rem)]">
                     <Card className="group h-full overflow-hidden transition-shadow hover:shadow-lg">
-                      <div className="aspect-video bg-gradient-to-br from-primary/5 to-secondary/5">
+                      <div className="relative aspect-video bg-gradient-to-br from-primary/5 to-secondary/5">
                         {program.image_url && <img src={program.image_url} alt={name} className="h-full w-full object-cover" />}
+                        {pricing.isEarlyBird && (
+                          <Badge className="absolute right-3 top-3 bg-amber-500 text-white gap-1">
+                            <Timer className="h-3 w-3" />
+                            Early Bird
+                          </Badge>
+                        )}
                       </div>
                       <CardHeader>
                         <CardTitle className="text-lg">{name}</CardTitle>
@@ -448,8 +476,21 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                       <CardContent className="space-y-3">
                         <div className="flex items-center justify-between text-sm text-muted-foreground">
                           <span>{program.duration || ''}</span>
-                          <span className="font-semibold text-foreground">{priceLabel}</span>
+                          {pricing.isEarlyBird ? (
+                            <div className="flex items-center gap-1">
+                              <span className="line-through text-muted-foreground">{pricing.currency} {pricing.regularPrice}</span>
+                              <span className="font-semibold text-amber-600">{priceLabel}</span>
+                            </div>
+                          ) : (
+                            <span className="font-semibold text-foreground">{priceLabel}</span>
+                          )}
                         </div>
+                        {pricing.isEarlyBird && pricing.earlyBirdDeadline && (
+                          <div className="flex items-center gap-2 text-xs text-amber-600 font-medium">
+                            <Timer className="h-3 w-3" />
+                            Ends {pricing.earlyBirdDeadline.toLocaleDateString(locale, { month: 'short', day: 'numeric' })}
+                          </div>
+                        )}
                         <Button variant="outline" className="w-full gap-2">
                           {t('common.learnMore')}
                           <ArrowRight className="h-4 w-4" />

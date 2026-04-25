@@ -1,249 +1,162 @@
 # Email Templates for Infinity Role Teachers
 
-Beautiful, responsive HTML email templates for all user communications.
-
-## Templates
-
-### 1. supabase-verification.html
-**Purpose**: Email verification for new user registrations  
-**Variables**:
-- `{{user_name}}` - User's first name
-- `{{verification_code}}` - 6-digit verification code
-- `{{confirmation_url}}` - Link to confirm email
-- `{{unsubscribe_url}}` - Unsubscribe link
-- `{{privacy_url}}` - Privacy policy URL
-
-**Usage**: Supabase Auth email confirmation
+Organized by sender: **Supabase** (auth), **Application** (business logic via Hostpoint.ch), **Stripe** (payment webhooks).
 
 ---
 
-### 2. password-reset.html
-**Purpose**: Password reset requests  
-**Variables**:
-- `{{user_name}}` - User's first name
-- `{{reset_url}}` - Password reset link (valid 1 hour)
+## 📁 Folder Structure
 
-**Usage**: Supabase Auth password recovery
-
----
-
-### 3. event-registration.html
-**Purpose**: Event registration confirmations  
-**Variables**:
-- `{{user_name}}` - User's first name
-- `{{event_title}}` - Event name
-- `{{event_date}}` - Event date
-- `{{event_time}}` - Event time
-- `{{event_location}}` - Event location
-- `{{payment_amount}}` - Amount paid
-- `{{order_id}}` - Order reference number
-- `{{registration_number}}` - Unique registration number
-- `{{event_url}}` - Link to event details
-- `{{calendar_url}}` - Add to calendar link
-- `{{unsubscribe_url}}` - Unsubscribe link
-- `{{privacy_url}}` - Privacy policy URL
-
-**Usage**: After successful event registration payment
-
----
-
-### 4. coach-training-registration.html
-**Purpose**: Coach training program enrollment confirmations  
-**Variables**:
-- `{{user_name}}` - User's first name
-- `{{program_name}}` - Training program name
-- `{{program_duration}}` - Program duration (e.g., "2 days")
-- `{{start_date}}` - Program start date
-- `{{program_time}}` - Daily schedule time
-- `{{location}}` - Training location
-- `{{max_participants}}` - Maximum group size
-- `{{payment_amount}}` - Amount paid
-- `{{enrollment_id}}` - Unique enrollment ID
-- `{{program_url}}` - Link to program dashboard
-- `{{unsubscribe_url}}` - Unsubscribe link
-- `{{privacy_url}}` - Privacy policy URL
-
-**Usage**: After successful coach training enrollment
-
----
-
-### 5. membership-confirmation.html
-**Purpose**: Membership subscription confirmations  
-**Variables**:
-- `{{user_name}}` - User's full name
-- `{{membership_name}}` - Membership tier name
-- `{{plan_type}}` - Monthly/Yearly
-- `{{billing_cycle}}` - Billing frequency
-- `{{payment_amount}}` - Amount charged
-- `{{start_date}}` - Membership start date
-- `{{next_billing_date}}` - Next billing date
-- `{{member_id}}` - Unique member ID
-- `{{user_email}}` - User's email address
-- `{{payment_method}}` - Card type ending in XXXX
-- `{{invoice_url}}` - Link to view/download invoice
-- `{{dashboard_url}}` - Member dashboard URL
-- `{{programs_url}}` - Programs listing URL
-- `{{help_center_url}}` - Help center URL
-- `{{unsubscribe_url}}` - Unsubscribe link
-- `{{privacy_url}}` - Privacy policy URL
-- `{{terms_url}}` - Terms of service URL
-
-**Usage**: After successful membership subscription
-
----
-
-## Design System
-
-### Color Palette (Earth Tones - Matching Logo)
-- **Primary**: `#8b7355` (Warm Brown - Brand color)
-- **Secondary**: `#5c4a3a` (Dark Brown - Text/Headings)
-- **Accent**: `#c4a77d` (Gold/Tan - Borders/Highlights)
-- **Background**: `#faf8f5` (Warm Off-White)
-- **Card Background**: `#f9f6f2` (Light Cream)
-- **Border**: `#e8e0d5` (Light Tan)
-- **Text**: `#3d3d3d` (Dark Gray)
-- **Muted Text**: `#666666` (Medium Gray)
-
-### Typography
-- **Headings**: Georgia serif, 18-26px, font-weight 400
-- **Body**: Georgia serif, 15px, line-height 1.8
-- **UI Elements**: Arial sans-serif, 11-14px, uppercase, letter-spacing 1-2px
-- **Labels**: Uppercase, letter-spacing 2px, font-weight 500
-
-### Logo
-- **URL**: `https://nchbiryeykludxrrdfaw.supabase.co/storage/v1/object/public/images/pages/home/logo%20small%20transparent.png`
-- **Header Size**: 85-95px width, `height: auto` (preserves natural aspect ratio)
-- **Footer Size**: 45-50px width, `height: auto`
-- **Style**: Natural aspect ratio, no forced circular crop
-
----
-
-## Email Client Compatibility
-
-These templates are tested and compatible with:
-- ✅ Apple Mail (iOS/macOS)
-- ✅ Gmail (Web/App)
-- ✅ Outlook (Web/Desktop)
-- ✅ Yahoo Mail
-- ✅ Samsung Mail
-- ✅ Thunderbird
-
-**Notes**:
-- Uses table-based layout for maximum compatibility
-- Inline CSS for Gmail compatibility
-- Responsive design with media queries
-- Web-safe fonts only
-
----
-
-## Supabase Integration
-
-To use these templates with Supabase Auth:
-
-1. Go to **Supabase Dashboard → Authentication → Email Templates**
-2. Replace the default templates with these HTML templates
-3. Update the variable syntax from `{{variable}}` to Supabase's format
-
-### Supabase Variable Mapping
-
-Supabase uses different variable syntax:
-
-| Our Template | Supabase Format |
-|-------------|-----------------|
-| `{{user_name}}` | `{{ .Data.user_name }}` or `{{ .User.Email }}` |
-| `{{confirmation_url}}` | `{{ .ConfirmationURL }}` |
-| `{{reset_url}}` | `{{ .ConfirmationURL }}` |
-
-**Example Supabase template**:
-```html
-<h1>Hello {{ .User.Email }}</h1>
-<a href="{{ .ConfirmationURL }}">Verify Email</a>
+```
+emails/
+├── supabase/           # Supabase Auth Templates (Go Template syntax)
+├── application/        # Application Emails → Hostpoint.ch SMTP
+├── stripe/             # Stripe Webhook Templates (if needed)
+└── README.md           # This file
 ```
 
 ---
 
-## Hostpoint.ch Integration
+## 🔐 Supabase Auth Templates (`/supabase/`)
 
-To send emails via Hostpoint.ch:
+These templates use **Go Template syntax** (`{{ .Variable }}`) and go directly into Supabase Dashboard.
 
-1. **Set up SMTP in your application**:
-   ```env
+### Templates
+
+| File | Supabase Template Name | Variables |
+|------|------------------------|-----------|
+| `confirm-signup.html` | Confirm signup | `{{ .ConfirmationURL }}`, `{{ .Token }}` |
+| `reset-password.html` | Reset password | `{{ .ConfirmationURL }}` |
+| `magic-link.html` | Magic link | `{{ .ConfirmationURL }}` |
+| `change-email.html` | Change email address | `{{ .ConfirmationURL }}`, `{{ .NewEmail }}` |
+
+### How to Install in Supabase
+
+1. Go to [Supabase Dashboard](https://app.supabase.com)
+2. Select your project → **Authentication → Email Templates**
+3. Choose template (e.g., "Confirm signup")
+4. Copy HTML content from corresponding file
+5. Paste into Supabase template editor
+6. Save
+
+**Available Supabase Variables:**
+- `{{ .ConfirmationURL }}` - Verification/confirmation link
+- `{{ .Token }}` - 6-digit OTP code
+- `{{ .Email }}` - User's email address
+- `{{ .NewEmail }}` - New email (for change email)
+- `{{ .SiteURL }}` - Your site URL from project settings
+
+---
+
+## 📧 Application Templates (`/application/`)
+
+These templates use **Handlebars/Custom syntax** (`{{variable}}`) and are sent via **Hostpoint.ch SMTP** from our application code.
+
+### Templates
+
+| File | Purpose | Variables |
+|------|---------|-----------|
+| `event-registration.html` | Event confirmation | `{{user_name}}`, `{{event_title}}`, `{{event_date}}`, `{{payment_amount}}`, etc. |
+| `coach-training-registration.html` | Training enrollment | `{{user_name}}`, `{{program_name}}`, `{{start_date}}`, etc. |
+| `membership-confirmation.html` | Membership welcome | `{{user_name}}`, `{{membership_name}}`, `{{billing_cycle}}`, etc. |
+| `password-reset.html` | Custom password reset | `{{user_name}}`, `{{reset_url}}` |
+| `supabase-verification.html` | Custom verification | `{{user_name}}`, `{{verification_code}}`, `{{confirmation_url}}` |
+
+### How to Use
+
+These are sent from your application code via Hostpoint.ch SMTP:
+
+```javascript
+// Example: Sending event registration confirmation
+const template = fs.readFileSync('./emails/application/event-registration.html', 'utf8');
+const emailBody = template
+  .replace('{{user_name}}', user.name)
+  .replace('{{event_title}}', event.title)
+  .replace('{{event_date}}', event.date);
+
+await transporter.sendMail({
+  from: 'Infinity Role Teachers <support@infinityroleteachers.com>',
+  to: user.email,
+  subject: 'Event Registration Confirmed',
+  html: emailBody
+});
+```
+
+**Available Variables:**
+- `{{user_name}}`, `{{user_email}}` - User details
+- `{{event_title}}`, `{{event_date}}`, `{{event_time}}`, `{{event_location}}` - Event info
+- `{{program_name}}`, `{{start_date}}`, `{{program_duration}}` - Training info
+- `{{membership_name}}`, `{{billing_cycle}}`, `{{next_billing_date}}` - Membership info
+- `{{payment_amount}}`, `{{order_id}}`, `{{registration_number}}` - Payment details
+
+---
+
+## 💳 Stripe Templates (`/stripe/`)
+
+For custom webhook-based emails if needed (Stripe sends built-in receipts in live mode).
+
+---
+
+## 🎨 Design System
+
+All templates use consistent earth-tone design:
+
+### Color Palette
+- **Primary**: `#8b7355` (Warm Brown)
+- **Secondary**: `#5c4a3a` (Dark Brown)
+- **Accent**: `#c4a77d` (Gold/Tan)
+- **Background**: `#faf8f5` (Warm Off-White)
+- **Card**: `#f9f6f2` (Light Cream)
+
+### Typography
+- **Headings**: Georgia serif, 18-26px
+- **Body**: Georgia, 15px, line-height 1.8
+- **UI Elements**: Arial, uppercase, letter-spacing 1-2px
+
+### Logo
+- **URL**: `https://nchbiryeykludxrrdfaw.supabase.co/storage/v1/object/public/images/pages/home/logo%20small%20transparent.png`
+- **Header**: 85-95px width, height: auto (natural ratio)
+- **Footer**: 45-50px width, height: auto
+
+---
+
+## 🔧 Hostpoint.ch Integration
+
+To send application emails via Hostpoint.ch:
+
+1. **Create email** in Hostpoint: `support@infinityroleteachers.com`
+2. **Get SMTP credentials** from Hostpoint control panel
+3. **Add to `.env.local`:**
+   ```
    SMTP_HOST=mail.hostpoint.ch
    SMTP_PORT=587
    SMTP_USER=support@infinityroleteachers.com
    SMTP_PASS=your_password
    SMTP_FROM=Infinity Role Teachers <support@infinityroleteachers.com>
    ```
-
-2. **Create email sending function** using Nodemailer or similar
-
-3. **Use these HTML templates** as the email body
-
-4. **Replace variables** dynamically before sending
+4. **Create API route** for sending emails using Nodemailer
 
 ---
 
-## Usage Examples
+## 📋 Quick Reference
 
-### Node.js with Nodemailer
-
-```javascript
-import nodemailer from 'nodemailer';
-import fs from 'fs';
-
-// Read template
-const template = fs.readFileSync('./emails/event-registration.html', 'utf8');
-
-// Replace variables
-const emailBody = template
-  .replace('{{user_name}}', user.name)
-  .replace('{{event_title}}', event.title)
-  .replace('{{event_date}}', event.date);
-
-// Send email
-const transporter = nodemailer.createTransport({
-  host: 'mail.hostpoint.ch',
-  port: 587,
-  auth: {
-    user: 'support@infinityroleteachers.com',
-    pass: process.env.SMTP_PASSWORD
-  }
-});
-
-await transporter.sendMail({
-  from: 'Infinity Role Teachers <support@infinityroleteachers.com>',
-  to: user.email,
-  subject: '🎉 You\'re Registered! ' + event.title,
-  html: emailBody
-});
-```
+| When | Who Sends | Where Template Lives | Syntax |
+|------|-----------|---------------------|--------|
+| User signs up | Supabase | `/supabase/confirm-signup.html` | `{{ .ConfirmationURL }}` |
+| Password reset | Supabase | `/supabase/reset-password.html` | `{{ .ConfirmationURL }}` |
+| Event registration | Our App | `/application/event-registration.html` | `{{user_name}}` |
+| Training enrollment | Our App | `/application/coach-training-registration.html` | `{{program_name}}` |
+| Membership signup | Our App | `/application/membership-confirmation.html` | `{{membership_name}}` |
+| Payment receipt | Stripe | Built-in (live mode) | — |
 
 ---
 
-## Customization
+## ✅ Email Client Compatibility
 
-To update branding:
-1. Replace the logo URL with your own
-2. Update gradient colors in the `<style>` section
-3. Change company name in footer
-4. Update social media links
-
----
-
-## File Structure
-
-```
-emails/
-├── README.md                           # This file
-├── supabase-verification.html          # Email verification
-├── password-reset.html                 # Password recovery
-├── event-registration.html             # Event confirmations
-├── coach-training-registration.html    # Training confirmations
-└── membership-confirmation.html        # Membership welcome
-```
-
----
-
-## Preview
-
-Open any `.html` file in a web browser to preview. All templates are self-contained with inline styles.
+Tested and compatible with:
+- ✅ Apple Mail (iOS/macOS)
+- ✅ Gmail (Web/App)
+- ✅ Outlook (Web/Desktop)
+- ✅ Yahoo Mail
+- ✅ Samsung Mail
+- ✅ Thunderbird
+- ✅ Proton Mail

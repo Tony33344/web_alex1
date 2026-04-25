@@ -46,8 +46,18 @@ export interface EmailOptions {
 export async function sendEmail(options: EmailOptions): Promise<{ success: boolean; messageId?: string; error?: string }> {
   const transporter = createTransporter();
 
-  // If SMTP not configured, log email and return success (dev mode)
+  // If SMTP not configured, fail in production
   if (!transporter) {
+    const isProduction = process.env.NODE_ENV === 'production';
+    if (isProduction) {
+      console.error('❌ SMTP not configured in production. Email cannot be sent.');
+      console.error('Required env vars: SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS');
+      return { 
+        success: false, 
+        error: 'SMTP not configured in production' 
+      };
+    }
+    // Dev mode: log and return success
     console.log('📧 EMAIL (not sent - SMTP not configured):');
     console.log('To:', options.to);
     console.log('Subject:', options.subject);

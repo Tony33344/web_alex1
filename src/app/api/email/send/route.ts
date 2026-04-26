@@ -141,3 +141,22 @@ export async function sendMembershipConfirmationEmail(
 
   return sendEmail({ to: userEmail, subject, html });
 }
+
+// Send welcome email after email confirmation
+export async function sendWelcomeEmail(
+  userEmail: string,
+  userName: string,
+  dashboardUrl: string = 'https://infinityroleteachers.com/en/welcome'
+) {
+  const { html, subject } = prepareEmail({
+    to: userEmail,
+    template: EmailTemplates.WELCOME,
+    subject: 'Welcome to Infinity Role Teachers',
+    variables: {
+      user_name: userName,
+      dashboard_url: dashboardUrl,
+    },
+  });
+
+  return sendEmail({ to: userEmail, subject, html });
+}

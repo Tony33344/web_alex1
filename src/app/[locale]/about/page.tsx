@@ -59,12 +59,12 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   return (
     <>
       {/* Hero Banner */}
-      <div className={`relative overflow-hidden rounded-2xl ${aboutPage?.banner_width === 'contained' ? 'mx-auto max-w-7xl my-6' : ''}`} style={{ minHeight: aboutPage?.banner_height || '240px' }}>
+      <div className={`relative overflow-hidden rounded-2xl ${aboutPage?.banner_width === 'contained' ? 'mx-auto max-w-7xl my-6' : ''}`}>
         {aboutPage?.hero_image_url ? (
-          <div className="relative aspect-[21/9]">
-            <img src={aboutPage.hero_image_url} alt={pageTitle} className="h-full w-full object-cover" />
+          <div className="relative" style={{ minHeight: aboutPage?.banner_height || '240px' }}>
+            <img src={aboutPage.hero_image_url} alt={pageTitle} className="h-full w-full object-cover absolute inset-0" />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-10 text-center">
+            <div className="relative flex items-end justify-center min-h-[inherit] p-6 sm:p-10 text-center">
               <h1 className="text-3xl font-bold text-white sm:text-4xl lg:text-5xl tracking-tight text-center">{pageTitle}</h1>
             </div>
           </div>

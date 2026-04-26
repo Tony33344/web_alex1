@@ -37,6 +37,7 @@ export const EmailTemplates = {
   MEMBERSHIP_CONFIRMATION: 'membership-confirmation',
   PASSWORD_RESET: 'password-reset',
   SUPABASE_VERIFICATION: 'supabase-verification',
+  WELCOME: 'welcome',
 } as const;
 
 export type EmailTemplateName = typeof EmailTemplates[keyof typeof EmailTemplates];

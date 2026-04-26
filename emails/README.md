@@ -142,6 +142,7 @@ To send application emails via Hostpoint.ch:
 | When | Who Sends | Where Template Lives | Syntax |
 |------|-----------|---------------------|--------|
 | User signs up | Supabase | `/supabase/confirm-signup.html` | `{{ .ConfirmationURL }}` |
+| Email confirmed | Our App | `/application/welcome.html` | `{{user_name}}`, `{{dashboard_url}}` |
 | Password reset | Supabase | `/supabase/reset-password.html` | `{{ .ConfirmationURL }}` |
 | Event registration | Our App | `/application/event-registration.html` | `{{user_name}}` |
 | Training enrollment | Our App | `/application/coach-training-registration.html` | `{{program_name}}` |

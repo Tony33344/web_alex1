@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { sendWelcomeEmail } from '@/app/api/email/send/route';
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -11,15 +12,24 @@ export async function GET(request: Request) {
     const supabase = await createClient();
     
     // Verify the email confirmation
-    const { error } = await supabase.auth.verifyOtp({
+    const { data, error } = await supabase.auth.verifyOtp({
       type,
       token_hash,
     });
 
-    if (!error) {
-      // Email verified successfully
+    if (!error && data?.user) {
+      // Email verified successfully - send welcome email for new signups
+      if (type === 'signup') {
+        const userName = data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || 'Friend';
+        const dashboardUrl = `${origin}/en/welcome`;
+        
+        // Send welcome email (don't await - don't block redirect)
+        sendWelcomeEmail(data.user.email!, userName, dashboardUrl).catch((err) => {
+          console.error('Failed to send welcome email:', err);
+        });
+      }
+      
       // Redirect to welcome page (user is now confirmed but needs to login)
-      // Or we could redirect to login with a success message
       return NextResponse.redirect(`${origin}${next}?confirmed=true`);
     }
   }

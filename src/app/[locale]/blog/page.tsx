@@ -68,7 +68,7 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
               );
             })}
 
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 items-stretch">
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 items-stretch auto-rows-fr">
               {regularPosts.map((post) => {
                 const title = getLocalizedField(post, 'title', locale) || post.title_en;
                 const excerpt = getLocalizedField(post, 'excerpt', locale) || '';
@@ -82,7 +82,7 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
                           <img src={post.featured_image_url} alt={title} className="h-full w-full object-cover" />
                         )}
                       </div>
-                      <CardHeader>
+                      <CardHeader className="flex-shrink-0">
                         {post.category && <Badge variant="outline" className="w-fit text-xs capitalize">{post.category}</Badge>}
                         <CardTitle className="line-clamp-2 text-lg group-hover:text-primary transition-colors">
                           {title}

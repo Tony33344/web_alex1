@@ -8,7 +8,7 @@ interface LogoProps {
   logoUrl?: string;
 }
 
-export function Logo({ locale = 'en', className = '', size = 60, logoUrl }: LogoProps) {
+export function Logo({ locale = 'en', className = '', size = 70, logoUrl }: LogoProps) {
   return (
     <Link href={`/${locale}`} className={`flex flex-col items-center gap-0 ${className}`}>
       <Image
@@ -19,7 +19,7 @@ export function Logo({ locale = 'en', className = '', size = 60, logoUrl }: Logo
         className="rounded-full object-cover"
         priority
       />
-      <span className="whitespace-nowrap text-sm font-semibold tracking-tight text-foreground">
+      <span className="whitespace-nowrap text-sm font-semibold tracking-tight text-foreground -mt-1">
         Infinity Role Teachers
       </span>
     </Link>

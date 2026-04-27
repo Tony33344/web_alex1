@@ -35,11 +35,11 @@ export function Footer({ locale }: FooterProps) {
             Transform your life through holistic wellness and coaching. Discover your infinite potential with our expert Role Teachers.
           </p>
           <div className="flex gap-3">
-            <SocialIcon href="#" icon={<Instagram className="h-4 w-4" />} />
-            <SocialIcon href="#" icon={<Facebook className="h-4 w-4" />} />
-            <SocialIcon href="#" icon={<Twitter className="h-4 w-4" />} />
-            <SocialIcon href="#" icon={<Linkedin className="h-4 w-4" />} />
-            <SocialIcon href="#" icon={<Youtube className="h-4 w-4" />} />
+            {settings.social_instagram && <SocialIcon href={settings.social_instagram} icon={<Instagram className="h-4 w-4" />} />}
+            {settings.social_facebook && <SocialIcon href={settings.social_facebook} icon={<Facebook className="h-4 w-4" />} />}
+            {settings.social_twitter && <SocialIcon href={settings.social_twitter} icon={<Twitter className="h-4 w-4" />} />}
+            {settings.social_linkedin && <SocialIcon href={settings.social_linkedin} icon={<Linkedin className="h-4 w-4" />} />}
+            {settings.social_youtube && <SocialIcon href={settings.social_youtube} icon={<Youtube className="h-4 w-4" />} />}
           </div>
         </div>
 

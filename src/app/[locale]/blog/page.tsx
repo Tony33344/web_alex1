@@ -38,37 +38,36 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
         ) : (
           <div className="grid grid-cols-2 gap-8 items-stretch auto-rows-fr">
             {posts.map((post) => {
-                const title = getLocalizedField(post, 'title', locale) || post.title_en;
-                const excerpt = getLocalizedField(post, 'excerpt', locale) || '';
-                const date = post.published_at ? new Date(post.published_at).toLocaleDateString(locale, { dateStyle: 'medium' }) : '';
+              const title = getLocalizedField(post, 'title', locale) || post.title_en;
+              const excerpt = getLocalizedField(post, 'excerpt', locale) || '';
+              const date = post.published_at ? new Date(post.published_at).toLocaleDateString(locale, { dateStyle: 'medium' }) : '';
 
-                return (
-                  <Link key={post.id} href={`/${locale}/blog/${post.slug}`}>
-                    <Card className="group flex h-full flex-col overflow-hidden transition-shadow hover:shadow-lg min-h-[400px]">
-                      <div className="aspect-video bg-gradient-to-br from-primary/5 to-muted">
-                        {post.featured_image_url && (
-                          <img src={post.featured_image_url} alt={title} className="h-full w-full object-cover" />
-                        )}
+              return (
+                <Link key={post.id} href={`/${locale}/blog/${post.slug}`}>
+                  <Card className="group flex h-full flex-col overflow-hidden transition-shadow hover:shadow-lg min-h-[400px]">
+                    <div className="aspect-video bg-gradient-to-br from-primary/5 to-muted">
+                      {post.featured_image_url && (
+                        <img src={post.featured_image_url} alt={title} className="h-full w-full object-cover" />
+                      )}
+                    </div>
+                    <CardHeader className="flex-shrink-0">
+                      {post.category && <Badge variant="outline" className="w-fit text-xs capitalize">{post.category}</Badge>}
+                      <CardTitle className="line-clamp-2 text-lg group-hover:text-primary transition-colors">
+                        {title}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex-1">
+                      <p className="line-clamp-2 text-sm text-muted-foreground">{excerpt}</p>
+                      <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
+                        <span className="flex items-center gap-1"><BookOpen className="h-3.5 w-3.5" />{post.reading_time_minutes} min read</span>
+                        <span>{date}</span>
                       </div>
-                      <CardHeader className="flex-shrink-0">
-                        {post.category && <Badge variant="outline" className="w-fit text-xs capitalize">{post.category}</Badge>}
-                        <CardTitle className="line-clamp-2 text-lg group-hover:text-primary transition-colors">
-                          {title}
-                        </CardTitle>
-                      </CardHeader>
-                      <CardContent className="flex-1">
-                        <p className="line-clamp-2 text-sm text-muted-foreground">{excerpt}</p>
-                        <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
-                          <span className="flex items-center gap-1"><BookOpen className="h-3.5 w-3.5" />{post.reading_time_minutes} min read</span>
-                          <span>{date}</span>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  </Link>
-                );
-              })}
-            </div>
-          )}
+                    </CardContent>
+                  </Card>
+                </Link>
+              );
+            })}
+          </div>
         )}
       </section>
     </>

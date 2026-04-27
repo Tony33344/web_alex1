@@ -20,10 +20,11 @@ export async function getSettings(): Promise<SiteSettings> {
   
   const settings: SiteSettings = {};
   data?.forEach((row: { key: string; value: string }) => {
-    if (row.key === 'logo') settings.logo = row.value;
-    if (row.key === 'logo_size') settings.logo_size = row.value;
-    if (row.key === 'logo_text_gap') settings.logo_text_gap = row.value;
-    if (row.key === 'logo_text_size') settings.logo_text_size = row.value;
+    const val = typeof row.value === 'string' ? row.value.replace(/^"|"$/g, '') : String(row.value);
+    if (row.key === 'logo') settings.logo = val;
+    if (row.key === 'logo_size') settings.logo_size = val;
+    if (row.key === 'logo_text_gap') settings.logo_text_gap = val;
+    if (row.key === 'logo_text_size') settings.logo_text_size = val;
   });
   
   return settings;

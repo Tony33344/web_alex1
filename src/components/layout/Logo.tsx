@@ -19,7 +19,7 @@ export function Logo({ locale = 'en', className = '', size = 48, logoUrl }: Logo
         className="rounded-full object-cover"
         priority
       />
-      <span className="hidden whitespace-nowrap text-lg font-semibold tracking-tight text-foreground sm:inline-block">
+      <span className="whitespace-nowrap text-lg font-semibold tracking-tight text-foreground">
         Infinity Role Teachers
       </span>
     </Link>

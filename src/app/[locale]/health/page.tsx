@@ -33,7 +33,7 @@ export default async function HealthPage({ params }: { params: Promise<{ locale:
 
   return (
     <>
-      <PageHeader title={pageTitle} subtitle={pageContent} backgroundColor={page?.background_color} gradientTo={page?.banner_gradient_to} width={page?.banner_width} height={page?.banner_height} />
+      <PageHeader title={pageTitle} subtitle={pageContent} backgroundColor={page?.background_color} gradientTo={page?.banner_gradient_to} textColor={page?.text_color} width={page?.banner_width} height={page?.banner_height} />
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         {categories.length === 0 ? (

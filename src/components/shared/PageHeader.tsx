@@ -4,6 +4,7 @@ interface PageHeaderProps {
   backgroundImage?: string;
   backgroundColor?: string | null;
   gradientTo?: string | null;
+  textColor?: string | null;
   width?: 'full' | 'contained' | null;
   height?: string | null;
 }
@@ -13,7 +14,7 @@ function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
 }
 
-export function PageHeader({ title, subtitle, backgroundImage, backgroundColor, gradientTo, width, height }: PageHeaderProps) {
+export function PageHeader({ title, subtitle, backgroundImage, backgroundColor, gradientTo, textColor, width, height }: PageHeaderProps) {
   const cleanSubtitle = subtitle ? stripHtml(subtitle) : '';
   const minH = height || '240px';
   const style: React.CSSProperties | undefined = backgroundImage
@@ -36,7 +37,7 @@ export function PageHeader({ title, subtitle, backgroundImage, backgroundColor, 
           {title}
         </h1>
         {cleanSubtitle && (
-          <p className={`mt-4 text-lg ${backgroundImage ? 'text-white/80' : 'text-muted-foreground'}`}>
+          <p className="mt-4 text-lg" style={{ color: textColor || (backgroundImage ? 'rgba(255,255,255,0.8)' : undefined) }}>
             {cleanSubtitle}
           </p>
         )}

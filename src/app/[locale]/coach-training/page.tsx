@@ -33,7 +33,7 @@ export default async function CoachTrainingPage({ params, searchParams }: CoachT
 
   return (
     <>
-      <PageHeader title={pageTitle} subtitle={pageContent} backgroundColor={page?.background_color} gradientTo={page?.banner_gradient_to} width={page?.banner_width} height={page?.banner_height} />
+      <PageHeader title={pageTitle} subtitle={pageContent} backgroundColor={page?.background_color} gradientTo={page?.banner_gradient_to} textColor={page?.text_color} width={page?.banner_width} height={page?.banner_height} />
 
       <PaymentSuccessBanner
         param="payment"

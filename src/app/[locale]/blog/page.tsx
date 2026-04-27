@@ -30,6 +30,7 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
         subtitle={pageContent}
         backgroundColor={blogPage?.background_color}
         gradientTo={blogPage?.banner_gradient_to}
+        textColor={blogPage?.text_color}
         width={blogPage?.banner_width}
         height={blogPage?.banner_height}
       />

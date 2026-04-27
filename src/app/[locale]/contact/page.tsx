@@ -22,6 +22,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
         subtitle={pageContent}
         backgroundColor={contactPage?.background_color}
         gradientTo={contactPage?.banner_gradient_to}
+        textColor={contactPage?.text_color}
         width={contactPage?.banner_width}
         height={contactPage?.banner_height}
       />

@@ -21,6 +21,7 @@ export default async function SupportPage({ params }: { params: Promise<{ locale
         subtitle={pageContent}
         backgroundColor={supportPage?.background_color}
         gradientTo={supportPage?.banner_gradient_to}
+        textColor={supportPage?.text_color}
         width={supportPage?.banner_width}
         height={supportPage?.banner_height}
       />

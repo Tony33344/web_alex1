@@ -5,6 +5,9 @@ const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   allowedDevOrigins: ['192.168.4.47'],
+  turbopack: {
+    root: process.cwd(),
+  },
   images: {
     remotePatterns: [
       {

@@ -8,18 +8,18 @@ interface LogoProps {
   logoUrl?: string;
 }
 
-export function Logo({ locale = 'en', className = '', size = 58, logoUrl }: LogoProps) {
+export function Logo({ locale = 'en', className = '', size = 60, logoUrl }: LogoProps) {
   return (
     <Link href={`/${locale}`} className={`flex flex-col items-center gap-0 ${className}`}>
-      <img
+      <Image
         src={logoUrl || "/logo/logo.jpeg"}
         alt="Infinity Role Teachers"
         width={size}
         height={size}
         className="rounded-full object-cover"
-        style={{ width: `${size}px`, height: `${size}px` }}
+        priority
       />
-      <span className="whitespace-nowrap text-base font-semibold tracking-tight text-foreground -mb-3">
+      <span className="whitespace-nowrap text-sm font-semibold tracking-tight text-foreground">
         Infinity Role Teachers
       </span>
     </Link>

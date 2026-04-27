@@ -20,9 +20,6 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
   const pageTitle = blogPage ? (getLocalizedField(blogPage, 'title', locale) || t('navigation.blog')) : t('navigation.blog');
   const pageContent = blogPage ? (getLocalizedField(blogPage, 'content', locale) || '') : '';
 
-  const featuredPosts = posts.filter((p) => p.is_featured);
-  const regularPosts = posts.filter((p) => !p.is_featured);
-
   return (
     <>
       <PageHeader
@@ -39,37 +36,8 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
         {posts.length === 0 ? (
           <p className="text-center text-muted-foreground">No blog posts yet. Check back soon!</p>
         ) : (
-          <>
-            {featuredPosts.map((post) => {
-              const title = getLocalizedField(post, 'title', locale) || post.title_en;
-              const excerpt = getLocalizedField(post, 'excerpt', locale) || '';
-              const date = post.published_at ? new Date(post.published_at).toLocaleDateString(locale, { dateStyle: 'medium' }) : '';
-
-              return (
-                <Link key={post.id} href={`/${locale}/blog/${post.slug}`}>
-                  <Card className="mb-12 overflow-hidden lg:flex group">
-                    <div className="aspect-video shrink-0 bg-gradient-to-br from-primary/10 to-secondary/10 lg:w-1/2">
-                      {post.featured_image_url && (
-                        <img src={post.featured_image_url} alt={title} className="h-full w-full object-cover" />
-                      )}
-                    </div>
-                    <div className="flex flex-col justify-center p-8 lg:w-1/2">
-                      <Badge variant="secondary" className="w-fit mb-3">Featured</Badge>
-                      <h2 className="text-2xl font-bold group-hover:text-primary transition-colors">{title}</h2>
-                      <p className="mt-3 text-muted-foreground">{excerpt}</p>
-                      <div className="mt-4 flex items-center gap-3 text-xs text-muted-foreground">
-                        <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" />{post.reading_time_minutes} min read</span>
-                        <span>{date}</span>
-                      </div>
-                      <Button className="mt-6 w-fit">{t('common.readMore')}</Button>
-                    </div>
-                  </Card>
-                </Link>
-              );
-            })}
-
-            <div className="grid grid-cols-2 gap-8 items-stretch auto-rows-fr">
-              {regularPosts.map((post) => {
+          <div className="grid grid-cols-2 gap-8 items-stretch auto-rows-fr">
+            {posts.map((post) => {
                 const title = getLocalizedField(post, 'title', locale) || post.title_en;
                 const excerpt = getLocalizedField(post, 'excerpt', locale) || '';
                 const date = post.published_at ? new Date(post.published_at).toLocaleDateString(locale, { dateStyle: 'medium' }) : '';
@@ -100,7 +68,7 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
                 );
               })}
             </div>
-          </>
+          )}
         )}
       </section>
     </>

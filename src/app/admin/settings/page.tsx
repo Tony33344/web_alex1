@@ -65,6 +65,7 @@ export default function AdminSettingsPage() {
   const logoSize = parseInt(getSetting('logo_size', '70')) || 70;
   const logoTextGap = parseInt(getSetting('logo_text_gap', '0')) || 0;
   const logoTextSize = getSetting('logo_text_size', '14');
+  const logoBottomGap = parseInt(getSetting('logo_bottom_gap', '0')) || 0;
   const logoUrl = getSetting('logo', '');
 
   const groups = {
@@ -72,7 +73,7 @@ export default function AdminSettingsPage() {
     'Contact': ['contact_email', 'contact_phone', 'contact_phone_2'],
     'Social Media': ['social_instagram', 'social_facebook', 'social_twitter', 'social_linkedin', 'social_youtube'],
     'Bank Details': ['bank_company', 'bank_iban', 'bank_bic', 'bank_name'],
-    'Logo': ['logo', 'logo_size', 'logo_text_gap', 'logo_text_size'],
+    'Logo': ['logo', 'logo_size', 'logo_text_gap', 'logo_text_size', 'logo_bottom_gap'],
   };
 
   return (
@@ -118,6 +119,10 @@ export default function AdminSettingsPage() {
                     >
                       Infinity Role Teachers
                     </span>
+                    <div
+                      className="w-full border-t border-dashed border-muted-foreground/30"
+                      style={{ marginTop: `${logoBottomGap}px` }}
+                    />
                   </div>
                 </div>
               )}
@@ -190,6 +195,29 @@ export default function AdminSettingsPage() {
                       <div className="flex justify-between text-xs text-muted-foreground">
                         <span>10px</span>
                         <span>24px</span>
+                      </div>
+                    </div>
+                  );
+                }
+                
+                if (key === 'logo_bottom_gap') {
+                  return (
+                    <div key={key} className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-xs text-muted-foreground">{setting.description || 'Gap under text to hero (pixels)'}</Label>
+                        <Badge variant="secondary">{logoBottomGap}px</Badge>
+                      </div>
+                      <input
+                        type="range"
+                        min="-10"
+                        max="30"
+                        value={logoBottomGap}
+                        onChange={(e) => updateValue(key, e.target.value)}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>-10px (closer)</span>
+                        <span>+30px (further)</span>
                       </div>
                     </div>
                   );

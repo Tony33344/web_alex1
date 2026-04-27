@@ -5,6 +5,7 @@ export interface SiteSettings {
   logo_size?: string;
   logo_text_gap?: string;
   logo_text_size?: string;
+  logo_bottom_gap?: string;
 }
 
 export async function getSettings(): Promise<SiteSettings> {
@@ -25,6 +26,7 @@ export async function getSettings(): Promise<SiteSettings> {
     if (row.key === 'logo_size') settings.logo_size = val;
     if (row.key === 'logo_text_gap') settings.logo_text_gap = val;
     if (row.key === 'logo_text_size') settings.logo_text_size = val;
+    if (row.key === 'logo_bottom_gap') settings.logo_bottom_gap = val;
   });
   
   return settings;

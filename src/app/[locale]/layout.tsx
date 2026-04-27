@@ -36,6 +36,7 @@ export default async function LocaleLayout({
   const logoSize = parseInt(settings.logo_size || '70') || 70;
   const logoTextGap = parseInt(settings.logo_text_gap || '0') || 0;
   const logoTextSize = parseInt(settings.logo_text_size || '14') || 14;
+  const logoBottomGap = parseInt(settings.logo_bottom_gap || '0') || 0;
   const programLinks = programs.map((p) => ({
     slug: p.slug,
     label: getLocalizedField(p, 'name', locale) || p.name_en,
@@ -51,7 +52,7 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <Header locale={locale} logoUrl={logoUrl} logoSize={logoSize} logoTextGap={logoTextGap} logoTextSize={logoTextSize} programs={programLinks} teachers={teacherLinks} healthCategories={healthLinks} />
+      <Header locale={locale} logoUrl={logoUrl} logoSize={logoSize} logoTextGap={logoTextGap} logoTextSize={logoTextSize} logoBottomGap={logoBottomGap} programs={programLinks} teachers={teacherLinks} healthCategories={healthLinks} />
       <main className="flex-1 pt-16">{children}</main>
       <Footer locale={locale} />
       <Toaster />

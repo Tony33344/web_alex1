@@ -25,6 +25,7 @@ interface HeaderProps {
   logoSize?: number;
   logoTextGap?: number;
   logoTextSize?: number;
+  logoBottomGap?: number;
   programs?: { slug: string; label: string }[];
   teachers?: { slug: string; label: string }[];
   healthCategories?: { slug: string; label: string }[];
@@ -36,7 +37,7 @@ const defaultProgramLinks = [
   { label: 'Awaken Your Inner Compass', slug: 'awaken-inner-compass' },
 ];
 
-export function Header({ locale, logoUrl, logoSize = 70, logoTextGap = 0, logoTextSize = 14, programs, teachers, healthCategories }: HeaderProps) {
+export function Header({ locale, logoUrl, logoSize = 70, logoTextGap = 0, logoTextSize = 14, logoBottomGap = 0, programs, teachers, healthCategories }: HeaderProps) {
   const programLinks = programs && programs.length > 0 ? programs : defaultProgramLinks;
   const teacherLinks = teachers && teachers.length > 0 ? teachers : [];
   const dynamicHealthLinks = healthCategories && healthCategories.length > 0 ? healthCategories : [];
@@ -71,7 +72,7 @@ export function Header({ locale, logoUrl, logoSize = 70, logoTextGap = 0, logoTe
     >
       <div className="mx-auto flex h-24 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
         {/* Logo */}
-        <div className="shrink-0">
+        <div className="shrink-0" style={{ marginBottom: `${logoBottomGap}px` }}>
           <Logo locale={locale} size={logoSize} logoUrl={logoUrl} textGap={logoTextGap} textSize={logoTextSize} />
         </div>
 

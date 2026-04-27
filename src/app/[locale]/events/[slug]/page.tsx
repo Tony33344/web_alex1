@@ -12,6 +12,7 @@ import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
 import { EventRegisterButton } from '@/components/sections/EventRegisterButton';
 import { ExpandableContent } from '@/components/shared/ExpandableContent';
+import { SmartImage } from '@/components/shared/SmartImage';
 import { getActivePricing } from '@/lib/utils/pricing';
 import { PriceTag } from '@/components/shared/PriceTag';
 
@@ -50,12 +51,10 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <Breadcrumbs locale={locale} items={[{ label: t('navigation.events'), href: `/${locale}/events` }, { label: title }]} />
 
-      {/* Full-width Main Image */}
-      <div className="mt-8 aspect-video overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10">
-        {event.image_url && (
-          <img src={event.image_url} alt={title} className="h-full w-full object-cover" />
-        )}
-      </div>
+      {/* Main Image — adapts to landscape/portrait */}
+      {event.image_url && (
+        <SmartImage src={event.image_url} alt={title} className="mt-8" />
+      )}
 
       <div className="mt-8 grid gap-12 lg:grid-cols-3">
         {/* Main content - 2/3 width */}

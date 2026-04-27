@@ -8,6 +8,7 @@ import { GalleryGrid } from '@/components/shared/GalleryGrid';
 import { getHealthCategory } from '@/lib/queries/health';
 import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
+import { SmartImage } from '@/components/shared/SmartImage';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
@@ -38,12 +39,10 @@ export default async function HealthCategoryPage({ params }: { params: Promise<{
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <Breadcrumbs locale={locale} items={[{ label: t('navigation.health'), href: `/${locale}/health` }, { label: name }]} />
 
-      {/* Full-width Main Image */}
-      <div className="mt-8 aspect-video overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10">
-        {category.cover_image_url && (
-          <img src={category.cover_image_url} alt={name} className="h-full w-full object-cover" />
-        )}
-      </div>
+      {/* Main Image — adapts to landscape/portrait */}
+      {category.cover_image_url && (
+        <SmartImage src={category.cover_image_url} alt={name} className="mt-8" />
+      )}
 
       <div className="mt-8 grid gap-12 lg:grid-cols-3">
         {/* Main content - 2/3 width */}

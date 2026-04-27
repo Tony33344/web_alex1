@@ -10,6 +10,7 @@ import { getTeacher } from '@/lib/queries/teachers';
 import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
 import { processContent } from '@/lib/utils/text';
+import { SmartImage } from '@/components/shared/SmartImage';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
@@ -39,14 +40,10 @@ export default async function TeacherDetailPage({ params }: { params: Promise<{ 
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <Breadcrumbs locale={locale} items={[{ label: 'Role Teachers', href: `/${locale}/role-teachers` }, { label: teacher.name }]} />
 
-      {/* Full-width Main Image */}
-      <div className="mt-8 aspect-video overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10">
-        {teacher.cover_image_url ? (
-          <img src={teacher.cover_image_url} alt={teacher.name} className="h-full w-full object-cover" />
-        ) : teacher.photo_url ? (
-          <img src={teacher.photo_url} alt={teacher.name} className="h-full w-full object-cover" />
-        ) : null}
-      </div>
+      {/* Main Image — adapts to landscape/portrait */}
+      {(teacher.cover_image_url || teacher.photo_url) && (
+        <SmartImage src={teacher.cover_image_url || teacher.photo_url || ''} alt={teacher.name} className="mt-8" />
+      )}
 
       <div className="mt-8 grid gap-12 lg:grid-cols-3">
         {/* Main content - 2/3 width */}

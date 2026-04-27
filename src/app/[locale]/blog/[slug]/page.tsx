@@ -9,6 +9,7 @@ import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 import { getBlogPost } from '@/lib/queries/blog';
 import { getLocalizedField } from '@/lib/localization';
 import { processContent } from '@/lib/utils/text';
+import { SmartImage } from '@/components/shared/SmartImage';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
@@ -50,11 +51,9 @@ export default async function BlogPostPage({ params }: { params: Promise<{ local
         </div>
       </header>
 
-      <div className="mt-8 aspect-video overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10">
-        {post.featured_image_url && (
-          <img src={post.featured_image_url} alt={title} className="h-full w-full object-cover" />
-        )}
-      </div>
+      {post.featured_image_url && (
+        <SmartImage src={post.featured_image_url} alt={title} className="mt-8" />
+      )}
 
       {content ? (
         <div className="prose prose-lg mt-8 max-w-none" style={{ color: textColor }} dangerouslySetInnerHTML={{ __html: processContent(content) }} />

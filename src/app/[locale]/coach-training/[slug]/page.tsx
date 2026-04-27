@@ -11,6 +11,7 @@ import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
 import { formatDateRange, formatDateRangeWithTime, parseDurationDays, computeEndDate } from '@/lib/utils/dates';
 import { EnrollButton } from '@/components/sections/EnrollButton';
+import { SmartImage } from '@/components/shared/SmartImage';
 
 export const revalidate = 0;
 
@@ -44,14 +45,10 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
       <Breadcrumbs locale={locale} items={[{ label: t('navigation.coachTraining'), href: `/${locale}/coach-training` }, { label: name }]} />
 
-      {/* Full-width Main Image */}
-      <div className="mt-8 aspect-video overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-secondary/10">
-        {program.image_url ? (
-          <img src={program.image_url} alt={name} className="h-full w-full object-cover" />
-        ) : program.cover_image_url ? (
-          <img src={program.cover_image_url} alt={name} className="h-full w-full object-cover" />
-        ) : null}
-      </div>
+      {/* Main Image — adapts to landscape/portrait */}
+      {(program.image_url || program.cover_image_url) && (
+        <SmartImage src={program.image_url || program.cover_image_url || ''} alt={name} className="mt-8" />
+      )}
 
       <div className="mt-8 grid gap-12 lg:grid-cols-3">
         {/* Main content - 2/3 width */}

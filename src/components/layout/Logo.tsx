@@ -10,7 +10,7 @@ interface LogoProps {
 
 export function Logo({ locale = 'en', className = '', size = 48, logoUrl }: LogoProps) {
   return (
-    <Link href={`/${locale}`} className={`flex flex-col items-center gap-1 ${className}`}>
+    <Link href={`/${locale}`} className={`flex flex-col items-center gap-0 ${className}`}>
       <Image
         src={logoUrl || "/logo/logo.jpeg"}
         alt="Infinity Role Teachers"

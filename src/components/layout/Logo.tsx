@@ -8,7 +8,7 @@ interface LogoProps {
   logoUrl?: string;
 }
 
-export function Logo({ locale = 'en', className = '', size = 48, logoUrl }: LogoProps) {
+export function Logo({ locale = 'en', className = '', size = 58, logoUrl }: LogoProps) {
   return (
     <Link href={`/${locale}`} className={`flex flex-col items-center gap-0 ${className}`}>
       <Image

@@ -75,7 +75,7 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
                 const date = post.published_at ? new Date(post.published_at).toLocaleDateString(locale, { dateStyle: 'medium' }) : '';
 
                 return (
-                  <Link key={post.id} href={`/${locale}/blog/${post.slug}`} className="block h-full">
+                  <Link key={post.id} href={`/${locale}/blog/${post.slug}`}>
                     <Card className="group flex h-full flex-col overflow-hidden transition-shadow hover:shadow-lg min-h-[400px]">
                       <div className="aspect-video bg-gradient-to-br from-primary/5 to-muted">
                         {post.featured_image_url && (

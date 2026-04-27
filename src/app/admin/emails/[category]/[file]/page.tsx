@@ -3,7 +3,10 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Save, Eye, EyeOff } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { ArrowLeft, Save, Eye, EyeOff, Code } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
@@ -15,7 +18,15 @@ export default function EmailTemplateViewer() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
+  const [editMode, setEditMode] = useState<'simple' | 'html'>('simple');
   const [saveSuccess, setSaveSuccess] = useState(false);
+  
+  // Extractable fields
+  const [fields, setFields] = useState({
+    title: '',
+    greeting: '',
+    message: '',
+  });
 
   useEffect(() => {
     async function loadTemplate() {
@@ -24,6 +35,7 @@ export default function EmailTemplateViewer() {
         if (res.ok) {
           const data = await res.json();
           setContent(data.content);
+          extractFields(data.content);
         }
       } catch (error) {
         console.error('Failed to load template:', error);
@@ -33,13 +45,51 @@ export default function EmailTemplateViewer() {
     loadTemplate();
   }, [category, file]);
 
+  function extractFields(html: string) {
+    // Extract title from h1
+    const titleMatch = html.match(/<h1[^>]*>(.*?)<\/h1>/);
+    const title = titleMatch ? titleMatch[1].trim() : '';
+    
+    // Extract greeting from first paragraph with greeting class
+    const greetingMatch = html.match(/<p class="greeting"[^>]*>(.*?)<\/p>/);
+    const greeting = greetingMatch ? greetingMatch[1].replace(/{{\w+}}/g, '[Name]').trim() : '';
+    
+    // Extract main message
+    const messageMatch = html.match(/<p class="message"[^>]*>([\s\S]*?)<\/p>/);
+    const message = messageMatch ? messageMatch[1].trim() : '';
+    
+    setFields({ title, greeting, message });
+  }
+
+  function updateContent() {
+    let updatedContent = content;
+    
+    // Update title
+    if (fields.title) {
+      updatedContent = updatedContent.replace(/(<h1[^>]*>)(.*?)(<\/h1>)/, `$1${fields.title}$3`);
+    }
+    
+    // Update greeting
+    if (fields.greeting) {
+      updatedContent = updatedContent.replace(/(<p class="greeting"[^>]*>)(.*?)(<\/p>)/, `$1${fields.greeting}$3`);
+    }
+    
+    // Update message
+    if (fields.message) {
+      updatedContent = updatedContent.replace(/(<p class="message"[^>]*>)([\s\S]*?)(<\/p>)/, `$1${fields.message}$3`);
+    }
+    
+    setContent(updatedContent);
+  }
+
   async function handleSave() {
     setSaving(true);
+    const contentToSave = editMode === 'simple' ? content : content;
     try {
       const res = await fetch(`/api/admin/emails/${category}/${file}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content }),
+        body: JSON.stringify({ content: contentToSave }),
       });
       if (res.ok) {
         setSaveSuccess(true);
@@ -77,6 +127,16 @@ export default function EmailTemplateViewer() {
             {previewMode ? <EyeOff className="h-4 w-4 mr-2" /> : <Eye className="h-4 w-4 mr-2" />}
             {previewMode ? 'Edit' : 'Preview'}
           </Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              if (editMode === 'simple') updateContent();
+              setEditMode(editMode === 'simple' ? 'html' : 'simple');
+            }}
+          >
+            <Code className="h-4 w-4 mr-2" />
+            {editMode === 'simple' ? 'HTML Mode' : 'Simple Mode'}
+          </Button>
           <Button onClick={handleSave} disabled={saving}>
             <Save className="h-4 w-4 mr-2" />
             {saving ? 'Saving...' : 'Save'}
@@ -85,23 +145,71 @@ export default function EmailTemplateViewer() {
         </div>
       </div>
 
-      <Card>
-        <CardContent className="p-0">
-          {previewMode ? (
+      <div className="grid gap-6 lg:grid-cols-2">
+        {!previewMode && (
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                {editMode === 'simple' ? 'Edit Content' : 'Edit HTML'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {editMode === 'simple' ? (
+                <>
+                  <div>
+                    <Label htmlFor="title">Title</Label>
+                    <Input
+                      id="title"
+                      value={fields.title}
+                      onChange={(e) => setFields({ ...fields, title: e.target.value })}
+                      className="mt-1"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="greeting">Greeting</Label>
+                    <Textarea
+                      id="greeting"
+                      value={fields.greeting}
+                      onChange={(e) => setFields({ ...fields, greeting: e.target.value })}
+                      className="mt-1"
+                      rows={2}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="message">Message</Label>
+                    <Textarea
+                      id="message"
+                      value={fields.message}
+                      onChange={(e) => setFields({ ...fields, message: e.target.value })}
+                      className="mt-1"
+                      rows={6}
+                    />
+                  </div>
+                </>
+              ) : (
+                <textarea
+                  value={content}
+                  onChange={(e) => setContent(e.target.value)}
+                  className="w-full h-[500px] p-4 font-mono text-sm border rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-primary"
+                />
+              )}
+            </CardContent>
+          </Card>
+        )}
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Preview</CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
             <iframe
-              srcDoc={content}
-              className="w-full h-[800px] border-0"
+              srcDoc={editMode === 'simple' ? content : content}
+              className="w-full h-[600px] border-0"
               title="Email Preview"
             />
-          ) : (
-            <textarea
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              className="w-full h-[800px] p-4 font-mono text-sm border-0 resize-none focus:outline-none"
-            />
-          )}
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

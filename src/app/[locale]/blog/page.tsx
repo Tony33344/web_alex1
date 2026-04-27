@@ -47,7 +47,7 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
               return (
                 <Link key={post.id} href={`/${locale}/blog/${post.slug}`}>
                   <Card className="mb-12 overflow-hidden lg:flex group">
-                    <div className="aspect-video bg-gradient-to-br from-primary/10 to-secondary/10 lg:aspect-auto lg:w-1/2">
+                    <div className="aspect-video shrink-0 bg-gradient-to-br from-primary/10 to-secondary/10 lg:w-1/2">
                       {post.featured_image_url && (
                         <img src={post.featured_image_url} alt={title} className="h-full w-full object-cover" />
                       )}
@@ -67,14 +67,14 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
               );
             })}
 
-            <div className="flex flex-wrap justify-center gap-8">
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {regularPosts.map((post) => {
                 const title = getLocalizedField(post, 'title', locale) || post.title_en;
                 const excerpt = getLocalizedField(post, 'excerpt', locale) || '';
                 const date = post.published_at ? new Date(post.published_at).toLocaleDateString(locale, { dateStyle: 'medium' }) : '';
 
                 return (
-                  <Link key={post.id} href={`/${locale}/blog/${post.slug}`} className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)]">
+                  <Link key={post.id} href={`/${locale}/blog/${post.slug}`}>
                     <Card className="group h-full overflow-hidden transition-shadow hover:shadow-lg">
                       <div className="aspect-video bg-gradient-to-br from-primary/5 to-muted">
                         {post.featured_image_url && (

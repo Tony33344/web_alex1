@@ -8,6 +8,7 @@ import { getPage } from '@/lib/queries/pages';
 import { getPrograms } from '@/lib/queries/programs';
 import { getTeachers } from '@/lib/queries/teachers';
 import { getHealthCategories } from '@/lib/queries/health';
+import { getSettings } from '@/lib/queries/settings';
 import { getLocalizedField } from '@/lib/localization';
 
 export default async function LocaleLayout({
@@ -24,13 +25,17 @@ export default async function LocaleLayout({
   }
 
   const messages = (await import(`@/messages/${locale}.json`)).default;
-  const [homePage, programs, teachers, healthCategories] = await Promise.all([
+  const [homePage, programs, teachers, healthCategories, settings] = await Promise.all([
     getPage('home'),
     getPrograms(),
     getTeachers(),
     getHealthCategories(),
+    getSettings(),
   ]);
-  const logoUrl = homePage?.header_logo_url || undefined;
+  const logoUrl = settings.logo || homePage?.header_logo_url || undefined;
+  const logoSize = parseInt(settings.logo_size || '70') || 70;
+  const logoTextGap = parseInt(settings.logo_text_gap || '0') || 0;
+  const logoTextSize = parseInt(settings.logo_text_size || '14') || 14;
   const programLinks = programs.map((p) => ({
     slug: p.slug,
     label: getLocalizedField(p, 'name', locale) || p.name_en,
@@ -46,7 +51,7 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages}>
-      <Header locale={locale} logoUrl={logoUrl} programs={programLinks} teachers={teacherLinks} healthCategories={healthLinks} />
+      <Header locale={locale} logoUrl={logoUrl} logoSize={logoSize} logoTextGap={logoTextGap} logoTextSize={logoTextSize} programs={programLinks} teachers={teacherLinks} healthCategories={healthLinks} />
       <main className="flex-1 pt-16">{children}</main>
       <Footer locale={locale} />
       <Toaster />

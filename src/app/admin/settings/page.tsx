@@ -1,11 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Save, Loader2 } from 'lucide-react';
+import { Save, Loader2, Image } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 interface Setting {
   id: string;
   key: string;
@@ -55,11 +56,23 @@ export default function AdminSettingsPage() {
     setTimeout(() => setMessage(''), 3000);
   }
 
+  // Get logo settings with defaults
+  const getSetting = (key: string, defaultValue: string) => {
+    const s = settings.find(s => s.key === key);
+    return s ? s.value : defaultValue;
+  };
+
+  const logoSize = parseInt(getSetting('logo_size', '70')) || 70;
+  const logoTextGap = parseInt(getSetting('logo_text_gap', '0')) || 0;
+  const logoTextSize = getSetting('logo_text_size', '14');
+  const logoUrl = getSetting('logo', '');
+
   const groups = {
     'General': ['site_name', 'site_description', 'default_currency'],
     'Contact': ['contact_email', 'contact_phone', 'contact_phone_2'],
     'Social Media': ['social_instagram', 'social_facebook', 'social_twitter', 'social_linkedin', 'social_youtube'],
     'Bank Details': ['bank_company', 'bank_iban', 'bank_bic', 'bank_name'],
+    'Logo': ['logo', 'logo_size', 'logo_text_gap', 'logo_text_size'],
   };
 
   return (
@@ -84,9 +97,104 @@ export default function AdminSettingsPage() {
           <Card key={groupName}>
             <CardHeader><CardTitle className="text-lg">{groupName}</CardTitle></CardHeader>
             <CardContent className="space-y-4">
+              {groupName === 'Logo' && (
+                <div className="mb-6 rounded-lg border bg-muted/50 p-6">
+                  <Label className="mb-3 block text-xs font-medium text-muted-foreground">Preview</Label>
+                  <div className="flex flex-col items-center">
+                    <img
+                      src={logoUrl || "/logo/logo.jpeg"}
+                      alt="Logo Preview"
+                      width={logoSize}
+                      height={logoSize}
+                      className="rounded-full object-cover"
+                      style={{ width: `${logoSize}px`, height: `${logoSize}px` }}
+                    />
+                    <span
+                      className="whitespace-nowrap font-semibold tracking-tight text-foreground"
+                      style={{
+                        fontSize: `${logoTextSize}px`,
+                        marginTop: `${logoTextGap}px`,
+                      }}
+                    >
+                      Infinity Role Teachers
+                    </span>
+                  </div>
+                </div>
+              )}
               {keys.map((key) => {
                 const setting = settings.find(s => s.key === key);
                 if (!setting) return null;
+                
+                // Special rendering for logo numeric settings
+                if (key === 'logo_size') {
+                  return (
+                    <div key={key} className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-xs text-muted-foreground">{setting.description || 'Logo Size (pixels)'}</Label>
+                        <Badge variant="secondary">{logoSize}px</Badge>
+                      </div>
+                      <input
+                        type="range"
+                        min="40"
+                        max="120"
+                        value={logoSize}
+                        onChange={(e) => updateValue(key, e.target.value)}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>40px</span>
+                        <span>120px</span>
+                      </div>
+                    </div>
+                  );
+                }
+                
+                if (key === 'logo_text_gap') {
+                  return (
+                    <div key={key} className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-xs text-muted-foreground">{setting.description || 'Text Gap (pixels)'}</Label>
+                        <Badge variant="secondary">{logoTextGap > 0 ? `+${logoTextGap}px` : `${logoTextGap}px`}</Badge>
+                      </div>
+                      <input
+                        type="range"
+                        min="-10"
+                        max="20"
+                        value={logoTextGap}
+                        onChange={(e) => updateValue(key, e.target.value)}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>-10px (closer)</span>
+                        <span>+20px (further)</span>
+                      </div>
+                    </div>
+                  );
+                }
+                
+                if (key === 'logo_text_size') {
+                  return (
+                    <div key={key} className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <Label className="text-xs text-muted-foreground">{setting.description || 'Text Size (pixels)'}</Label>
+                        <Badge variant="secondary">{logoTextSize}px</Badge>
+                      </div>
+                      <input
+                        type="range"
+                        min="10"
+                        max="24"
+                        value={parseInt(logoTextSize) || 14}
+                        onChange={(e) => updateValue(key, e.target.value)}
+                        className="w-full"
+                      />
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>10px</span>
+                        <span>24px</span>
+                      </div>
+                    </div>
+                  );
+                }
+                
                 return (
                   <div key={key} className="space-y-1">
                     <Label className="text-xs text-muted-foreground">{setting.description || setting.key}</Label>

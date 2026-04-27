@@ -25,6 +25,7 @@ const navItems = [
   { label: 'Membership', href: '/admin/membership', icon: CreditCard },
   { label: 'Contacts', href: '/admin/contacts', icon: MessageSquare },
   { label: 'Newsletter', href: '/admin/newsletter', icon: Mail },
+  { label: 'Email Templates', href: '/admin/emails', icon: Mail },
   { label: 'Media', href: '/admin/media', icon: Image },
   { label: 'Translations', href: '/admin/translations', icon: Globe },
   { label: 'Users', href: '/admin/users', icon: Users },

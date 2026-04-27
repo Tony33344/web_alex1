@@ -89,7 +89,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             }}
           >
             <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl text-center">{pageTitle}</h1>
-            {pageContent && <p className="mt-4 text-lg text-muted-foreground text-center">{stripHtml(pageContent)}</p>}
+            {pageContent && <p className="mt-4 text-lg text-center" style={{ color: aboutPage?.text_color || undefined }}>{stripHtml(pageContent)}</p>}
           </div>
         )}
       </div>

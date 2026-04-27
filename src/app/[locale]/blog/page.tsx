@@ -76,7 +76,7 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
 
                 return (
                   <Link key={post.id} href={`/${locale}/blog/${post.slug}`} className="block h-full">
-                    <Card className="group flex h-full flex-col overflow-hidden transition-shadow hover:shadow-lg">
+                    <Card className="group flex h-full flex-col overflow-hidden transition-shadow hover:shadow-lg min-h-[400px]">
                       <div className="aspect-video bg-gradient-to-br from-primary/5 to-muted">
                         {post.featured_image_url && (
                           <img src={post.featured_image_url} alt={title} className="h-full w-full object-cover" />

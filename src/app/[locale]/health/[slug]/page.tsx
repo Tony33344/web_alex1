@@ -68,15 +68,22 @@ export default async function HealthCategoryPage({ params }: { params: Promise<{
         <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           {/* Gallery in sidebar */}
           {galleryImages.length > 0 && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Gallery</h3>
-              <GalleryGrid images={galleryImages} locale={locale} />
+            <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+              <div className="flex-1">
+                <h3 className="text-lg font-semibold">Gallery</h3>
+                <GalleryGrid images={galleryImages} locale={locale} />
+              </div>
+              <Link href={`/${locale}/health`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors sm:self-center">
+                <ArrowLeft className="h-4 w-4" /> {t('common.backTo')} {t('navigation.health')}
+              </Link>
             </div>
           )}
 
-          <Link href={`/${locale}/health`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft className="h-4 w-4" /> {t('common.backTo')} {t('navigation.health')}
-          </Link>
+          {!galleryImages.length && (
+            <Link href={`/${locale}/health`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
+              <ArrowLeft className="h-4 w-4" /> {t('common.backTo')} {t('navigation.health')}
+            </Link>
+          )}
         </div>
       </div>
     </div>

@@ -104,6 +104,19 @@ export function Footer({ locale }: FooterProps) {
         </div>
       </div>
 
+      {/* Social Media Bar */}
+      {(settings.social_instagram || settings.social_facebook || settings.social_twitter || settings.social_linkedin || settings.social_youtube) && (
+        <div className="border-t border-background/10">
+          <div className="mx-auto flex max-w-7xl items-center justify-center gap-6 px-4 py-6 sm:px-6 lg:px-8">
+            {settings.social_instagram && <SocialIcon href={settings.social_instagram} icon={<Instagram className="h-5 w-5" />} />}
+            {settings.social_facebook && <SocialIcon href={settings.social_facebook} icon={<Facebook className="h-5 w-5" />} />}
+            {settings.social_twitter && <SocialIcon href={settings.social_twitter} icon={<Twitter className="h-5 w-5" />} />}
+            {settings.social_linkedin && <SocialIcon href={settings.social_linkedin} icon={<Linkedin className="h-5 w-5" />} />}
+            {settings.social_youtube && <SocialIcon href={settings.social_youtube} icon={<Youtube className="h-5 w-5" />} />}
+          </div>
+        </div>
+      )}
+
       {/* Bottom Bar */}
       <div className="border-t border-background/10">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-background/50 sm:flex-row sm:px-6 lg:px-8">

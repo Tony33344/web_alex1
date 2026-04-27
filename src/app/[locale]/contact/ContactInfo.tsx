@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin, Instagram, Facebook, Twitter, Linkedin, Youtube } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 
 export function ContactInfo() {
@@ -57,6 +57,40 @@ export function ContactInfo() {
             <p className="text-sm text-muted-foreground">AMS4EVER AG<br />Switzerland</p>
           </div>
         </div>
+
+        {/* Social Media */}
+        {(settings.social_instagram || settings.social_facebook || settings.social_twitter || settings.social_linkedin || settings.social_youtube) && (
+          <div className="pt-4 border-t">
+            <h4 className="text-sm font-semibold mb-3">Follow Us</h4>
+            <div className="flex gap-3">
+              {settings.social_instagram && (
+                <a href={settings.social_instagram} target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors hover:bg-primary/20">
+                  <Instagram className="h-5 w-5" />
+                </a>
+              )}
+              {settings.social_facebook && (
+                <a href={settings.social_facebook} target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors hover:bg-primary/20">
+                  <Facebook className="h-5 w-5" />
+                </a>
+              )}
+              {settings.social_twitter && (
+                <a href={settings.social_twitter} target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors hover:bg-primary/20">
+                  <Twitter className="h-5 w-5" />
+                </a>
+              )}
+              {settings.social_linkedin && (
+                <a href={settings.social_linkedin} target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors hover:bg-primary/20">
+                  <Linkedin className="h-5 w-5" />
+                </a>
+              )}
+              {settings.social_youtube && (
+                <a href={settings.social_youtube} target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors hover:bg-primary/20">
+                  <Youtube className="h-5 w-5" />
+                </a>
+              )}
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

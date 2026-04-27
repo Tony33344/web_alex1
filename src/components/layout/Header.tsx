@@ -23,16 +23,9 @@ interface HeaderProps {
   locale: string;
   logoUrl?: string;
   programs?: { slug: string; label: string }[];
+  teachers?: { slug: string; label: string }[];
+  healthCategories?: { slug: string; label: string }[];
 }
-
-const healthLinks = [
-  { key: 'nutrition', slug: 'nutrition' },
-  { key: 'yoga', slug: 'yoga' },
-  { key: 'sunyoga', slug: 'sunyoga' },
-  { key: 'meditation', slug: 'meditation' },
-  { key: 'powerTraining', slug: 'power-training' },
-  { key: 'acupressura', slug: 'acupressura' },
-];
 
 const defaultProgramLinks = [
   { label: 'Sunyoga Coach Training', slug: 'sunyoga-training' },
@@ -40,8 +33,10 @@ const defaultProgramLinks = [
   { label: 'Awaken Your Inner Compass', slug: 'awaken-inner-compass' },
 ];
 
-export function Header({ locale, logoUrl, programs }: HeaderProps) {
+export function Header({ locale, logoUrl, programs, teachers, healthCategories }: HeaderProps) {
   const programLinks = programs && programs.length > 0 ? programs : defaultProgramLinks;
+  const teacherLinks = teachers && teachers.length > 0 ? teachers : [];
+  const dynamicHealthLinks = healthCategories && healthCategories.length > 0 ? healthCategories : [];
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
@@ -96,8 +91,10 @@ export function Header({ locale, logoUrl, programs }: HeaderProps) {
             active={isActive('/role-teachers')}
             items={[
               { label: 'Meet Your Role Teachers', href: p('/role-teachers') },
-              { label: 'Avalon', href: p('/role-teachers/avalon') },
-              { label: 'Akasha', href: p('/role-teachers/akasha') },
+              ...teacherLinks.map((t) => ({
+                label: t.label,
+                href: p(`/role-teachers/${t.slug}`),
+              })),
               { label: 'Testimonials', href: p('/role-teachers/testimonials') },
             ]}
           />
@@ -108,8 +105,8 @@ export function Header({ locale, logoUrl, programs }: HeaderProps) {
             active={isActive('/health')}
             items={[
               { label: 'Overview', href: p('/health') },
-              ...healthLinks.map((h) => ({
-                label: h.slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+              ...dynamicHealthLinks.map((h) => ({
+                label: h.label,
                 href: p(`/health/${h.slug}`),
               })),
             ]}
@@ -268,8 +265,9 @@ export function Header({ locale, logoUrl, programs }: HeaderProps) {
                     </AccordionTrigger>
                     <AccordionContent className="flex flex-col gap-1 pl-4">
                       <MobileLink href={p('/role-teachers')} label="Meet Your Role Teachers" onClick={() => setMobileOpen(false)} />
-                      <MobileLink href={p('/role-teachers/avalon')} label="Avalon" onClick={() => setMobileOpen(false)} />
-                      <MobileLink href={p('/role-teachers/akasha')} label="Akasha" onClick={() => setMobileOpen(false)} />
+                      {teacherLinks.map((t) => (
+                        <MobileLink key={t.slug} href={p(`/role-teachers/${t.slug}`)} label={t.label} onClick={() => setMobileOpen(false)} />
+                      ))}
                       <MobileLink href={p('/role-teachers/testimonials')} label="Testimonials" onClick={() => setMobileOpen(false)} />
                     </AccordionContent>
                   </AccordionItem>
@@ -280,11 +278,11 @@ export function Header({ locale, logoUrl, programs }: HeaderProps) {
                     </AccordionTrigger>
                     <AccordionContent className="flex flex-col gap-1 pl-4">
                       <MobileLink href={p('/health')} label="Overview" onClick={() => setMobileOpen(false)} />
-                      {healthLinks.map((h) => (
+                      {dynamicHealthLinks.map((h) => (
                         <MobileLink
                           key={h.slug}
                           href={p(`/health/${h.slug}`)}
-                          label={h.slug.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())}
+                          label={h.label}
                           onClick={() => setMobileOpen(false)}
                         />
                       ))}

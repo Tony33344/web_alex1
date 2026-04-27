@@ -76,7 +76,7 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
 
                 return (
                   <Link key={post.id} href={`/${locale}/blog/${post.slug}`}>
-                    <Card className="group h-full overflow-hidden transition-shadow hover:shadow-lg">
+                    <Card className="group flex h-full flex-col overflow-hidden transition-shadow hover:shadow-lg">
                       <div className="aspect-video bg-gradient-to-br from-primary/5 to-muted">
                         {post.featured_image_url && (
                           <img src={post.featured_image_url} alt={title} className="h-full w-full object-cover" />
@@ -88,7 +88,7 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
                           {title}
                         </CardTitle>
                       </CardHeader>
-                      <CardContent>
+                      <CardContent className="flex-1">
                         <p className="line-clamp-2 text-sm text-muted-foreground">{excerpt}</p>
                         <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
                           <span className="flex items-center gap-1"><BookOpen className="h-3.5 w-3.5" />{post.reading_time_minutes} min read</span>

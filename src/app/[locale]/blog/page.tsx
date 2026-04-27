@@ -68,7 +68,7 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
               );
             })}
 
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 items-stretch auto-rows-fr">
+            <div className="grid grid-cols-2 gap-8 items-stretch auto-rows-fr">
               {regularPosts.map((post) => {
                 const title = getLocalizedField(post, 'title', locale) || post.title_en;
                 const excerpt = getLocalizedField(post, 'excerpt', locale) || '';

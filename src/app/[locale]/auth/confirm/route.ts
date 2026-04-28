@@ -8,6 +8,8 @@ export async function GET(request: Request) {
   const type = searchParams.get('type') as 'signup' | 'recovery' | 'invite' | 'email_change' | null;
   const next = searchParams.get('next') ?? '/en/welcome';
 
+  console.log('auth/confirm received params:', { token_hash: !!token_hash, type, next, fullUrl: request.url });
+
   if (token_hash && type) {
     const supabase = await createClient();
     
@@ -17,9 +19,12 @@ export async function GET(request: Request) {
       token_hash,
     });
 
+    console.log('verifyOtp result:', { error: error?.message, hasUser: !!data?.user });
+
     if (!error && data?.user) {
       // Password recovery — redirect to reset-password page
       if (type === 'recovery') {
+        console.log('Recovery type detected in auth/confirm, redirecting to reset-password');
         const localeMatch = request.url.match(/\/([a-z]{2})\/auth\/confirm/);
         const locale = localeMatch ? localeMatch[1] : 'en';
         return NextResponse.redirect(`${origin}/${locale}/reset-password`);

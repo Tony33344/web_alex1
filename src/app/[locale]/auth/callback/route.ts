@@ -15,26 +15,22 @@ export async function GET(request: Request) {
     if (!error) {
       console.log('Code exchanged successfully, checking for recovery flow');
       
-      // Check if this is a password recovery flow by examining the auth state
-      // After exchangeCodeForSession, Supabase sets a session with recovery state
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      // For password reset, check the auth state's recovery flag
-      // or check if the URL has type=recovery
+      // For password recovery with code flow, always redirect to reset-password
+      // This is because password reset emails from Supabase use code parameter
       const type = searchParams.get('type');
-      const isRecovery = type === 'recovery' || 
-                        (session?.user?.user_metadata?.recovery === true) ||
-                        (session?.user?.app_metadata?.recovery === true);
+      const localeMatch = request.url.match(/\/([a-z]{2})\/auth\/callback/);
+      const locale = localeMatch ? localeMatch[1] : 'en';
       
-      if (isRecovery) {
-        console.log('Recovery flow detected, redirecting to reset-password');
-        const localeMatch = request.url.match(/\/([a-z]{2})\/auth\/callback/);
-        const locale = localeMatch ? localeMatch[1] : 'en';
+      // If type=recovery or no type (password reset), go to reset-password
+      if (type === 'recovery' || !type) {
+        console.log('Recovery flow detected (or no type), redirecting to reset-password');
         return NextResponse.redirect(`${origin}/${locale}/reset-password`);
       }
       
       console.log('Not a recovery flow, redirecting to:', next);
       return NextResponse.redirect(`${origin}${next}`);
+    } else {
+      console.error('Code exchange failed:', error);
     }
   }
 

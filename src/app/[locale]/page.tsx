@@ -27,9 +27,16 @@ const colorPalette = [
   { bg: 'from-lime-500/80 to-green-700/80',      icon: 'bg-lime-100 text-lime-700',        accent: 'text-lime-300' },
 ];
 
-export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function HomePage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ code?: string }> }) {
   const { locale } = await params;
+  const { code } = await searchParams;
   const t = await getTranslations();
+
+  // If code is present, redirect to auth callback to handle password reset
+  if (code) {
+    const { redirect } = await import('next/navigation');
+    redirect(`/${locale}/auth/callback?code=${code}`);
+  }
 
   const [teachers, programs, { posts }, testimonials, featuredEvent, { events: upcomingEvents }, healthCategories, missionPage, visionPage, homePage, healthPage, roleTeachersPage, coachTrainingPage, blogPage, membershipPage, contactPage] = await Promise.all([
     getTeachers(),

@@ -13,21 +13,19 @@ export async function GET(request: Request) {
     const supabase = await createClient();
     const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      console.log('Code exchanged successfully, checking for recovery flow');
+      console.log('Code exchanged successfully');
       
-      // For password recovery with code flow, always redirect to reset-password
-      // This is because password reset emails from Supabase use code parameter
       const type = searchParams.get('type');
       const localeMatch = request.url.match(/\/([a-z]{2})\/auth\/callback/);
       const locale = localeMatch ? localeMatch[1] : 'en';
       
-      // If type=recovery or no type (password reset), go to reset-password
-      if (type === 'recovery' || !type) {
-        console.log('Recovery flow detected (or no type), redirecting to reset-password');
+      // If type=recovery, redirect to reset-password
+      if (type === 'recovery') {
+        console.log('Recovery flow detected, redirecting to reset-password');
         return NextResponse.redirect(`${origin}/${locale}/reset-password`);
       }
       
-      console.log('Not a recovery flow, redirecting to:', next);
+      console.log('Redirecting to:', next);
       return NextResponse.redirect(`${origin}${next}`);
     } else {
       console.error('Code exchange failed:', error);

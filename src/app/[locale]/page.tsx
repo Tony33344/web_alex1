@@ -1,7 +1,9 @@
 import { getTranslations } from 'next-intl/server';
+import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowRight, Heart, Sun, Brain, Dumbbell, Hand, Leaf, Star, Calendar, BookOpen, Users, Target, Compass, MapPin, Clock, Timer, type LucideIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { createClient } from '@/lib/supabase/server';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getTeachers } from '@/lib/queries/teachers';
@@ -27,15 +29,19 @@ const colorPalette = [
   { bg: 'from-lime-500/80 to-green-700/80',      icon: 'bg-lime-100 text-lime-700',        accent: 'text-lime-300' },
 ];
 
-export default async function HomePage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ code?: string }> }) {
+export default async function HomePage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ code?: string; type?: string }> }) {
   const { locale } = await params;
-  const { code } = await searchParams;
+  const { code, type } = await searchParams;
   const t = await getTranslations();
 
-  // If code is present, redirect to auth callback to handle password reset
-  if (code) {
-    const { redirect } = await import('next/navigation');
-    redirect(`/${locale}/auth/callback?code=${code}`);
+  // Handle password reset code from Supabase
+  if (code && type === 'recovery') {
+    const supabase = await createClient();
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (!error) {
+      // Successfully exchanged, redirect to reset-password
+      redirect(`/${locale}/reset-password`);
+    }
   }
 
   const [teachers, programs, { posts }, testimonials, featuredEvent, { events: upcomingEvents }, healthCategories, missionPage, visionPage, homePage, healthPage, roleTeachersPage, coachTrainingPage, blogPage, membershipPage, contactPage] = await Promise.all([

@@ -28,12 +28,26 @@ export async function POST(request: Request) {
   console.log(`🔔 Stripe webhook received: ${event.type}`);
 
   // Helper to get user profile with email and name
+  // Falls back to auth.users email if profiles.email is missing
   async function getUserProfile(userId: string) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('email, full_name')
       .eq('id', userId)
       .single();
+    
+    // If profile email is missing, try to get it from auth
+    if (!profile?.email) {
+      try {
+        const { data: { user: authUser } } = await supabase.auth.admin.getUserById(userId);
+        if (authUser?.email) {
+          return { email: authUser.email, full_name: profile?.full_name || null };
+        }
+      } catch {
+        // admin API might not be available in webhook context
+      }
+    }
+    
     return profile;
   }
 
@@ -125,18 +139,36 @@ export async function POST(request: Request) {
 
       // One-time event payment
       if (type === 'event' && userId && eventId) {
-        await supabase
+        console.log(`🎫 Processing event payment: eventId=${eventId}, userId=${userId}`);
+        
+        // Check if already confirmed (idempotency)
+        const { data: existingReg } = await supabase
           .from('event_registrations')
-          .update({
-            payment_status: 'paid',
-            status: 'confirmed',
-            stripe_payment_intent_id: session.payment_intent as string || null,
-            confirmed_at: new Date().toISOString(),
-          })
+          .select('id, status, payment_status')
           .eq('event_id', eventId)
-          .eq('user_id', userId);
+          .eq('user_id', userId)
+          .maybeSingle();
+        
+        if (existingReg?.payment_status === 'paid') {
+          console.log(`🎫 Event registration already paid, skipping update: eventId=${eventId}, userId=${userId}`);
+        } else {
+          const { error: updateError } = await supabase
+            .from('event_registrations')
+            .update({
+              payment_status: 'paid',
+              status: 'confirmed',
+              stripe_payment_intent_id: session.payment_intent as string || null,
+              confirmed_at: new Date().toISOString(),
+            })
+            .eq('event_id', eventId)
+            .eq('user_id', userId);
+          
+          if (updateError) {
+            console.error(`🎫 Failed to update event registration:`, updateError);
+          }
+        }
 
-        // Get event details and send confirmation email
+        // Always attempt to send confirmation email (even if already paid, email might have failed before)
         const { data: eventData } = await supabase
           .from('events')
           .select('title, start_date, location')
@@ -163,6 +195,8 @@ export async function POST(request: Request) {
               payment_amount: `CHF ${amount}`,
             }
           );
+        } else {
+          console.error(`🎫 Event not found for ID: ${eventId}`);
         }
       }
 

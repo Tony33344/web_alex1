@@ -18,6 +18,13 @@ export async function GET(request: Request) {
     });
 
     if (!error && data?.user) {
+      // Password recovery — redirect to reset-password page
+      if (type === 'recovery') {
+        const localeMatch = request.url.match(/\/([a-z]{2})\/auth\/confirm/);
+        const locale = localeMatch ? localeMatch[1] : 'en';
+        return NextResponse.redirect(`${origin}/${locale}/reset-password`);
+      }
+
       // Email verified successfully - send welcome email for new signups
       if (type === 'signup') {
         const userName = data.user.user_metadata?.full_name || data.user.email?.split('@')[0] || 'Friend';

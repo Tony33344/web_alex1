@@ -6,11 +6,20 @@ export async function GET(request: Request) {
   const code = searchParams.get('code');
   const next = searchParams.get('next') ?? '/en';
 
-  // Handle OAuth code exchange (Google, etc.)
+  // Handle code exchange (OAuth or PKCE email links)
   if (code) {
     const supabase = await createClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      // If this is a password recovery flow, redirect to reset-password page
+      // Supabase sets the session with a recovery type — detect it from the URL
+      const type = searchParams.get('type');
+      if (type === 'recovery') {
+        // Extract locale from the request path
+        const localeMatch = request.url.match(/\/([a-z]{2})\/auth\/callback/);
+        const locale = localeMatch ? localeMatch[1] : 'en';
+        return NextResponse.redirect(`${origin}/${locale}/reset-password`);
+      }
       return NextResponse.redirect(`${origin}${next}`);
     }
   }

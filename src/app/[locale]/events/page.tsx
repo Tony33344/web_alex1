@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { Calendar, MapPin, Users, XCircle } from 'lucide-react';
 import Link from 'next/link';
+import { createClient } from '@/lib/supabase/server';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,16 +12,28 @@ import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
 import { getActivePricing } from '@/lib/utils/pricing';
 import { PriceTag } from '@/components/shared/PriceTag';
+import { verifyAndActivateSession } from '@/lib/stripe/verify-session';
 
 interface EventsPageProps {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ payment?: string }>;
+  searchParams: Promise<{ payment?: string; session_id?: string }>;
 }
 
 export default async function EventsPage({ params, searchParams }: EventsPageProps) {
   const { locale } = await params;
-  const { payment } = await searchParams;
+  const { payment, session_id } = await searchParams;
   const t = await getTranslations();
+
+  // If arriving from Stripe checkout, verify and activate the registration
+  // This ensures the confirmation email is sent even if the webhook is delayed
+  if (session_id) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      await verifyAndActivateSession(session_id, user.id);
+    }
+  }
+
   const [{ events }, page] = await Promise.all([
     getEvents({ upcoming: true }),
     getPage('events'),

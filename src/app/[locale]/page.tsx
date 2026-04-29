@@ -13,6 +13,7 @@ import { getTestimonials } from '@/lib/queries/testimonials';
 import { getFeaturedEvent, getEvents } from '@/lib/queries/events';
 import { getHealthCategories } from '@/lib/queries/health';
 import { getPage } from '@/lib/queries/pages';
+import { getSettings } from '@/lib/queries/settings';
 import { getLocalizedField } from '@/lib/localization';
 import { processHtmlContent, createBriefDescription } from '@/lib/utils/html';
 import { NewsletterSection } from '@/components/sections/NewsletterSection';
@@ -44,7 +45,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
     }
   }
 
-  const [teachers, programs, { posts }, testimonials, featuredEvent, { events: upcomingEvents }, healthCategories, missionPage, visionPage, homePage, healthPage, roleTeachersPage, coachTrainingPage, blogPage, membershipPage, contactPage] = await Promise.all([
+  const [teachers, programs, { posts }, testimonials, featuredEvent, { events: upcomingEvents }, healthCategories, missionPage, visionPage, homePage, healthPage, roleTeachersPage, coachTrainingPage, blogPage, membershipPage, contactPage, settings] = await Promise.all([
     getTeachers(),
     getPrograms(),
     getBlogPosts({ limit: 3 }),
@@ -61,6 +62,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
     getPage('blog'),
     getPage('membership'),
     getPage('contact'),
+    getSettings(),
   ]);
 
   return (
@@ -636,7 +638,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
         title={t('home.newsletter')}
         placeholder={t('home.newsletterPlaceholder')}
         buttonLabel={t('home.subscribe')}
-        logoUrl={homePage?.hero_image_url || "https://infinityroleteachers.com/logo/logo.jpeg"}
+        logoUrl={settings?.logo || "https://infinityroleteachers.com/logo/logo.jpeg"}
       />
 
       {/* Section 11: Contact CTA */}

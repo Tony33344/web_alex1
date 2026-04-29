@@ -30,6 +30,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
         textColor={contactPage?.text_color}
         width={contactPage?.banner_width}
         height={contactPage?.banner_height}
+        logoUrl={undefined}
       />
 
       {/* Logo */}

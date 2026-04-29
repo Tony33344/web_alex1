@@ -3,6 +3,7 @@ import { Mail, Phone, MapPin } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PageHeader } from '@/components/shared/PageHeader';
 import { getPage } from '@/lib/queries/pages';
+import { getSettings } from '@/lib/queries/settings';
 import { getLocalizedField } from '@/lib/localization';
 import { ContactForm } from './ContactForm';
 import { ContactInfo } from './ContactInfo';
@@ -10,10 +11,14 @@ import { ContactInfo } from './ContactInfo';
 export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations();
-  const contactPage = await getPage('contact');
+  const [contactPage, settings] = await Promise.all([
+    getPage('contact'),
+    getSettings(),
+  ]);
 
   const pageTitle = contactPage ? (getLocalizedField(contactPage, 'title', locale) || t('contact.title')) : t('contact.title');
   const pageContent = contactPage ? (getLocalizedField(contactPage, 'content', locale) || '') : '';
+  const logoUrl = contactPage?.hero_image_url || settings.logo || undefined;
 
   return (
     <>
@@ -30,7 +35,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
       {/* Logo */}
       <div className="mx-auto max-w-7xl px-4 pt-8 text-center sm:px-6 lg:px-8">
         <img
-          src="https://infinityroleteachers.com/logo/logo.jpeg"
+          src={logoUrl || "https://infinityroleteachers.com/logo/logo.jpeg"}
           alt="Infinity Role Teachers"
           className="mx-auto h-48 w-auto"
         />

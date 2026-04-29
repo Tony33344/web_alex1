@@ -20,9 +20,10 @@ interface MembershipClientProps {
   pageContent: string;
   locale: string;
   galleryMap: Record<string, GalleryImage[]>;
+  logoUrl?: string;
 }
 
-export function MembershipClient({ plans, pageTitle, pageContent, locale, galleryMap }: MembershipClientProps) {
+export function MembershipClient({ plans, pageTitle, pageContent, locale, galleryMap, logoUrl }: MembershipClientProps) {
   const t = useTranslations();
   const router = useRouter();
   const { user, profile } = useUser();
@@ -90,7 +91,7 @@ export function MembershipClient({ plans, pageTitle, pageContent, locale, galler
       {/* Logo */}
       <div className="mb-8 flex justify-center">
         <img
-          src="https://infinityroleteachers.com/logo/logo.jpeg"
+          src={logoUrl || "https://infinityroleteachers.com/logo/logo.jpeg"}
           alt="Infinity Role Teachers"
           className="h-48 w-auto"
         />

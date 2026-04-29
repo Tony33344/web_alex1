@@ -636,6 +636,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
         title={t('home.newsletter')}
         placeholder={t('home.newsletterPlaceholder')}
         buttonLabel={t('home.subscribe')}
+        logoUrl={homePage?.hero_image_url || "https://infinityroleteachers.com/logo/logo.jpeg"}
       />
 
       {/* Section 11: Contact CTA */}

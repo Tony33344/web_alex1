@@ -18,10 +18,6 @@ function stripHtml(html: string): string {
 export function PageHeader({ title, subtitle, backgroundImage, backgroundColor, gradientTo, textColor, width, height, logoUrl }: PageHeaderProps) {
   const cleanSubtitle = subtitle ? stripHtml(subtitle) : '';
   const minH = height || '240px';
-  
-  if (logoUrl) {
-    console.log('PageHeader logoUrl:', logoUrl);
-  }
   const style: React.CSSProperties | undefined = backgroundImage
     ? { backgroundImage: `url(${backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center', minHeight: minH }
     : backgroundColor && gradientTo

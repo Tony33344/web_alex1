@@ -242,6 +242,16 @@ export async function POST(request: Request) {
 
       // One-time donation payment
       if (type === 'donation' && userId) {
+        // Get donation details before updating
+        const { data: donationData } = await supabase
+          .from('donations')
+          .select('id, amount, currency, message')
+          .eq('user_id', userId)
+          .eq('payment_status', 'pending')
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+
         await supabase
           .from('donations')
           .update({
@@ -253,6 +263,30 @@ export async function POST(request: Request) {
           .eq('payment_status', 'pending')
           .order('created_at', { ascending: false })
           .limit(1);
+
+        // Send donation confirmation email
+        if (donationData) {
+          const amount = (donationData.amount / 100).toFixed(2);
+          const currency = donationData.currency?.toUpperCase() || 'CHF';
+          const receiptId = `DON-${donationData.id.slice(-8).toUpperCase()}`;
+          const donationDate = new Date().toLocaleDateString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+
+          await sendConfirmationEmail(
+            EmailTemplates.DONATION_CONFIRMATION,
+            userId,
+            'Thank You for Your Donation - Infinity Role Teachers',
+            {
+              donation_amount: `${currency} ${amount}`,
+              donation_date: donationDate,
+              receipt_id: receiptId,
+            }
+          );
+        }
       }
 
       break;

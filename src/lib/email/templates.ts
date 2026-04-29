@@ -35,6 +35,7 @@ export const EmailTemplates = {
   EVENT_REGISTRATION: 'event-registration',
   COACH_TRAINING_REGISTRATION: 'coach-training-registration',
   MEMBERSHIP_CONFIRMATION: 'membership-confirmation',
+  DONATION_CONFIRMATION: 'donation-confirmation',
   PASSWORD_RESET: 'password-reset',
   SUPABASE_VERIFICATION: 'supabase-verification',
   WELCOME: 'welcome',

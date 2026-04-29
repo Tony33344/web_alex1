@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thank You for Your Donation</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Georgia, 'Times New Roman', serif;
+      background-color: #F5F3FF;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container {
+      max-width: 560px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    .header {
+      background: linear-gradient(90deg, #a35dea 0%, #e7b8ea 100%);
+      padding: 18px 40px 15px;
+      text-align: center;
+    }
+    .logo-wrapper {
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+    .logo {
+      width: 70px;
+      height: auto;
+      display: block;
+    }
+    .header h1 {
+      color: #ffffff;
+      font-size: 17px;
+      margin: 0;
+      font-weight: 400;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-family: Georgia, serif;
+    }
+    .header-subtitle {
+      color: rgba(255,255,255,0.85);
+      font-size: 11px;
+      margin-top: 8px;
+      font-style: italic;
+    }
+    .content {
+      padding: 50px 40px;
+      color: #3d3d3d;
+    }
+    .greeting {
+      font-size: 18px;
+      font-weight: 400;
+      margin-bottom: 22px;
+      color: #4C1D95;
+      font-style: italic;
+    }
+    .message {
+      font-size: 15px;
+      line-height: 1.9;
+      margin-bottom: 40px;
+      color: #5a5a5a;
+    }
+    .donation-card {
+      background: linear-gradient(90deg, #b58cde 0%, #e7b8ea 100%);
+      border-radius: 4px;
+      padding: 35px;
+      margin: 35px 0;
+      color: #ffffff;
+      text-align: center;
+    }
+    .donation-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      opacity: 0.85;
+      margin-bottom: 10px;
+      font-family: Arial, sans-serif;
+    }
+    .donation-amount {
+      font-size: 36px;
+      font-weight: 400;
+      margin-bottom: 10px;
+      font-style: italic;
+    }
+    .donation-date {
+      font-size: 13px;
+      opacity: 0.9;
+    }
+    .receipt-info {
+      background-color: #f9f9f9;
+      border-left: 3px solid #a35dea;
+      padding: 25px;
+      margin: 30px 0;
+    }
+    .receipt-title {
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #4C1D95;
+      margin-bottom: 15px;
+      font-family: Arial, sans-serif;
+    }
+    .receipt-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+      font-size: 14px;
+    }
+    .receipt-row:last-child {
+      border-bottom: none;
+    }
+    .receipt-label {
+      color: #666;
+    }
+    .receipt-value {
+      color: #3d3d3d;
+      font-weight: 500;
+    }
+    .impact-section {
+      text-align: center;
+      margin: 40px 0;
+      padding: 30px;
+      background-color: #fafafa;
+      border-radius: 4px;
+    }
+    .impact-title {
+      font-size: 16px;
+      color: #4C1D95;
+      margin-bottom: 15px;
+      font-style: italic;
+    }
+    .impact-text {
+      font-size: 14px;
+      line-height: 1.8;
+      color: #5a5a5a;
+    }
+    .footer {
+      background-color: #f5f5f5;
+      padding: 30px 40px;
+      text-align: center;
+    }
+    .social-links {
+      margin-bottom: 20px;
+    }
+    .social-links a {
+      display: inline-block;
+      margin: 0 10px;
+      color: #a35dea;
+      text-decoration: none;
+      font-size: 13px;
+    }
+    .footer-text {
+      font-size: 12px;
+      color: #888;
+      line-height: 1.8;
+    }
+    .footer-text a {
+      color: #a35dea;
+      text-decoration: none;
+    }
+    @media only screen and (max-width: 600px) {
+      .content {
+        padding: 35px 25px;
+      }
+      .donation-card {
+        padding: 25px;
+      }
+      .donation-amount {
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo-wrapper">
+        <img src="https://infinityroleteachers.com/logo/logo.jpeg" alt="Infinity Role Teachers" class="logo">
+      </div>
+      <h1>Thank You for Your Gift</h1>
+      <div class="header-subtitle">Your generosity makes our mission possible</div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <div class="greeting">Dear {{user_name}},</div>
+      
+      <div class="message">
+        We are deeply grateful for your generous donation to Infinity Role Teachers. Your support helps us continue our mission of empowering individuals on their journey toward holistic wellness through transformative education and healing practices.
+      </div>
+
+      <!-- Donation Card -->
+      <div class="donation-card">
+        <div class="donation-label">Your Donation</div>
+        <div class="donation-amount">{{donation_amount}}</div>
+        <div class="donation-date">{{donation_date}}</div>
+      </div>
+
+      <!-- Receipt Info -->
+      <div class="receipt-info">
+        <div class="receipt-title">Donation Receipt</div>
+        <div class="receipt-row">
+          <span class="receipt-label">Receipt ID</span>
+          <span class="receipt-value">#{{receipt_id}}</span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Date</span>
+          <span class="receipt-value">{{donation_date}}</span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Amount</span>
+          <span class="receipt-value">{{donation_amount}}</span>
+        </div>
+        <div class="receipt-row">
+          <span class="receipt-label">Payment Method</span>
+          <span class="receipt-value">Credit Card (Stripe)</span>
+        </div>
+      </div>
+
+      <!-- Impact Section -->
+      <div class="impact-section">
+        <div class="impact-title">Your Impact</div>
+        <div class="impact-text">
+          Every contribution directly supports our community programs, teacher training scholarships, and the development of wellness resources that reach people around the world.
+        </div>
+      </div>
+
+      <div class="message" style="margin-top: 30px;">
+        We will send a formal tax receipt to your registered email address within 24 hours. Please keep this email for your records.
+        <br><br>
+        With heartfelt gratitude,<br>
+        <strong>The Infinity Role Teachers Team</strong>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="social-links">
+        <a href="https://infinityroleteachers.com">Website</a>
+        <a href="https://instagram.com/infinityroleteachers">Instagram</a>
+        <a href="https://facebook.com/infinityroleteachers">Facebook</a>
+      </div>
+      <div class="footer-text">
+        Infinity Role Teachers<br>
+        <a href="mailto:support@infinityroleteachers.com">support@infinityroleteachers.com</a><br>
+        <a href="https://infinityroleteachers.com">www.infinityroleteachers.com</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -90,7 +90,7 @@ export function MembershipClient({ plans, pageTitle, pageContent, locale, galler
       {/* Logo */}
       <div className="mb-8 flex justify-center">
         <img
-          src="https://nchbiryeykludxrrdfaw.supabase.co/storage/v1/object/public/images/pages/home/logo%20small%20transparent.png"
+          src="https://infinityroleteachers.com/logo/logo.jpeg"
           alt="Infinity Role Teachers"
           className="h-48 w-auto"
         />

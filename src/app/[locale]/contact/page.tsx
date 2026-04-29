@@ -30,7 +30,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
       {/* Logo */}
       <div className="mx-auto max-w-7xl px-4 pt-8 text-center sm:px-6 lg:px-8">
         <img
-          src="https://nchbiryeykludxrrdfaw.supabase.co/storage/v1/object/public/images/pages/home/logo%20small%20transparent.png"
+          src="https://infinityroleteachers.com/logo/logo.jpeg"
           alt="Infinity Role Teachers"
           className="mx-auto h-48 w-auto"
         />

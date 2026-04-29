@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://www.infinityroleteachers.com';
-const logoUrl = 'https://nchbiryeykludxrrdfaw.supabase.co/storage/v1/object/public/images/pages/home/logo%20small%20transparent.png';
+const logoUrl = 'https://infinityroleteachers.com/logo/logo.jpeg';
 
 export const metadata: Metadata = {
   title: "Infinity Role Teachers — Holistic Wellness & Coach Training",

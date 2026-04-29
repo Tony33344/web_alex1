@@ -54,7 +54,7 @@ export default async function LocaleLayout({
     <NextIntlClientProvider locale={locale} messages={messages}>
       <Header locale={locale} logoUrl={logoUrl} logoSize={logoSize} logoTextGap={logoTextGap} logoTextSize={logoTextSize} logoBottomGap={logoBottomGap} programs={programLinks} teachers={teacherLinks} healthCategories={healthLinks} />
       <main className="flex-1 pt-16">{children}</main>
-      <Footer locale={locale} />
+      <Footer locale={locale} logoUrl={logoUrl} />
       <Toaster />
     </NextIntlClientProvider>
   );

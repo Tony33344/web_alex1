@@ -6,9 +6,10 @@ import { Instagram, Facebook, Twitter, Linkedin, Youtube, Phone, Mail, Heart } f
 
 interface FooterProps {
   locale: string;
+  logoUrl?: string;
 }
 
-export function Footer({ locale }: FooterProps) {
+export function Footer({ locale, logoUrl }: FooterProps) {
   const p = (path: string) => `/${locale}${path}`;
   const year = new Date().getFullYear();
   const [settings, setSettings] = useState<Record<string, string>>({});
@@ -27,7 +28,7 @@ export function Footer({ locale }: FooterProps) {
         {/* Column 1 — Brand */}
         <div className="space-y-4">
           <img
-            src="https://nchbiryeykludxrrdfaw.supabase.co/storage/v1/object/public/images/pages/home/logo%20small%20transparent.png"
+            src={logoUrl || "https://infinityroleteachers.com/logo/logo.jpeg"}
             alt="Infinity Role Teachers"
             className="h-18 w-auto"
           />

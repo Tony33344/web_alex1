@@ -28,7 +28,7 @@ export default async function MembershipPage({ params }: { params: Promise<{ loc
 
   const pageTitle = (membershipPage && getLocalizedField(membershipPage, 'title', locale)) || t('membership.title');
   const pageContent = (membershipPage && getLocalizedField(membershipPage, 'content', locale)) || '';
-  const logoUrl = settings.logo || membershipPage?.header_logo_url || undefined;
+  const logoUrl = membershipPage?.hero_image_url || settings.logo || undefined;
 
   return (
     <>

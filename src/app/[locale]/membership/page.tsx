@@ -32,7 +32,7 @@ export default async function MembershipPage({ params }: { params: Promise<{ loc
 
   return (
     <>
-      <PageHeader title={pageTitle} subtitle={pageContent} backgroundColor={membershipPage?.background_color} gradientTo={membershipPage?.banner_gradient_to} textColor={membershipPage?.text_color} width={membershipPage?.banner_width} height={membershipPage?.banner_height} logoUrl={logoUrl} />
+      <PageHeader title={pageTitle} subtitle={pageContent} backgroundColor={membershipPage?.background_color} gradientTo={membershipPage?.banner_gradient_to} textColor={membershipPage?.text_color} width={membershipPage?.banner_width} height={membershipPage?.banner_height} logoUrl={undefined} />
       <MembershipClient 
         plans={plans} 
         pageTitle={pageTitle} 

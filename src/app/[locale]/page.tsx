@@ -137,23 +137,26 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                           <Badge className="absolute left-3 top-3 bg-secondary text-secondary-foreground">Featured</Badge>
                         )}
                         {pricing.isEarlyBird && (
-                          <Badge className="absolute right-3 top-3 bg-amber-500 text-white gap-1">
+                          <Badge className="absolute left-3 bottom-3 bg-amber-500 text-white gap-1">
                             <Timer className="h-3 w-3" />
                             Early Bird
                           </Badge>
                         )}
+                        {/* Price in upper right corner */}
+                        <div className="absolute right-3 top-3 bg-background/90 backdrop-blur-sm px-2 py-1 rounded-md shadow-sm">
+                          {pricing.isEarlyBird ? (
+                            <div className="flex flex-col items-end">
+                              <span className="text-xs text-muted-foreground line-through">{pricing.currency} {pricing.regularPrice}</span>
+                              <span className="text-sm font-bold text-amber-600">{pricing.currency} {pricing.activePrice}</span>
+                            </div>
+                          ) : (
+                            <span className="text-sm font-bold text-primary">{priceLabel}</span>
+                          )}
+                        </div>
                       </div>
                       <CardHeader>
                         <div className="flex items-center gap-2 text-xs text-muted-foreground">
                           <Badge variant="outline">{event.is_online ? t('common.online') : t('common.inPerson')}</Badge>
-                          {pricing.isEarlyBird ? (
-                            <div className="flex items-center gap-1">
-                              <span className="line-through text-muted-foreground">{pricing.currency} {pricing.regularPrice}</span>
-                              <span className="font-semibold text-amber-600">{priceLabel}</span>
-                            </div>
-                          ) : (
-                            <span className="font-semibold text-primary">{priceLabel}</span>
-                          )}
                         </div>
                         <CardTitle className="text-lg group-hover:text-primary transition-colors">{evtTitle}</CardTitle>
                       </CardHeader>
@@ -479,11 +482,22 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                       <div className="relative aspect-video bg-gradient-to-br from-primary/5 to-secondary/5">
                         {program.image_url && <img src={program.image_url} alt={name} className="h-full w-full object-cover" />}
                         {pricing.isEarlyBird && (
-                          <Badge className="absolute right-3 top-3 bg-amber-500 text-white gap-1">
+                          <Badge className="absolute left-3 bottom-3 bg-amber-500 text-white gap-1">
                             <Timer className="h-3 w-3" />
                             Early Bird
                           </Badge>
                         )}
+                        {/* Price in upper right corner */}
+                        <div className="absolute right-3 top-3 bg-background/90 backdrop-blur-sm px-2 py-1 rounded-md shadow-sm">
+                          {pricing.isEarlyBird ? (
+                            <div className="flex flex-col items-end">
+                              <span className="text-xs text-muted-foreground line-through">{pricing.currency} {pricing.regularPrice}</span>
+                              <span className="text-sm font-bold text-amber-600">{pricing.currency} {pricing.activePrice}</span>
+                            </div>
+                          ) : (
+                            <span className="text-sm font-bold text-primary">{priceLabel}</span>
+                          )}
+                        </div>
                       </div>
                       <CardHeader>
                         <CardTitle className="text-lg">{name}</CardTitle>
@@ -491,14 +505,6 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                       <CardContent className="space-y-3">
                         <div className="flex items-center justify-between text-sm text-muted-foreground">
                           <span>{program.duration || ''}</span>
-                          {pricing.isEarlyBird ? (
-                            <div className="flex items-center gap-1">
-                              <span className="line-through text-muted-foreground">{pricing.currency} {pricing.regularPrice}</span>
-                              <span className="font-semibold text-amber-600">{priceLabel}</span>
-                            </div>
-                          ) : (
-                            <span className="font-semibold text-foreground">{priceLabel}</span>
-                          )}
                         </div>
                         {pricing.isEarlyBird && pricing.earlyBirdDeadline && (
                           <div className="flex items-center gap-2 text-xs text-amber-600 font-medium">

@@ -18,7 +18,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
 
   const pageTitle = contactPage ? (getLocalizedField(contactPage, 'title', locale) || t('contact.title')) : t('contact.title');
   const pageContent = contactPage ? (getLocalizedField(contactPage, 'content', locale) || '') : '';
-  const logoUrl = settings.logo || "https://infinityroleteachers.com/logo/logo.jpeg";
+  const logoUrl = settings.logo || "/logo/logo.jpeg";
 
   return (
     <>
@@ -36,7 +36,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
       {/* Logo */}
       <div className="mx-auto max-w-7xl px-4 pt-8 text-center sm:px-6 lg:px-8">
         <img
-          src={logoUrl || "https://infinityroleteachers.com/logo/logo.jpeg"}
+          src={logoUrl || "/logo/logo.jpeg"}
           alt="Infinity Role Teachers"
           className="mx-auto h-48 w-auto"
         />

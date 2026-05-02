@@ -11,14 +11,15 @@ import { ContactInfo } from './ContactInfo';
 export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
   const t = await getTranslations();
-  const [contactPage, settings] = await Promise.all([
+  const [contactPage, membershipPage, settings] = await Promise.all([
     getPage('contact'),
+    getPage('membership'),
     getSettings(),
   ]);
 
   const pageTitle = contactPage ? (getLocalizedField(contactPage, 'title', locale) || t('contact.title')) : t('contact.title');
   const pageContent = contactPage ? (getLocalizedField(contactPage, 'content', locale) || '') : '';
-  const logoUrl = settings.logo || "/logo/logo.jpeg";
+  const logoUrl = membershipPage?.hero_image_url || settings.logo || "/logo/logo.jpeg";
 
   return (
     <>

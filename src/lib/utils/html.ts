@@ -34,8 +34,15 @@ export function processHtmlContent(html: string | null | undefined): string {
  */
 export function createBriefDescription(description: string | null | undefined, maxLength: number = 120): string {
   if (!description) return '';
-  // Strip HTML tags
-  const plain = description.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
+  // Convert block-level tags and line breaks to spaces before stripping HTML
+  const withSpaces = description
+    .replace(/<\/p>/gi, ' ')
+    .replace(/<\/div>/gi, ' ')
+    .replace(/<br\s*\/?>/gi, ' ')
+    .replace(/<\/li>/gi, ' ')
+    .replace(/<\/h[1-6]>/gi, ' ');
+  // Strip all remaining HTML tags
+  const plain = withSpaces.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim();
   if (plain.length <= maxLength) return plain;
   return plain.slice(0, maxLength).replace(/\s+\S*$/, '') + '...';
 }

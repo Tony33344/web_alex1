@@ -18,7 +18,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
 
   const pageTitle = contactPage ? (getLocalizedField(contactPage, 'title', locale) || t('contact.title')) : t('contact.title');
   const pageContent = contactPage ? (getLocalizedField(contactPage, 'content', locale) || '') : '';
-  const logoUrl = contactPage?.hero_image_url || settings.logo || "https://infinityroleteachers.com/logo/logo.jpeg";
+  const logoUrl = settings.logo || "https://infinityroleteachers.com/logo/logo.jpeg";
 
   return (
     <>

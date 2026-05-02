@@ -30,7 +30,7 @@ export function PriceTag({ pricing, freeLabel, locale, className = '', size = 'm
   const deadlineLabel = earlyBirdDeadline?.toLocaleDateString(locale, { day: 'numeric', month: 'long' });
 
   return (
-    <div className={`flex flex-col items-end gap-0.5 ${className}`}>
+    <div className={`flex flex-col items-end gap-0.5 w-full ${className}`}>
       <div className="flex items-baseline gap-2">
         {regularPrice != null && regularPrice > activePrice && (
           <span className={`${smallSize} text-muted-foreground line-through`}>{currency} {regularPrice}</span>

@@ -69,7 +69,12 @@ export default async function EventsPage({ params, searchParams }: EventsPagePro
               const title = getLocalizedField(event, 'title', locale) || event.title_en;
               const spotsLeft = event.max_attendees ? event.max_attendees - event.current_attendees : null;
               const pricing = getActivePricing(event);
-              const startDate = new Date(event.start_date).toLocaleDateString(locale, { dateStyle: 'medium' });
+              const startDateTime = new Date(event.start_date);
+              const endDateTime = event.end_date ? new Date(event.end_date) : null;
+              const formatDateTime = (d: Date) => d.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' }) + ', ' + d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false });
+              const dateRangeDisplay = endDateTime
+                ? `${formatDateTime(startDateTime)} – ${formatDateTime(endDateTime)}`
+                : formatDateTime(startDateTime);
 
               return (
                 <Link key={event.id} href={`/${locale}/events/${event.slug}`} className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)]">
@@ -91,7 +96,7 @@ export default async function EventsPage({ params, searchParams }: EventsPagePro
                     </CardHeader>
                     <CardContent className="space-y-3">
                       <div className="space-y-2 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-2"><Calendar className="h-4 w-4" />{startDate}</div>
+                        <div className="flex items-center gap-2"><Calendar className="h-4 w-4 flex-shrink-0" />{dateRangeDisplay}</div>
                         <div className="flex items-center gap-2"><MapPin className="h-4 w-4" />{event.is_online ? 'Online' : event.location || 'TBA'}</div>
                         {spotsLeft !== null && (
                           <div className="flex items-center gap-2"><Users className="h-4 w-4" />{spotsLeft > 0 ? `${spotsLeft} spots left` : t('common.eventFull')}</div>

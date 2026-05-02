@@ -41,8 +41,12 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
   const title = getLocalizedField(event, 'title', locale) || event.title_en;
   const description = getLocalizedField(event, 'description', locale) || '';
   const longContent = getLocalizedField(event, 'long_content', locale) || '';
-  const startDate = new Date(event.start_date).toLocaleDateString(locale, { dateStyle: 'long' });
-  const startTime = new Date(event.start_date).toLocaleTimeString(locale, { timeStyle: 'short' });
+  const startDateTime = new Date(event.start_date);
+  const endDateTime = event.end_date ? new Date(event.end_date) : null;
+  const formatDateTime = (d: Date) => d.toLocaleDateString(locale, { day: 'numeric', month: 'long', year: 'numeric' }) + ', ' + d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false });
+  const dateRangeDisplay = endDateTime
+    ? `${formatDateTime(startDateTime)} – ${formatDateTime(endDateTime)}`
+    : formatDateTime(startDateTime);
   const spotsLeft = event.max_attendees ? event.max_attendees - event.current_attendees : null;
   const pricing = getActivePricing(event);
   const galleryImages = await getGalleryImages('event', event.id);
@@ -80,8 +84,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
           <Card>
             <CardContent className="space-y-4 pt-6">
               <div className="space-y-3 text-sm">
-                <div className="flex items-center gap-3"><Calendar className="h-4 w-4 text-primary" /><span>{startDate}</span></div>
-                <div className="flex items-center gap-3"><Clock className="h-4 w-4 text-primary" /><span>{startTime}</span></div>
+                <div className="flex items-center gap-3"><Calendar className="h-4 w-4 text-primary flex-shrink-0" /><span>{dateRangeDisplay}</span></div>
                 <div className="flex items-center gap-3"><MapPin className="h-4 w-4 text-primary" />{event.is_online ? <span>Online</span> : event.location ? <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`} target="_blank" rel="noopener noreferrer" className="underline hover:text-primary transition-colors">{event.location}</a> : <span>TBA</span>}</div>
                 {spotsLeft !== null && (
                   <div className="flex items-center gap-3"><Users className="h-4 w-4 text-primary" /><span>{spotsLeft > 0 ? `${spotsLeft} spots left` : t('common.eventFull')}</span></div>

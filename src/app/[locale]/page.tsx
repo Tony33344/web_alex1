@@ -125,7 +125,12 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                 const spotsLeft = event.max_attendees ? event.max_attendees - event.current_attendees : null;
                 const pricing = getActivePricing(event);
                 const priceLabel = pricing.activePrice && pricing.activePrice > 0 ? `${pricing.currency} ${pricing.activePrice}` : t('common.free');
-                const startDate = new Date(event.start_date).toLocaleDateString(locale, { dateStyle: 'medium' });
+                const startDateTime = new Date(event.start_date);
+                const endDateTime = event.end_date ? new Date(event.end_date) : null;
+                const formatDateTime = (d: Date) => d.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' }) + ', ' + d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false });
+                const dateRangeDisplay = endDateTime
+                  ? `${formatDateTime(startDateTime)} – ${formatDateTime(endDateTime)}`
+                  : formatDateTime(startDateTime);
                 return (
                   <Link key={event.id} href={`/${locale}/events/${event.slug}`} className="w-full sm:w-[calc(50%-1rem)] lg:w-[calc(33.333%-1.5rem)]">
                     <Card className="group h-full overflow-hidden transition-shadow hover:shadow-lg">
@@ -162,7 +167,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                       </CardHeader>
                       <CardContent className="space-y-3">
                         <div className="space-y-2 text-sm text-muted-foreground">
-                          <div className="flex items-center gap-2"><Calendar className="h-4 w-4" />{startDate}</div>
+                          <div className="flex items-center gap-2"><Calendar className="h-4 w-4 flex-shrink-0" />{dateRangeDisplay}</div>
                           <div className="flex items-center gap-2"><MapPin className="h-4 w-4" />{event.is_online ? 'Online' : event.location || 'TBA'}</div>
                           {pricing.isEarlyBird && pricing.earlyBirdDeadline && (
                             <div className="flex items-center gap-2 text-amber-600 font-medium">
@@ -476,6 +481,14 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                 const name = getLocalizedField(program, 'name', locale) || program.name_en;
                 const pricing = getActivePricing(program);
                 const priceLabel = pricing.activePrice && pricing.activePrice > 0 ? `${pricing.currency} ${pricing.activePrice}` : t('common.free');
+                const progStartDateTime = program.start_date ? new Date(program.start_date) : null;
+                const progEndDateTime = program.end_date ? new Date(program.end_date) : null;
+                const formatProgDateTime = (d: Date) => d.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: 'numeric' }) + ', ' + d.toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false });
+                const progDateRangeDisplay = progStartDateTime
+                  ? (progEndDateTime
+                    ? `${formatProgDateTime(progStartDateTime)} – ${formatProgDateTime(progEndDateTime)}`
+                    : formatProgDateTime(progStartDateTime))
+                  : (program.duration || '');
                 return (
                   <Link key={program.slug} href={`/${locale}/coach-training/${program.slug}`} className="w-full md:w-[calc(33.333%-1.5rem)]">
                     <Card className="group h-full overflow-hidden transition-shadow hover:shadow-lg">
@@ -503,8 +516,9 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                         <CardTitle className="text-lg">{name}</CardTitle>
                       </CardHeader>
                       <CardContent className="space-y-3">
-                        <div className="flex items-center justify-between text-sm text-muted-foreground">
-                          <span>{program.duration || ''}</span>
+                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                          <Calendar className="h-4 w-4 flex-shrink-0" />
+                          <span>{progDateRangeDisplay}</span>
                         </div>
                         {pricing.isEarlyBird && pricing.earlyBirdDeadline && (
                           <div className="flex items-center gap-2 text-xs text-amber-600 font-medium">

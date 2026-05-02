@@ -172,7 +172,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                           {pricing.isEarlyBird && pricing.earlyBirdDeadline && (
                             <div className="flex items-center gap-2 text-amber-600 font-medium">
                               <Timer className="h-4 w-4" />
-                              Ends {pricing.earlyBirdDeadline.toLocaleDateString(locale, { month: 'short', day: 'numeric' })}
+                              Early bird ends on {pricing.earlyBirdDeadline.toLocaleDateString(locale, { month: 'short', day: 'numeric' })}
                             </div>
                           )}
                           {spotsLeft !== null && (
@@ -523,7 +523,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                         {pricing.isEarlyBird && pricing.earlyBirdDeadline && (
                           <div className="flex items-center gap-2 text-xs text-amber-600 font-medium">
                             <Timer className="h-3 w-3" />
-                            Ends {pricing.earlyBirdDeadline.toLocaleDateString(locale, { month: 'short', day: 'numeric' })}
+                            Early bird ends on {pricing.earlyBirdDeadline.toLocaleDateString(locale, { month: 'short', day: 'numeric' })}
                           </div>
                         )}
                         <Button variant="outline" className="w-full gap-2">

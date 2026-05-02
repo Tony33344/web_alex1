@@ -425,7 +425,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                     {getLocalizedField(featuredEvent, 'title', locale)}
                   </h2>
                   <p className="text-lg leading-relaxed text-primary-foreground/80">
-                    {getLocalizedField(featuredEvent, 'brief_description', locale) || createBriefDescription(getLocalizedField(featuredEvent, 'description', locale))}
+                    {createBriefDescription(getLocalizedField(featuredEvent, 'brief_description', locale), 200) || createBriefDescription(getLocalizedField(featuredEvent, 'description', locale), 200)}
                   </p>
                   <div className="flex items-center gap-4 text-sm text-primary-foreground/70">
                     <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" /> {new Date(featuredEvent.start_date).toLocaleDateString(locale, { dateStyle: 'long' })}</span>

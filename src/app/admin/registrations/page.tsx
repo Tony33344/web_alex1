@@ -4,6 +4,7 @@ import { useEffect, useState, useMemo } from 'react';
 import {
   CheckCircle, Clock, XCircle, CreditCard, Building2, Ticket,
   Users, Bell, UserCheck, User, ChevronDown, ChevronRight, AlertTriangle,
+  RefreshCw, Trash2,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -204,6 +205,43 @@ export default function AdminRegistrationsPage() {
     setUpdatingWl(null);
   }
 
+  async function resetEventCount(eventId: string) {
+    if (!confirm('Reset attendee count to match actual active registrations?')) return;
+    const res = await fetch('/api/admin/registrations', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'events', id: eventId, action: 'reset_count' }),
+    });
+    if (!res.ok) {
+      const error = await res.json();
+      alert(`Failed to reset: ${error.error || 'Unknown error'}`);
+      return;
+    }
+    const data = await res.json();
+    alert(`Count reset to ${data.count} active registrations`);
+    // Refresh data
+    const regData = await fetch('/api/admin/registrations').then(r => r.json());
+    setRegs(regData.eventRegistrations ?? []);
+  }
+
+  async function deleteAllRegistrations(eventId: string) {
+    if (!confirm('Delete ALL registrations for this event? This cannot be undone.')) return;
+    const res = await fetch('/api/admin/registrations', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'event_registrations', id: eventId, action: 'delete_all' }),
+    });
+    if (!res.ok) {
+      const error = await res.json();
+      alert(`Failed to delete: ${error.error || 'Unknown error'}`);
+      return;
+    }
+    alert('All registrations deleted');
+    // Refresh data
+    const regData = await fetch('/api/admin/registrations').then(r => r.json());
+    setRegs(regData.eventRegistrations ?? []);
+  }
+
   const pendingCount = regs.filter(r => r.payment_status === 'pending').length + enrollments.filter(e => e.payment_status === 'pending').length;
   const activeWaitlist = waitlist.filter(w => w.status !== 'cancelled').length;
 
@@ -270,7 +308,29 @@ export default function AdminRegistrationsPage() {
                         <CapacityBar current={event?.current_attendees ?? active.length} max={event?.max_attendees ?? null} />
                       </div>
                     </div>
-                    {isExpanded ? <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 text-xs gap-1"
+                        onClick={(e) => { e.stopPropagation(); resetEventCount(event?.id ?? ''); }}
+                        title="Reset count to match actual registrations"
+                      >
+                        <RefreshCw className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 text-xs gap-1 text-destructive hover:text-destructive"
+                        onClick={(e) => { e.stopPropagation(); deleteAllRegistrations(event?.id ?? ''); }}
+                        title="Delete all registrations for this event"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                      <button onClick={() => toggleExpand(event?.id ?? '')}>
+                        {isExpanded ? <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />}
+                      </button>
+                    </div>
                   </button>
                 </CardHeader>
                 {isExpanded && (

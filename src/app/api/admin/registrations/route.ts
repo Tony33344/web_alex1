@@ -37,7 +37,31 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  const { table, id, data } = await request.json();
+  const { table, id, data, action } = await request.json();
+
+  // Reset event current_attendees count
+  if (action === 'reset_count' && table === 'events' && id) {
+    const { data: activeRegs } = await admin
+      .from('event_registrations')
+      .select('id')
+      .eq('event_id', id)
+      .neq('status', 'cancelled');
+    const { error } = await admin
+      .from('events')
+      .update({ current_attendees: activeRegs?.length || 0 })
+      .eq('id', id);
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: true, count: activeRegs?.length || 0 });
+  }
+
+  // Delete all registrations for an event
+  if (action === 'delete_all' && table === 'event_registrations' && id) {
+    const { error } = await admin.from('event_registrations').delete().eq('event_id', id);
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    // Also reset the event's current_attendees to 0
+    await admin.from('events').update({ current_attendees: 0 }).eq('id', id);
+    return NextResponse.json({ success: true });
+  }
 
   if (!['event_registrations', 'program_enrollments'].includes(table) || !id) {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });

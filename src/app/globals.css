@@ -158,6 +158,12 @@
   .prose [style*="line-height: 1"] {
     line-height: 1 !important;
   }
+  .prose ul[style*="line-height:1"] > li,
+  .prose ol[style*="line-height:1"] > li,
+  .prose ul[style*="line-height: 1"] > li,
+  .prose ol[style*="line-height: 1"] > li {
+    line-height: 1 !important;
+  }
   .prose p[style*="line-height:1.5"],
   .prose p[style*="line-height: 1.5"],
   .prose h1[style*="line-height:1.5"],
@@ -171,6 +177,12 @@
   .prose [style*="line-height: 1.5"] {
     line-height: 1.5 !important;
   }
+  .prose ul[style*="line-height:1.5"] > li,
+  .prose ol[style*="line-height:1.5"] > li,
+  .prose ul[style*="line-height: 1.5"] > li,
+  .prose ol[style*="line-height: 1.5"] > li {
+    line-height: 1.5 !important;
+  }
   .prose p[style*="line-height:2"],
   .prose p[style*="line-height: 2"],
   .prose h1[style*="line-height:2"],
@@ -182,6 +194,12 @@
   .prose ol > li[style*="line-height:2"],
   .prose li[style*="line-height:2"],
   .prose [style*="line-height: 2"] {
+    line-height: 2 !important;
+  }
+  .prose ul[style*="line-height:2"] > li,
+  .prose ol[style*="line-height:2"] > li,
+  .prose ul[style*="line-height: 2"] > li,
+  .prose ol[style*="line-height: 2"] > li {
     line-height: 2 !important;
   }
 }

@@ -74,6 +74,14 @@ const LineHeight = Extension.create({
             if (this.options.types.includes(node.type.name)) {
               editor.chain().focus().setNodeSelection(pos).updateAttributes(node.type.name, { lineHeight }).run();
             }
+            // Also apply to list items when setting on a list
+            if (node.type.name === 'bulletList' || node.type.name === 'orderedList') {
+              node.forEach((child, childOffset) => {
+                if (child.type.name === 'listItem') {
+                  editor.chain().focus().setNodeSelection(pos + 1 + childOffset).updateAttributes('listItem', { lineHeight }).run();
+                }
+              });
+            }
           });
           return true;
         },
@@ -85,6 +93,14 @@ const LineHeight = Extension.create({
           editor.state.doc.nodesBetween(from, to, (node, pos) => {
             if (this.options.types.includes(node.type.name)) {
               editor.chain().focus().setNodeSelection(pos).updateAttributes(node.type.name, { lineHeight: null }).run();
+            }
+            // Also remove from list items when unsetting from a list
+            if (node.type.name === 'bulletList' || node.type.name === 'orderedList') {
+              node.forEach((child, childOffset) => {
+                if (child.type.name === 'listItem') {
+                  editor.chain().focus().setNodeSelection(pos + 1 + childOffset).updateAttributes('listItem', { lineHeight: null }).run();
+                }
+              });
             }
           });
           return true;

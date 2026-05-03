@@ -1,7 +1,7 @@
 'use client';
 
 import { useEditor, EditorContent } from '@tiptap/react';
-import { Node as TiptapNode, mergeAttributes } from '@tiptap/core';
+import { Node as TiptapNode, mergeAttributes, Extension } from '@tiptap/core';
 import StarterKit from '@tiptap/starter-kit';
 import { createClient } from '@/lib/supabase/client';
 import Underline from '@tiptap/extension-underline';
@@ -34,8 +34,64 @@ import {
   Film,
   Trash2,
   Loader2,
+  Type,
 } from 'lucide-react';
 import { useEffect, useCallback, useRef, useState } from 'react';
+
+// Custom LineHeight extension
+const LineHeight = Extension.create({
+  name: 'lineHeight',
+  addOptions() {
+    return {
+      types: ['paragraph', 'heading'],
+    };
+  },
+  addGlobalAttributes() {
+    return [
+      {
+        types: this.options.types,
+        attributes: {
+          lineHeight: {
+            default: null,
+            parseHTML: (element) => element.style.lineHeight,
+            renderHTML: (attributes) => {
+              if (!attributes.lineHeight) return {};
+              return { style: `line-height: ${attributes.lineHeight}` };
+            },
+          },
+        },
+      },
+    ];
+  },
+  addCommands() {
+    return {
+      setLineHeight:
+        (lineHeight: string) =>
+        ({ editor }) => {
+          const { selection } = editor.state;
+          const { from, to } = selection;
+          editor.state.doc.nodesBetween(from, to, (node, pos) => {
+            if (this.options.types.includes(node.type.name)) {
+              editor.chain().focus().setNodeSelection(pos).updateAttributes(node.type.name, { lineHeight }).run();
+            }
+          });
+          return true;
+        },
+      unsetLineHeight:
+        () =>
+        ({ editor }) => {
+          const { selection } = editor.state;
+          const { from, to } = selection;
+          editor.state.doc.nodesBetween(from, to, (node, pos) => {
+            if (this.options.types.includes(node.type.name)) {
+              editor.chain().focus().setNodeSelection(pos).updateAttributes(node.type.name, { lineHeight: null }).run();
+            }
+          });
+          return true;
+        },
+    };
+  },
+});
 
 // Custom TipTap node: <video controls src="..." />
 const Video = TiptapNode.create({
@@ -322,6 +378,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
       }),
       TextStyle,
       Color,
+      LineHeight,
       Youtube.configure({
         controls: true,
         nocookie: true,
@@ -518,6 +575,27 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
           title="Justify"
         >
           <AlignJustify className="h-4 w-4" />
+        </ToolbarButton>
+
+        <Separator />
+
+        <ToolbarButton
+          onClick={() => (editor.commands as { setLineHeight?: (lh: string) => boolean }).setLineHeight?.('1')}
+          title="Line spacing: tight"
+        >
+          <span className="text-xs font-bold">1</span>
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => (editor.commands as { setLineHeight?: (lh: string) => boolean }).setLineHeight?.('1.5')}
+          title="Line spacing: normal"
+        >
+          <span className="text-xs font-bold">1.5</span>
+        </ToolbarButton>
+        <ToolbarButton
+          onClick={() => (editor.commands as { setLineHeight?: (lh: string) => boolean }).setLineHeight?.('2')}
+          title="Line spacing: loose"
+        >
+          <span className="text-xs font-bold">2</span>
         </ToolbarButton>
 
         <Separator />

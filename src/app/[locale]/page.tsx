@@ -576,21 +576,19 @@ export default async function HomePage({ params, searchParams }: { params: Promi
       {/* Section 8: Latest Blog */}
       <section className="bg-background py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="mb-12 flex items-end justify-between">
-            <div>
-              <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-                {(blogPage && getLocalizedField(blogPage, 'title', locale)) || t('home.latestBlog')}
-              </h2>
-              <div className="mt-2 prose dark:prose-invert">
-                {(blogPage && getLocalizedField(blogPage, 'content', locale)) ? (
-                  <div dangerouslySetInnerHTML={{ __html: getLocalizedField(blogPage, 'content', locale) || '' }} />
-                ) : (
-                  <p className="text-muted-foreground">Insights, stories, and wellness tips</p>
-                )}
-              </div>
+          <div className="mb-12 flex flex-col items-center text-center">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              {(blogPage && getLocalizedField(blogPage, 'title', locale)) || t('home.latestBlog')}
+            </h2>
+            <div className="mt-2 prose dark:prose-invert">
+              {(blogPage && getLocalizedField(blogPage, 'content', locale)) ? (
+                <div dangerouslySetInnerHTML={{ __html: getLocalizedField(blogPage, 'content', locale) || '' }} />
+              ) : (
+                <p className="text-muted-foreground">Insights, stories, and wellness tips</p>
+              )}
             </div>
             <Link href={`/${locale}/blog`}>
-              <Button variant="ghost" className="hidden gap-2 sm:flex">
+              <Button variant="ghost" className="hidden gap-2 sm:flex mt-4">
                 {t('home.readAll')}
                 <ArrowRight className="h-4 w-4" />
               </Button>

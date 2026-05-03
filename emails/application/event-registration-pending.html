@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registration Pending - Infinity Role Teachers</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Georgia, 'Times New Roman', serif;
+      background-color: #F5F3FF;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container {
+      max-width: 560px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    .header {
+      background: linear-gradient(90deg, #a35dea 0%, #e7b8ea 100%);
+      padding: 15px 40px 12px;
+      text-align: center;
+    }
+    .logo-wrapper {
+      display: inline-block;
+      margin-bottom: 14px;
+    }
+    .logo {
+      width: 60px;
+      height: auto;
+      display: block;
+    }
+    .header h1 {
+      color: #ffffff;
+      font-size: 15px;
+      margin: 0;
+      font-weight: 400;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-family: Georgia, serif;
+    }
+    .pending-badge {
+      display: inline-block;
+      background-color: rgba(255,255,255,0.2);
+      color: #ffffff;
+      padding: 6px 15px;
+      border-radius: 2px;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      margin-top: 12px;
+      font-family: Arial, sans-serif;
+    }
+    .content {
+      padding: 45px 40px;
+      color: #3d3d3d;
+    }
+    .greeting {
+      font-size: 18px;
+      font-weight: 400;
+      margin-bottom: 20px;
+      color: #4C1D95;
+      font-style: italic;
+    }
+    .message {
+      font-size: 15px;
+      line-height: 1.8;
+      margin-bottom: 35px;
+      color: #5a5a5a;
+    }
+    .event-card {
+      background-color: #FEF3C7;
+      border: 1px solid #FBBF24;
+      border-radius: 4px;
+      padding: 35px;
+      margin: 30px 0;
+    }
+    .event-title {
+      font-size: 22px;
+      font-weight: 400;
+      color: #4C1D95;
+      margin-bottom: 25px;
+      font-style: italic;
+    }
+    .event-detail {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 14px;
+      font-size: 14px;
+      color: #666666;
+      font-family: Arial, sans-serif;
+    }
+    .event-detail-icon {
+      width: 24px;
+      margin-right: 12px;
+      text-align: center;
+      color: #6B46C1;
+    }
+    .detail-label {
+      font-weight: 600;
+      color: #4C1D95;
+      min-width: 90px;
+    }
+    .reference-box {
+      background: linear-gradient(90deg, #b58cde 0%, #e7b8ea 100%);
+      border-radius: 4px;
+      padding: 30px;
+      margin: 35px 0;
+      color: #ffffff;
+      text-align: center;
+    }
+    .reference-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+      opacity: 0.85;
+      font-family: Arial, sans-serif;
+    }
+    .reference-number {
+      font-size: 26px;
+      font-weight: 300;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 3px;
+    }
+    .button-container {
+      text-align: center;
+      margin: 35px 0;
+    }
+    .action-button {
+      display: inline-block;
+      background-color: #6B46C1;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 14px 35px;
+      border-radius: 2px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      font-family: Arial, sans-serif;
+    }
+    .info-box {
+      background-color: #F5F3FF;
+      border-left: 3px solid #8B5CF6;
+      padding: 22px;
+      margin: 30px 0;
+    }
+    .info-box-title {
+      font-weight: 600;
+      color: #4C1D95;
+      margin-bottom: 10px;
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+    }
+    .info-box-text {
+      color: #666666;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .footer {
+      background-color: #EDE9FE;
+      padding: 40px;
+      text-align: center;
+    }
+    .footer-logo {
+      width: 45px;
+      height: auto;
+      margin-bottom: 18px;
+      opacity: 0.7;
+    }
+    .company-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #4C1D95;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .footer-text {
+      font-size: 12px;
+      color: #999999;
+      margin-bottom: 6px;
+      font-family: Arial, sans-serif;
+    }
+    .footer a {
+      color: #6B46C1;
+      text-decoration: none;
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid #e8e0d5;
+      margin: 35px 0;
+    }
+    @media only screen and (max-width: 600px) {
+      .content {
+        padding: 35px 25px;
+      }
+      .header {
+        padding: 35px 25px 30px;
+      }
+      .event-card {
+        padding: 25px;
+      }
+      .action-button {
+        display: block;
+        margin: 10px 0;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+    <tr>
+      <td align="center" style="padding: 30px 15px;">
+        <table role="presentation" class="container" cellspacing="0" cellpadding="0" border="0" width="560">
+          <!-- Header -->
+          <tr>
+            <td class="header">
+              <div class="logo-wrapper">
+                <img src="https://infinityroleteachers.com/logo/logo.jpeg" 
+                     alt="Infinity Role Teachers" 
+                     class="logo">
+              </div>
+              <h1>Registration Pending</h1>
+              <span class="pending-badge">Awaiting Payment</span>
+            </td>
+          </tr>
+          
+          <!-- Content -->
+          <tr>
+            <td class="content">
+              <p class="greeting">Dear {{user_name}},</p>
+              
+              <p class="message">
+                We have received your registration request. Your spot will be reserved once we receive your bank transfer payment.
+              </p>
+              
+              <!-- Event Details -->
+              <div class="event-card">
+                <h2 class="event-title">{{event_title}}</h2>
+                
+                <div class="event-detail">
+                  <span class="event-detail-icon">📅</span>
+                  <span class="detail-label">Date:</span>
+                  <span>{{event_date}}</span>
+                </div>
+                
+                <div class="event-detail">
+                  <span class="event-detail-icon">🕐</span>
+                  <span class="detail-label">Time:</span>
+                  <span>{{event_time}}</span>
+                </div>
+                
+                <div class="event-detail">
+                  <span class="event-detail-icon">📍</span>
+                  <span class="detail-label">Location:</span>
+                  <span>{{event_location}}</span>
+                </div>
+                
+                <div class="event-detail">
+                  <span class="event-detail-icon">💳</span>
+                  <span class="detail-label">Amount:</span>
+                  <span>{{payment_amount}}</span>
+                </div>
+              </div>
+              
+              <!-- Bank Transfer Reference -->
+              <div class="reference-box">
+                <p class="reference-label">Bank Transfer Reference</p>
+                <p class="reference-number">{{bank_reference}}</p>
+                <p style="font-size: 12px; margin-top: 10px; opacity: 0.85;">Please include this reference in your transfer</p>
+              </div>
+              
+              <!-- Action Button -->
+              <div class="button-container">
+                <a href="{{event_url}}" class="action-button">View Event Details</a>
+              </div>
+              
+              <!-- Important Info -->
+              <div class="info-box">
+                <p class="info-box-title">📌 Payment Instructions</p>
+                <p class="info-box-text">
+                  Please complete your bank transfer within 48 hours using the reference number above. Your registration will be confirmed once payment is received.
+                  <br><br>
+                  Bank details will be provided separately or can be found on our website.
+                  <br><br>
+                  Should you have any questions, require additional information, or need assistance, please don't hesitate to reach out to us anytime. You can simply reply to this email.
+                </p>
+              </div>
+              
+              <hr class="divider">
+              
+              <p class="message" style="font-size: 14px; color: #666666;">
+                We'll send you a confirmation email once your payment is received.
+              </p>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td class="footer">
+              <img src="https://infinityroleteachers.com/logo/logo.jpeg" 
+                   alt="Infinity Role Teachers" 
+                   class="footer-logo">
+              <p class="company-name">Infinity Role Teachers</p>
+              <p class="footer-text">AMS4EVER AG • Switzerland</p>
+              <p class="footer-text">
+                <a href="mailto:support@infinityroleteachers.com">support@infinityroleteachers.com</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

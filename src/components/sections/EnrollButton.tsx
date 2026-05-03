@@ -15,22 +15,23 @@ interface EnrollButtonProps {
   price?: number | null;
   currency?: string;
   programName?: string;
+  autoOpenCheckout?: boolean;
 }
 
-export function EnrollButton({ locale, programSlug, label, price, currency, programName }: EnrollButtonProps) {
+export function EnrollButton({ locale, programSlug, label, price, currency, programName, autoOpenCheckout = false }: EnrollButtonProps) {
   const router = useRouter();
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
   const [enrolled, setEnrolled] = useState(false);
   const [error, setError] = useState('');
-  const [showCheckout, setShowCheckout] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(autoOpenCheckout);
   const [hasReference, setHasReference] = useState(false);
 
   const isFree = !price || price <= 0;
 
   async function handleClick() {
     if (!user) {
-      router.push(`/${locale}/login?redirect=/${locale}/coach-training/${programSlug}`);
+      router.push(`/${locale}/login?redirect=/${locale}/coach-training/${programSlug}&intent=register`);
       return;
     }
 

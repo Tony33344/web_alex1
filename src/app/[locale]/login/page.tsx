@@ -22,6 +22,7 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect');
+  const intent = searchParams.get('intent');
   const confirmed = searchParams.get('confirmed');
   const urlError = searchParams.get('error');
   const message = searchParams.get('message');
@@ -77,7 +78,10 @@ export default function LoginPage() {
       }
     }
 
-    router.push(redirect || `/${locale}/welcome`);
+    // Preserve intent parameter in redirect URL for auto-opening checkout dialog
+    const redirectUrl = redirect || `/${locale}/welcome`;
+    const finalUrl = intent && redirect ? `${redirect}&intent=${intent}` : redirectUrl;
+    router.push(finalUrl);
     router.refresh();
   }
 

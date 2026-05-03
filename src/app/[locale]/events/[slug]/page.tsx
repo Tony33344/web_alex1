@@ -10,7 +10,7 @@ import { GalleryGrid } from '@/components/shared/GalleryGrid';
 import { getEvent } from '@/lib/queries/events';
 import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
-import { EventRegisterButton } from '@/components/sections/EventRegisterButton';
+import { EventRegisterButtonClient } from '@/components/sections/EventRegisterButtonClient';
 import { ExpandableContent } from '@/components/shared/ExpandableContent';
 import { SmartImage } from '@/components/shared/SmartImage';
 import { getActivePricing } from '@/lib/utils/pricing';
@@ -93,7 +93,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
               <div className="border-t pt-4">
                 <PriceTag pricing={pricing} freeLabel={t('common.free')} locale={locale} size="lg" />
               </div>
-              <EventRegisterButton
+              <EventRegisterButtonClient
                 eventId={event.id}
                 locale={locale}
                 label={t('common.enrollNow')}

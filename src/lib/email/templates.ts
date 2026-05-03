@@ -33,7 +33,9 @@ export function renderTemplate(template: string, variables: Record<string, strin
 // Predefined email templates
 export const EmailTemplates = {
   EVENT_REGISTRATION: 'event-registration',
+  EVENT_REGISTRATION_PENDING: 'event-registration-pending',
   COACH_TRAINING_REGISTRATION: 'coach-training-registration',
+  COACH_TRAINING_REGISTRATION_PENDING: 'coach-training-registration-pending',
   MEMBERSHIP_CONFIRMATION: 'membership-confirmation',
   DONATION_CONFIRMATION: 'donation-confirmation',
   PASSWORD_RESET: 'password-reset',

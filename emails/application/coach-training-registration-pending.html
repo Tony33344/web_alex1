@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Enrollment Pending - Infinity Role Teachers</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Georgia, 'Times New Roman', serif;
+      background-color: #F5F3FF;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container {
+      max-width: 560px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    .header {
+      background: linear-gradient(90deg, #a35dea 0%, #e7b8ea 100%);
+      padding: 18px 40px 14px;
+      text-align: center;
+    }
+    .logo-wrapper {
+      display: inline-block;
+      margin-bottom: 16px;
+    }
+    .logo {
+      width: 65px;
+      height: auto;
+      display: block;
+    }
+    .header h1 {
+      color: #ffffff;
+      font-size: 16px;
+      margin: 0;
+      font-weight: 400;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-family: Georgia, serif;
+    }
+    .header-subtitle {
+      color: rgba(255,255,255,0.85);
+      font-size: 11px;
+      margin-top: 8px;
+      font-style: italic;
+    }
+    .pending-badge {
+      display: inline-block;
+      background-color: rgba(255,255,255,0.15);
+      color: #ffffff;
+      padding: 6px 16px;
+      border-radius: 2px;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      margin-top: 14px;
+      font-family: Arial, sans-serif;
+      text-transform: uppercase;
+    }
+    .content {
+      padding: 50px 40px;
+      color: #3d3d3d;
+    }
+    .greeting {
+      font-size: 18px;
+      font-weight: 400;
+      margin-bottom: 22px;
+      color: #4C1D95;
+      font-style: italic;
+    }
+    .welcome-message {
+      font-size: 15px;
+      line-height: 1.9;
+      margin-bottom: 40px;
+      color: #5a5a5a;
+      padding: 25px;
+      background-color: #F5F3FF;
+      border-left: 3px solid #8B5CF6;
+    }
+    .program-card {
+      background-color: #FEF3C7;
+      border: 1px solid #FBBF24;
+      border-radius: 4px;
+      padding: 35px;
+      margin: 35px 0;
+    }
+    .program-title {
+      font-size: 24px;
+      font-weight: 400;
+      color: #4C1D95;
+      margin-bottom: 25px;
+      font-style: italic;
+      line-height: 1.3;
+    }
+    .program-detail {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 14px;
+      font-size: 14px;
+      color: #666666;
+      font-family: Arial, sans-serif;
+    }
+    .program-detail-icon {
+      width: 28px;
+      margin-right: 12px;
+      text-align: center;
+      color: #6B46C1;
+    }
+    .detail-label {
+      font-weight: 600;
+      color: #4C1D95;
+      min-width: 100px;
+    }
+    .certificate-badge {
+      display: inline-flex;
+      align-items: center;
+      background: linear-gradient(90deg, #b58cde 0%, #e7b8ea 100%);
+      color: #ffffff;
+      padding: 10px 22px;
+      border-radius: 2px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 1px;
+      margin-top: 18px;
+      font-family: Arial, sans-serif;
+    }
+    .reference-box {
+      background: linear-gradient(90deg, #b58cde 0%, #e7b8ea 100%);
+      border-radius: 4px;
+      padding: 28px;
+      margin: 35px 0;
+      color: #ffffff;
+      text-align: center;
+    }
+    .reference-label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+      opacity: 0.85;
+      font-family: Arial, sans-serif;
+    }
+    .reference-number {
+      font-size: 26px;
+      font-weight: 300;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 3px;
+    }
+    .button-container {
+      text-align: center;
+      margin: 40px 0;
+    }
+    .action-button {
+      display: inline-block;
+      background-color: #6B46C1;
+      color: #ffffff;
+      text-decoration: none;
+      padding: 16px 45px;
+      border-radius: 2px;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      font-family: Arial, sans-serif;
+    }
+    .important-info {
+      background-color: #F5F3FF;
+      border-left: 3px solid #8B5CF6;
+      padding: 22px;
+      margin: 30px 0;
+    }
+    .important-info h4 {
+      font-weight: 600;
+      color: #4C1D95;
+      margin-bottom: 12px;
+      font-size: 14px;
+      font-family: Arial, sans-serif;
+    }
+    .important-info ul {
+      margin: 0;
+      padding-left: 18px;
+      color: #666666;
+    }
+    .important-info li {
+      margin-bottom: 8px;
+      font-size: 13px;
+      line-height: 1.5;
+      font-family: Arial, sans-serif;
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid #DDD6FE;
+      margin: 40px 0;
+    }
+    .footer {
+      background-color: #EDE9FE;
+      padding: 40px;
+      text-align: center;
+    }
+    .footer-logo {
+      width: 50px;
+      height: auto;
+      margin-bottom: 20px;
+      opacity: 0.7;
+    }
+    .company-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: #4C1D95;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .footer-text {
+      font-size: 12px;
+      color: #999999;
+      margin-bottom: 6px;
+      font-family: Arial, sans-serif;
+    }
+    .footer a {
+      color: #6B46C1;
+      text-decoration: none;
+    }
+    @media only screen and (max-width: 600px) {
+      .content {
+        padding: 35px 25px;
+      }
+      .header {
+        padding: 40px 25px 35px;
+      }
+      .program-card {
+        padding: 25px;
+      }
+      .program-detail {
+        flex-direction: column;
+      }
+      .detail-label {
+        margin-bottom: 5px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+    <tr>
+      <td align="center" style="padding: 30px 15px;">
+        <table role="presentation" class="container" cellspacing="0" cellpadding="0" border="0" width="560">
+          <!-- Header -->
+          <tr>
+            <td class="header">
+              <div class="logo-wrapper">
+                <img src="https://infinityroleteachers.com/logo/logo.jpeg" 
+                     alt="Infinity Role Teachers" 
+                     class="logo">
+              </div>
+              <h1>Enrollment Pending</h1>
+              <p class="header-subtitle">Coach Training Program</p>
+              <span class="pending-badge">Awaiting Payment</span>
+            </td>
+          </tr>
+          
+          <!-- Content -->
+          <tr>
+            <td class="content">
+              <p class="greeting">Dear {{user_name}},</p>
+              
+              <p class="welcome-message">
+                We have received your enrollment request for the coach training program. Your spot will be reserved once we receive your bank transfer payment.
+              </p>
+              
+              <!-- Program Details -->
+              <div class="program-card">
+                <h2 class="program-title">{{program_name}}</h2>
+                
+                <div class="program-detail">
+                  <span class="program-detail-icon">📅</span>
+                  <span class="detail-label">Duration:</span>
+                  <span>{{program_duration}}</span>
+                </div>
+                
+                <div class="program-detail">
+                  <span class="program-detail-icon">🗓️</span>
+                  <span class="detail-label">Start Date:</span>
+                  <span>{{start_date}}</span>
+                </div>
+                
+                <div class="program-detail">
+                  <span class="program-detail-icon">🕐</span>
+                  <span class="detail-label">Time:</span>
+                  <span>{{program_time}}</span>
+                </div>
+                
+                <div class="program-detail">
+                  <span class="program-detail-icon">📍</span>
+                  <span class="detail-label">Location:</span>
+                  <span>{{location}}</span>
+                </div>
+                
+                <div class="program-detail">
+                  <span class="program-detail-icon">💳</span>
+                  <span class="detail-label">Investment:</span>
+                  <span>{{payment_amount}}</span>
+                </div>
+              </div>
+              
+              <!-- Bank Transfer Reference -->
+              <div class="reference-box">
+                <p class="reference-label">Bank Transfer Reference</p>
+                <p class="reference-number">{{bank_reference}}</p>
+                <p style="font-size: 12px; margin-top: 10px; opacity: 0.85;">Please include this reference in your transfer</p>
+              </div>
+              
+              <!-- Action Button -->
+              <div class="button-container">
+                <a href="{{program_url}}" class="action-button">View Program Details</a>
+              </div>
+              
+              <!-- Important Info -->
+              <div class="important-info">
+                <h4>📌 Payment Instructions</h4>
+                <ul>
+                  <li>Please complete your bank transfer within 48 hours using the reference number above</li>
+                  <li>Your enrollment will be confirmed once payment is received</li>
+                  <li>Bank details will be provided separately or can be found on our website</li>
+                  <li>Course materials will be sent 48 hours before the start date after payment confirmation</li>
+                </ul>
+              </div>
+              
+              <hr class="divider">
+              
+              <p style="font-size: 15px; line-height: 1.8; color: #5a5a5a;">
+                We'll send you a confirmation email once your payment is received and your enrollment is finalized.
+              </p>
+              
+              <p style="font-size: 15px; color: #5a5a5a; margin-top: 25px;">
+                Should you have any questions, please don't hesitate to reach out to our support team.<br>
+                <strong style="color: #4C1D95;">— The IRT Team</strong>
+              </p>
+            </td>
+          </tr>
+          
+          <!-- Footer -->
+          <tr>
+            <td class="footer">
+              <img src="https://infinityroleteachers.com/logo/logo.jpeg" 
+                   alt="Infinity Role Teachers" 
+                   class="footer-logo">
+              <p class="company-name">Infinity Role Teachers</p>
+              <p class="footer-text">AMS4EVER AG • Switzerland</p>
+              <p class="footer-text">
+                <a href="mailto:support@infinityroleteachers.com">support@infinityroleteachers.com</a>
+              </p>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

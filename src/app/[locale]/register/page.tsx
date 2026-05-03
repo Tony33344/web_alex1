@@ -23,6 +23,7 @@ export default function RegisterPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect');
+  const intent = searchParams.get('intent');
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -44,6 +45,14 @@ export default function RegisterPage() {
     setLoading(true);
     setError('');
 
+    // Build callback URL with redirect and intent parameters preserved
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://infinityroleteachers.com';
+    let callbackUrl = `${appUrl}/${locale}/auth/callback`;
+    const queryParams: string[] = [];
+    if (redirect) queryParams.push(`redirect=${encodeURIComponent(redirect)}`);
+    if (intent) queryParams.push(`intent=${intent}`);
+    if (queryParams.length > 0) callbackUrl += `?${queryParams.join('&')}`;
+
     const supabase = createClient();
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email: data.email,
@@ -54,7 +63,7 @@ export default function RegisterPage() {
           phone: data.phone,
           preferred_language: data.preferred_language,
         },
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_APP_URL || window.location.origin}/${locale}/auth/callback`,
+        emailRedirectTo: callbackUrl,
       },
     });
 

@@ -10,7 +10,7 @@ import { getProgram } from '@/lib/queries/programs';
 import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
 import { formatDateRange, formatDateRangeWithTime, parseDurationDays, computeEndDate } from '@/lib/utils/dates';
-import { EnrollButton } from '@/components/sections/EnrollButton';
+import { EnrollButtonClient } from '@/components/sections/EnrollButtonClient';
 import { SmartImage } from '@/components/shared/SmartImage';
 
 export const revalidate = 0;
@@ -104,7 +104,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
                 )}
                 <div className="flex items-center gap-3"><Award className="h-4 w-4 text-primary" />Certificate included</div>
               </div>
-              <EnrollButton locale={locale} programSlug={slug} label={t('common.enrollNow')} stripepriceId={program.stripe_price_id} price={program.price} currency={program.currency} programName={name} />
+              <EnrollButtonClient locale={locale} programSlug={slug} label={t('common.enrollNow')} stripepriceId={program.stripe_price_id} price={program.price} currency={program.currency} programName={name} />
               <p className="text-xs text-center text-muted-foreground">Secure your spot — limited availability</p>
             </CardContent>
           </Card>

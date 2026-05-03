@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createCheckoutSession, createDynamicCheckoutSession, createOrRetrieveCustomer } from '@/lib/stripe/helpers';
+import { EmailTemplates, prepareEmail } from '@/lib/email/templates';
+import { sendEmail } from '@/lib/email/transporter';
 
 export async function POST(request: Request) {
   try {
@@ -30,7 +32,7 @@ export async function POST(request: Request) {
 
     const { data: event } = await adminSupabase
       .from('events')
-      .select('id, title_en, max_attendees, current_attendees, price, currency, stripe_price_id')
+      .select('id, title_en, max_attendees, current_attendees, price, currency, stripe_price_id, start_date, is_online, location')
       .eq('id', eventId)
       .single();
 
@@ -99,8 +101,45 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, status });
     }
 
-    // Bank transfer — return reference
+    // Bank transfer — send pending email and return reference
     if (method === 'bank_transfer') {
+      // Send pending payment email
+      try {
+        const { data: profile } = await adminSupabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single();
+
+        const userName = profile?.full_name || user.email?.split('@')[0] || 'there';
+        const eventUrl = `${appUrl}/${locale}/events/${eventId}`;
+        
+        const emailContent = prepareEmail({
+          to: user.email!,
+          subject: 'Registration Pending - Payment Required',
+          template: EmailTemplates.EVENT_REGISTRATION_PENDING,
+          variables: {
+            user_name: userName,
+            event_title: event.title_en || 'Event',
+            event_date: event.start_date ? new Date(event.start_date).toLocaleDateString(locale, { dateStyle: 'long' }) : 'TBA',
+            event_time: event.start_date ? new Date(event.start_date).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false }) : 'TBA',
+            event_location: event.is_online ? 'Online' : (event.location || 'TBA'),
+            payment_amount: event.price ? `${event.currency || 'CHF'} ${event.price}` : 'TBA',
+            bank_reference: bankRef || 'N/A',
+            event_url: eventUrl,
+          },
+        });
+
+        await sendEmail({
+          to: user.email!,
+          subject: emailContent.subject,
+          html: emailContent.html,
+        });
+      } catch (emailError) {
+        console.error('Failed to send pending payment email:', emailError);
+        // Don't fail the registration if email fails
+      }
+
       return NextResponse.json({ success: true, status, reference: bankRef });
     }
 

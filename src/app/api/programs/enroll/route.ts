@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createCheckoutSession, createDynamicCheckoutSession, createOrRetrieveCustomer } from '@/lib/stripe/helpers';
+import { EmailTemplates, prepareEmail } from '@/lib/email/templates';
+import { sendEmail } from '@/lib/email/transporter';
 
 // Force redeploy - v2
 export async function POST(request: Request) {
@@ -23,7 +25,7 @@ export async function POST(request: Request) {
 
     const { data: program, error: programError } = await adminSupabase
       .from('programs')
-      .select('id, name_en, price, currency, stripe_price_id')
+      .select('id, name_en, price, currency, stripe_price_id, slug, start_date, duration, location')
       .eq('slug', programSlug)
       .single();
 
@@ -81,8 +83,48 @@ export async function POST(request: Request) {
       return NextResponse.json({ success: true, status: 'enrolled' });
     }
 
-    // Bank transfer - return reference
+    // Bank transfer - send pending email and return reference
     if (method === 'bank_transfer') {
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+      
+      // Send pending payment email
+      try {
+        const { data: profile } = await adminSupabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single();
+
+        const userName = profile?.full_name || user.email?.split('@')[0] || 'there';
+        const programUrl = `${appUrl}/${locale}/coach-training/${programSlug}`;
+        
+        const emailContent = prepareEmail({
+          to: user.email!,
+          subject: 'Enrollment Pending - Payment Required',
+          template: EmailTemplates.COACH_TRAINING_REGISTRATION_PENDING,
+          variables: {
+            user_name: userName,
+            program_name: program.name_en || 'Program',
+            program_duration: program.duration || 'TBA',
+            start_date: program.start_date ? new Date(program.start_date).toLocaleDateString(locale, { dateStyle: 'long' }) : 'TBA',
+            program_time: program.start_date ? new Date(program.start_date).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false }) : 'TBA',
+            location: program.location || 'TBA',
+            payment_amount: program.price ? `${program.currency || 'CHF'} ${program.price}` : 'TBA',
+            bank_reference: bankRef || 'N/A',
+            program_url: programUrl,
+          },
+        });
+
+        await sendEmail({
+          to: user.email!,
+          subject: emailContent.subject,
+          html: emailContent.html,
+        });
+      } catch (emailError) {
+        console.error('Failed to send pending payment email:', emailError);
+        // Don't fail the enrollment if email fails
+      }
+
       return NextResponse.json({ success: true, status: 'enrolled', reference: bankRef });
     }
 

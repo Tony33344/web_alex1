@@ -1,0 +1,46 @@
+# Supabase Dashboard Configuration for Buy-Flow UX Fix
+
+This document outlines the manual Supabase dashboard configuration steps required to complete the buy-flow UX fix implementation.
+
+## Authentication Settings
+
+### URL Configuration
+Navigate to: Authentication → URL Configuration
+
+1. **Site URL**: Set to `https://infinityroleteachers.com`
+   - This ensures verification emails point to production, not Netlify preview URLs
+
+2. **Redirect URLs**: Add the following redirect URL:
+   - `https://infinityroleteachers.com/**`
+   - This allows redirects from email verification to work on the production domain
+
+### Email Templates
+Navigate to: Authentication → Email Templates → Confirm signup
+
+Replace the default Supabase template with the custom template from the repo:
+- File location: `emails/supabase/confirm-signup.html`
+- This template has been cleaned up to:
+  - Remove the 6-digit verification code section (confusing for users who only want the link)
+  - Update expiry note from "This code will expire" to "This link expires in one hour"
+  - Replace Supabase-hosted logo URL with production URL to avoid CORB/third-party domain issues
+
+## Environment Variables
+
+Add the following environment variable to Netlify production:
+- `NEXT_PUBLIC_APP_URL=https://infinityroleteachers.com`
+
+This is already handled as a hardcoded fallback in the register page code, but setting it explicitly is recommended for clarity.
+
+## Implementation Status
+
+Code changes completed:
+- ✅ Purchase intent persistence through login redirect
+- ✅ Auto-open checkout dialog after login with intent=register
+- ✅ Email verification redirect with production URL fallback
+- ✅ Clean signup email template (no code, link-only)
+- ✅ Bank-transfer confirmation emails for events and programs
+
+Manual configuration required:
+- ⏳ Supabase Dashboard URL Configuration (Site URL, Redirect URLs)
+- ⏳ Supabase Email Template replacement
+- ⏳ Netlify environment variable (optional, has code fallback)

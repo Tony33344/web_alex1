@@ -17,15 +17,16 @@ interface EventRegisterButtonProps {
   price?: number | null;
   currency?: string;
   eventTitle?: string;
+  autoOpenCheckout?: boolean;
 }
 
-export function EventRegisterButton({ eventId, locale, label, isFree, isFull, price, currency, eventTitle }: EventRegisterButtonProps) {
+export function EventRegisterButton({ eventId, locale, label, isFree, isFull, price, currency, eventTitle, autoOpenCheckout = false }: EventRegisterButtonProps) {
   const router = useRouter();
   const { user, profile } = useUser();
   const [loading, setLoading] = useState(false);
   const [registered, setRegistered] = useState(false);
   const [error, setError] = useState('');
-  const [showCheckout, setShowCheckout] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(autoOpenCheckout);
   const [hasReference, setHasReference] = useState(false);
   const [showWaitlist, setShowWaitlist] = useState(false);
 
@@ -34,7 +35,7 @@ export function EventRegisterButton({ eventId, locale, label, isFree, isFull, pr
       const currentUrl = typeof window !== 'undefined'
         ? `${window.location.pathname}${window.location.search}`
         : `/${locale}/events`;
-      router.push(`/${locale}/login?redirect=${encodeURIComponent(currentUrl)}`);
+      router.push(`/${locale}/login?redirect=${encodeURIComponent(currentUrl)}&intent=register`);
       return;
     }
 

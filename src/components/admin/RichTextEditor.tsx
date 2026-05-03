@@ -43,7 +43,7 @@ const LineHeight = Extension.create({
   name: 'lineHeight',
   addOptions() {
     return {
-      types: ['paragraph', 'heading'],
+      types: ['paragraph', 'heading', 'bulletList', 'orderedList', 'listItem'],
     };
   },
   addGlobalAttributes() {

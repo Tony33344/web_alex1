@@ -40,7 +40,7 @@ export function NewsletterSection({ title, logoUrl, placeholder, buttonLabel }: 
     <section className="bg-muted/50 py-16">
       <div className="mx-auto max-w-xl px-4 text-center sm:px-6">
         <img
-          src={logoUrl || "https://infinityroleteachers.com/logo/logo.jpeg"}
+          src={logoUrl || "/logo/logo.jpeg"}
           alt="Infinity Role Teachers"
           className="mx-auto mb-6 h-48 w-auto"
         />

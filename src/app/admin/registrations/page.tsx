@@ -224,6 +224,30 @@ export default function AdminRegistrationsPage() {
     setRegs(regData.eventRegistrations ?? []);
   }
 
+  async function setCustomCount(eventId: string, currentCount: number) {
+    const count = prompt('Enter custom attendee count (for offline registrations):', currentCount.toString());
+    if (count === null) return;
+    const numCount = parseInt(count, 10);
+    if (isNaN(numCount) || numCount < 0) {
+      alert('Please enter a valid number');
+      return;
+    }
+    const res = await fetch('/api/admin/registrations', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'events', id: eventId, action: 'set_count', data: { count: numCount } }),
+    });
+    if (!res.ok) {
+      const error = await res.json();
+      alert(`Failed to set count: ${error.error || 'Unknown error'}`);
+      return;
+    }
+    alert(`Count set to ${numCount}`);
+    // Refresh data
+    const regData = await fetch('/api/admin/registrations').then(r => r.json());
+    setRegs(regData.eventRegistrations ?? []);
+  }
+
   async function deleteAllRegistrations(eventId: string) {
     if (!confirm('Delete ALL registrations for this event? This cannot be undone.')) return;
     const res = await fetch('/api/admin/registrations', {
@@ -317,6 +341,15 @@ export default function AdminRegistrationsPage() {
                         title="Reset count to match actual registrations"
                       >
                         <RefreshCw className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 text-xs gap-1"
+                        onClick={(e) => { e.stopPropagation(); setCustomCount(event?.id ?? '', event?.current_attendees ?? 0); }}
+                        title="Set custom attendee count (for offline registrations)"
+                      >
+                        <span className="font-bold">#</span>
                       </Button>
                       <Button
                         size="sm"

@@ -54,6 +54,20 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ success: true, count: activeRegs?.length || 0 });
   }
 
+  // Set custom event current_attendees count (for offline registrations)
+  if (action === 'set_count' && table === 'events' && id && data?.count !== undefined) {
+    const count = parseInt(data.count, 10);
+    if (isNaN(count) || count < 0) {
+      return NextResponse.json({ error: 'Invalid count value' }, { status: 400 });
+    }
+    const { error } = await admin
+      .from('events')
+      .update({ current_attendees: count })
+      .eq('id', id);
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ success: true, count });
+  }
+
   // Delete all registrations for an event
   if (action === 'delete_all' && table === 'event_registrations' && id) {
     const { error } = await admin.from('event_registrations').delete().eq('event_id', id);

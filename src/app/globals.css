@@ -145,61 +145,21 @@
     text-align: justify !important;
   }
   /* Allow inline line-height styles from the rich text editor to override prose defaults */
-  .prose p[style*="line-height:1"],
-  .prose p[style*="line-height: 1"],
-  .prose h1[style*="line-height:1"],
-  .prose h2[style*="line-height:1"],
-  .prose h3[style*="line-height:1"],
-  .prose ul[style*="line-height:1"],
-  .prose ul > li[style*="line-height:1"],
-  .prose ol[style*="line-height:1"],
-  .prose ol > li[style*="line-height:1"],
-  .prose li[style*="line-height:1"],
-  .prose [style*="line-height: 1"] {
-    line-height: 1 !important;
+  /* When ul/ol has inline line-height, children inherit it instead of using prose defaults */
+  .prose ul[style*="line-height"] > li,
+  .prose ol[style*="line-height"] > li {
+    line-height: inherit !important;
   }
-  .prose ul[style*="line-height:1"] > li,
-  .prose ol[style*="line-height:1"] > li,
-  .prose ul[style*="line-height: 1"] > li,
-  .prose ol[style*="line-height: 1"] > li {
-    line-height: 1 !important;
+  .prose ul[style*="line-height"] > li > p,
+  .prose ol[style*="line-height"] > li > p {
+    line-height: inherit !important;
   }
-  .prose p[style*="line-height:1.5"],
-  .prose p[style*="line-height: 1.5"],
-  .prose h1[style*="line-height:1.5"],
-  .prose h2[style*="line-height:1.5"],
-  .prose h3[style*="line-height:1.5"],
-  .prose ul[style*="line-height:1.5"],
-  .prose ul > li[style*="line-height:1.5"],
-  .prose ol[style*="line-height:1.5"],
-  .prose ol > li[style*="line-height:1.5"],
-  .prose li[style*="line-height:1.5"],
-  .prose [style*="line-height: 1.5"] {
-    line-height: 1.5 !important;
+  /* When li has inline line-height, its p children inherit */
+  .prose li[style*="line-height"] > p {
+    line-height: inherit !important;
   }
-  .prose ul[style*="line-height:1.5"] > li,
-  .prose ol[style*="line-height:1.5"] > li,
-  .prose ul[style*="line-height: 1.5"] > li,
-  .prose ol[style*="line-height: 1.5"] > li {
-    line-height: 1.5 !important;
-  }
-  .prose p[style*="line-height:2"],
-  .prose p[style*="line-height: 2"],
-  .prose h1[style*="line-height:2"],
-  .prose h2[style*="line-height:2"],
-  .prose h3[style*="line-height:2"],
-  .prose ul[style*="line-height:2"],
-  .prose ul > li[style*="line-height:2"],
-  .prose ol[style*="line-height:2"],
-  .prose ol > li[style*="line-height:2"],
-  .prose li[style*="line-height:2"],
-  .prose [style*="line-height: 2"] {
-    line-height: 2 !important;
-  }
-  .prose ul[style*="line-height:2"] > li,
-  .prose ol[style*="line-height:2"] > li,
-  .prose ul[style*="line-height: 2"] > li,
-  .prose ol[style*="line-height: 2"] > li {
-    line-height: 2 !important;
+  /* When p inside a li has inline line-height, the li should also respect it (for content saved before list support was added) */
+  .prose li:has(> p[style*="line-height"]) {
+    line-height: inherit !important;
   }
 }

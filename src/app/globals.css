@@ -145,24 +145,17 @@
     text-align: justify !important;
   }
   /* Allow inline line-height styles from the rich text editor to override prose defaults */
-  .prose [style*="line-height"],
-  .prose p[style*="line-height"],
-  .prose h1[style*="line-height"],
-  .prose h2[style*="line-height"],
-  .prose h3[style*="line-height"],
-  .prose ul[style*="line-height"],
-  .prose ol[style*="line-height"],
-  .prose li[style*="line-height"] {
-    line-height: attr(style) !important;
-  }
   .prose p[style*="line-height:1"],
   .prose p[style*="line-height: 1"],
   .prose h1[style*="line-height:1"],
   .prose h2[style*="line-height:1"],
   .prose h3[style*="line-height:1"],
   .prose ul[style*="line-height:1"],
+  .prose ul > li[style*="line-height:1"],
   .prose ol[style*="line-height:1"],
-  .prose li[style*="line-height:1"] {
+  .prose ol > li[style*="line-height:1"],
+  .prose li[style*="line-height:1"],
+  .prose [style*="line-height: 1"] {
     line-height: 1 !important;
   }
   .prose p[style*="line-height:1.5"],
@@ -171,8 +164,11 @@
   .prose h2[style*="line-height:1.5"],
   .prose h3[style*="line-height:1.5"],
   .prose ul[style*="line-height:1.5"],
+  .prose ul > li[style*="line-height:1.5"],
   .prose ol[style*="line-height:1.5"],
-  .prose li[style*="line-height:1.5"] {
+  .prose ol > li[style*="line-height:1.5"],
+  .prose li[style*="line-height:1.5"],
+  .prose [style*="line-height: 1.5"] {
     line-height: 1.5 !important;
   }
   .prose p[style*="line-height:2"],
@@ -181,8 +177,11 @@
   .prose h2[style*="line-height:2"],
   .prose h3[style*="line-height:2"],
   .prose ul[style*="line-height:2"],
+  .prose ul > li[style*="line-height:2"],
   .prose ol[style*="line-height:2"],
-  .prose li[style*="line-height:2"] {
+  .prose ol > li[style*="line-height:2"],
+  .prose li[style*="line-height:2"],
+  .prose [style*="line-height: 2"] {
     line-height: 2 !important;
   }
 }

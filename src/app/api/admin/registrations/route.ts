@@ -10,11 +10,11 @@ export async function GET() {
   const [regs, enrollments] = await Promise.all([
     admin
       .from('event_registrations')
-      .select('id, event_id, user_id, status, payment_status, payment_method, amount, currency, bank_transfer_reference, confirmed_at, notes, created_at, event:events(id, title_en, slug, start_date, price, currency, max_attendees, current_attendees), profile:profiles(email, full_name, phone)')
+      .select('*, event:events(id, title_en, slug, start_date, price, currency, max_attendees, current_attendees), profile:profiles(email, full_name, phone)')
       .order('created_at', { ascending: false }),
     admin
       .from('program_enrollments')
-      .select('id, program_id, user_id, status, payment_status, payment_method, amount, currency, bank_transfer_reference, confirmed_at, created_at, program:programs(id, name_en, slug, price, currency), profile:profiles(email, full_name, phone)')
+      .select('*, program:programs(id, name_en, slug, price, currency), profile:profiles(email, full_name, phone)')
       .order('created_at', { ascending: false }),
   ]);
 

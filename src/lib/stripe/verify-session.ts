@@ -136,12 +136,19 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
 
     if (type === 'program') {
       const programId = session.metadata?.program_id;
+      console.log('verifyAndActivateSession: Processing program payment', { programId, effectiveUserId });
       if (programId) {
-        await admin
+        const { error: updateError } = await admin
           .from('program_enrollments')
           .update({ payment_status: 'paid', status: 'confirmed', confirmed_at: new Date().toISOString() })
           .eq('program_id', programId)
           .eq('user_id', effectiveUserId);
+        
+        if (updateError) {
+          console.error('verifyAndActivateSession: Failed to update program enrollment:', updateError);
+        } else {
+          console.log('verifyAndActivateSession: Program enrollment updated successfully');
+        }
 
         // Get program details for email
         const { data: program } = await admin
@@ -149,6 +156,8 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
           .select('name_en, name_de, duration, start_date')
           .eq('id', programId)
           .single();
+
+        console.log('verifyAndActivateSession: Program data fetched', { program, profile: !!profile });
 
         // Send program confirmation email
         if (profile?.email && program) {
@@ -172,7 +181,11 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
           } catch (emailError) {
             console.error('Failed to send program email:', emailError);
           }
+        } else {
+          console.warn('verifyAndActivateSession: Cannot send program email - missing profile.email or program data', { hasEmail: !!profile?.email, hasProgram: !!program });
         }
+      } else {
+        console.warn('verifyAndActivateSession: Program payment but no programId in metadata');
       }
       return true;
     }

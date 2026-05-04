@@ -33,22 +33,27 @@ export function PaymentSuccessBanner({
 
   useEffect(() => {
     if (!isSuccess) return;
-    setVisible(true);
-
     const sessionId = searchParams.get('session_id');
+    console.log('PaymentSuccessBanner: payment success detected', { param, sessionId });
+    setVisible(true);
 
     async function verifyAndCleanup() {
       // Activate subscription/registration via Stripe (fallback when webhooks aren't configured)
       if (sessionId) {
         try {
+          console.log('PaymentSuccessBanner: calling verify-session API', { sessionId });
           await fetch('/api/stripe/verify-session', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ sessionId }),
           });
-        } catch {
+          console.log('PaymentSuccessBanner: verify-session API called successfully');
+        } catch (err) {
+          console.error('PaymentSuccessBanner: verify-session API failed', err);
           // Non-fatal — webhook may still process it
         }
+      } else {
+        console.warn('PaymentSuccessBanner: no sessionId found in URL');
       }
 
       // Clean URL so reloads don't re-trigger

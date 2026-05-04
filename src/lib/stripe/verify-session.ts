@@ -23,11 +23,9 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
       user_id: session.metadata?.user_id,
     });
 
-    // Security: session must belong to this user
-    if (session.metadata?.user_id && session.metadata.user_id !== userId) {
-      console.error('verifyAndActivateSession: user mismatch', { sessionUserId: session.metadata.user_id, currentUserId: userId });
-      return false;
-    }
+    // For webhooks, use the user_id from session metadata if provided
+    // (webhooks are server-to-server and don't have authenticated user context)
+    const effectiveUserId = session.metadata?.user_id || userId;
 
     if (session.payment_status !== 'paid' && session.status !== 'complete') {
       console.log('verifyAndActivateSession: payment not complete', { payment_status: session.payment_status, status: session.status });
@@ -41,7 +39,7 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
     const { data: profile } = await admin
       .from('profiles')
       .select('email, full_name')
-      .eq('id', userId)
+      .eq('id', effectiveUserId)
       .single();
 
     if (type === 'membership' && session.mode === 'subscription') {
@@ -57,16 +55,16 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
           subscription_plan: session.metadata?.plan || null,
           subscription_end_date: endTs ? new Date(endTs * 1000).toISOString() : null,
         })
-        .eq('id', userId);
+        .eq('id', effectiveUserId);
 
       if (error) {
         console.error('verify-session: profile update error', error);
         return false;
       }
-      console.log('verify-session: membership activated successfully', { userId, plan: session.metadata?.plan });
+      console.log('verify-session: membership activated successfully', { userId: effectiveUserId, plan: session.metadata?.plan });
 
       // Send membership confirmation email
-      console.log('🔍 Preparing membership confirmation email for user:', userId);
+      console.log('🔍 Preparing membership confirmation email for user:', effectiveUserId);
       if (profile?.email) {
         try {
           const amount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';
@@ -99,7 +97,7 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
           .from('event_registrations')
           .update({ payment_status: 'paid', status: 'confirmed', confirmed_at: new Date().toISOString() })
           .eq('event_id', eventId)
-          .eq('user_id', userId);
+          .eq('user_id', effectiveUserId);
 
         // Get event details for email
         const { data: event } = await admin
@@ -143,7 +141,7 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
           .from('program_enrollments')
           .update({ payment_status: 'paid', status: 'confirmed', confirmed_at: new Date().toISOString() })
           .eq('program_id', programId)
-          .eq('user_id', userId);
+          .eq('user_id', effectiveUserId);
 
         // Get program details for email
         const { data: program } = await admin

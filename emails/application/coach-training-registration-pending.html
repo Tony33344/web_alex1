@@ -312,19 +312,56 @@
                 <p class="reference-number">{{bank_reference}}</p>
                 <p style="font-size: 12px; margin-top: 10px; opacity: 0.85;">Please include this reference in your transfer</p>
               </div>
-              
+
+              <!-- Bank Details -->
+              <div style="background-color: #F5F3FF; border: 1px solid #DDD6FE; border-radius: 4px; padding: 30px; margin: 35px 0;">
+                <h3 style="color: #4C1D95; font-size: 16px; margin: 0 0 20px 0; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; font-family: Arial, sans-serif;">Bank Transfer Details</h3>
+
+                <div style="margin-bottom: 15px;">
+                  <span style="font-weight: 600; color: #4C1D95; font-size: 13px; font-family: Arial, sans-serif;">Bank:</span>
+                  <span style="color: #666666; font-size: 14px; margin-left: 10px;">{{bank_name}}</span>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                  <span style="font-weight: 600; color: #4C1D95; font-size: 13px; font-family: Arial, sans-serif;">Account Holder:</span>
+                  <span style="color: #666666; font-size: 14px; margin-left: 10px;">{{bank_account_holder}}</span>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                  <span style="font-weight: 600; color: #4C1D95; font-size: 13px; font-family: Arial, sans-serif;">IBAN:</span>
+                  <span style="color: #666666; font-size: 14px; margin-left: 10px; font-family: 'Courier New', monospace;">{{bank_iban}}</span>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                  <span style="font-weight: 600; color: #4C1D95; font-size: 13px; font-family: Arial, sans-serif;">BIC:</span>
+                  <span style="color: #666666; font-size: 14px; margin-left: 10px; font-family: 'Courier New', monospace;">{{bank_bic}}</span>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                  <span style="font-weight: 600; color: #4C1D95; font-size: 13px; font-family: Arial, sans-serif;">Amount:</span>
+                  <span style="color: #666666; font-size: 14px; margin-left: 10px;">{{payment_amount}}</span>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                  <span style="font-weight: 600; color: #4C1D95; font-size: 13px; font-family: Arial, sans-serif;">Reference:</span>
+                  <span style="color: #666666; font-size: 14px; margin-left: 10px; font-family: 'Courier New', monospace;">{{bank_reference}}</span>
+                </div>
+
+                {{qr_code_image}}
+              </div>
+
               <!-- Action Button -->
               <div class="button-container">
                 <a href="{{program_url}}" class="action-button">View Program Details</a>
               </div>
-              
+
               <!-- Important Info -->
               <div class="important-info">
                 <h4>📌 Payment Instructions</h4>
                 <ul>
                   <li>Please complete your bank transfer within 48 hours using the reference number above</li>
                   <li>Your enrollment will be confirmed once payment is received</li>
-                  <li>Bank details will be provided separately or can be found on our website</li>
+                  <li>Use the reference code in your transfer description so we can match your payment</li>
                   <li>Course materials will be sent 48 hours before the start date after payment confirmation</li>
                 </ul>
               </div>

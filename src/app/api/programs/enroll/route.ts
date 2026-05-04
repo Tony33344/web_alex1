@@ -132,6 +132,29 @@ export async function POST(request: Request) {
       console.log('Processing bank transfer enrollment');
       const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
+      // Fetch bank info from settings
+      const { data: bankSettings } = await adminSupabase
+        .from('site_settings')
+        .select('key, value')
+        .in('key', ['bank_name', 'bank_iban', 'bank_bic', 'bank_account_holder']);
+
+      const bankInfo: Record<string, string> = {};
+      (bankSettings ?? []).forEach((row: { key: string; value: unknown }) => {
+        const val = String(row.value).replace(/"/g, '').trim();
+        if (val) bankInfo[row.key] = val;
+      });
+
+      const bankName = bankInfo.bank_name || 'UBS Switzerland AG';
+      const bankIban = bankInfo.bank_iban || 'CH93 0076 2011 6238 5295 7';
+      const bankBic = bankInfo.bank_bic || 'AEAGCH22';
+      const bankAccountHolder = bankInfo.bank_account_holder || 'AMS4EVER AG';
+
+      // Generate QR code placeholder (in production, this would be a real QR code image)
+      const qrCodeImage = `<div style="text-align: center; margin-top: 20px; padding: 15px; background: white; border: 1px dashed #DDD6FE; border-radius: 4px;">
+        <p style="font-size: 12px; color: #666666; margin: 0 0 10px 0;">Scan with your banking app to pay</p>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=BCD\n001\n1\nCHF\n${program.price || '0'}\nS\n${bankIban.replace(/\s/g, '')}\n${bankAccountHolder.replace(/\s/g, '')}\n\n${bankRef}\n" alt="Bank Transfer QR Code" style="width: 150px; height: 150px; display: inline-block;">
+      </div>`;
+
       // Send pending payment email
       try {
         const { data: profile } = await adminSupabase
@@ -159,6 +182,11 @@ export async function POST(request: Request) {
             payment_amount: program.price ? `${program.currency || 'CHF'} ${program.price}` : 'TBA',
             bank_reference: bankRef || 'N/A',
             program_url: programUrl,
+            bank_name: bankName,
+            bank_iban: bankIban,
+            bank_bic: bankBic,
+            bank_account_holder: bankAccountHolder,
+            qr_code_image: qrCodeImage,
           },
         });
 

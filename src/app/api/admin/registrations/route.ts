@@ -18,6 +18,13 @@ export async function GET() {
       .order('created_at', { ascending: false }),
   ]);
 
+  console.log('Admin registrations API response:', {
+    eventRegistrationsCount: regs.data?.length || 0,
+    programEnrollmentsCount: enrollments.data?.length || 0,
+    enrollmentsError: enrollments.error?.message,
+    regsError: regs.error?.message,
+  });
+
   return NextResponse.json({
     eventRegistrations: regs.data ?? [],
     programEnrollments: enrollments.data ?? [],

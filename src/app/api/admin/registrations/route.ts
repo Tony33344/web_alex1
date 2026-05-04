@@ -160,22 +160,24 @@ export async function PATCH(request: Request) {
             const userName = userProfile?.full_name || recipientEmail.split('@')[0] || 'there';
             const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
             const programUrl = `${appUrl}/coach-training/${program.slug}`;
+            const emailVariables = {
+              user_name: userName,
+              program_name: program.name_en || 'Program',
+              order_id: `PRG-${id.substring(0, 8).toUpperCase()}`,
+              program_duration: program.duration || 'TBA',
+              start_date: program.start_date ? new Date(program.start_date).toLocaleDateString('en', { dateStyle: 'long' }) : 'TBA',
+              program_time: program.start_date ? new Date(program.start_date).toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', hour12: false }) : 'TBA',
+              location: program.location || 'TBA',
+              max_participants: program.max_participants?.toString() || 'TBA',
+              payment_amount: program.price ? `${program.currency || 'CHF'} ${program.price}` : 'TBA',
+              program_url: programUrl,
+            };
+            console.log('Program enrollment email variables:', emailVariables);
             const emailContent = prepareEmail({
               to: recipientEmail,
               subject: 'Program Enrollment Confirmed',
               template: EmailTemplates.COACH_TRAINING_REGISTRATION,
-              variables: {
-                user_name: userName,
-                program_name: program.name_en || 'Program',
-                order_id: `PRG-${id.substring(0, 8).toUpperCase()}`,
-                program_duration: program.duration || 'TBA',
-                start_date: program.start_date ? new Date(program.start_date).toLocaleDateString('en', { dateStyle: 'long' }) : 'TBA',
-                program_time: program.start_date ? new Date(program.start_date).toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', hour12: false }) : 'TBA',
-                location: program.location || 'TBA',
-                max_participants: program.max_participants?.toString() || 'TBA',
-                payment_amount: program.price ? `${program.currency || 'CHF'} ${program.price}` : 'TBA',
-                program_url: programUrl,
-              },
+              variables: emailVariables,
             });
             await sendEmail({ to: recipientEmail, subject: emailContent.subject, html: emailContent.html });
           }

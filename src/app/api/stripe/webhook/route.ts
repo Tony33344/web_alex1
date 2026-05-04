@@ -216,7 +216,7 @@ export async function POST(request: Request) {
         // Get program details and send confirmation email
         const { data: programData } = await supabase
           .from('programs')
-          .select('title_en, start_date, duration_days')
+          .select('name_en, start_date, duration')
           .eq('id', programId)
           .single();
         
@@ -226,13 +226,13 @@ export async function POST(request: Request) {
           await sendConfirmationEmail(
             EmailTemplates.COACH_TRAINING_REGISTRATION,
             userId,
-            `Enrollment Confirmed: ${programData.title_en}`,
+            `Enrollment Confirmed: ${programData.name_en}`,
             {
-              program_name: programData.title_en,
+              program_name: programData.name_en,
               start_date: programData.start_date ? new Date(programData.start_date).toLocaleDateString('en-US', { 
                 weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
               }) : 'TBD',
-              program_duration: programData.duration_days ? `${programData.duration_days} days` : 'See details',
+              program_duration: programData.duration || 'See details',
               order_id: orderId,
               payment_amount: `CHF ${amount}`,
             }

@@ -216,7 +216,7 @@ export async function POST(request: Request) {
         // Get program details and send confirmation email
         const { data: programData } = await supabase
           .from('programs')
-          .select('name_en, start_date, duration')
+          .select('name_en, start_date, duration, location, max_participants')
           .eq('id', programId)
           .single();
         
@@ -232,9 +232,15 @@ export async function POST(request: Request) {
               start_date: programData.start_date ? new Date(programData.start_date).toLocaleDateString('en-US', { 
                 weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
               }) : 'TBD',
+              program_time: programData.start_date ? new Date(programData.start_date).toLocaleTimeString('en-US', { 
+                hour: '2-digit', minute: '2-digit', hour12: false 
+              }) : 'TBD',
               program_duration: programData.duration || 'See details',
+              location: programData.location || 'TBD',
+              max_participants: programData.max_participants?.toString() || 'TBD',
               order_id: orderId,
               payment_amount: `CHF ${amount}`,
+              program_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/coach-training/${programId}`,
             }
           );
         }

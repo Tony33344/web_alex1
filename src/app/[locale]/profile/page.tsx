@@ -25,7 +25,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tabParam = searchParams.get('tab');
-  const initialTab = ['profile', 'subscription', 'events', 'settings'].includes(tabParam || '')
+  const initialTab = ['profile', 'subscription', 'events', 'programs', 'settings'].includes(tabParam || '')
     ? (tabParam as string)
     : 'profile';
   const { user, profile, loading: userLoading } = useUser();
@@ -33,6 +33,7 @@ export default function ProfilePage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState('');
   const [registrations, setRegistrations] = useState<Array<{ id: string; status: string; payment_status: string; created_at: string; events: { title_en: string; start_date: string; location: string | null; is_online: boolean } | null }>>([]);
+  const [enrollments, setEnrollments] = useState<Array<{ id: string; status: string; payment_status: string; created_at: string; programs: { name_en: string; slug: string } | null }>>([]);
   const [regsLoading, setRegsLoading] = useState(false);
 
   const {
@@ -64,16 +65,24 @@ export default function ProfilePage() {
     if (!user) return;
     setRegsLoading(true);
     const supabase = createClient();
-    supabase
-      .from('event_registrations')
-      .select('id, status, payment_status, created_at, events(title_en, start_date, location, is_online)')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(20)
-      .then(({ data }) => {
-        setRegistrations((data as unknown as typeof registrations) ?? []);
-        setRegsLoading(false);
-      });
+    Promise.all([
+      supabase
+        .from('event_registrations')
+        .select('id, status, payment_status, created_at, events(title_en, start_date, location, is_online)')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20),
+      supabase
+        .from('program_enrollments')
+        .select('id, status, payment_status, created_at, programs(name_en, slug)')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(20),
+    ]).then(([{ data: regData }, { data: enrollData }]) => {
+      setRegistrations((regData as unknown as typeof registrations) ?? []);
+      setEnrollments((enrollData as unknown as typeof enrollments) ?? []);
+      setRegsLoading(false);
+    });
   }, [user]);
 
   async function onSubmit(data: ProfileFormData) {
@@ -145,6 +154,7 @@ export default function ProfilePage() {
           <TabsTrigger value="profile"><UserIcon className="mr-2 h-4 w-4" />Profile</TabsTrigger>
           <TabsTrigger value="subscription"><CreditCard className="mr-2 h-4 w-4" />Subscription</TabsTrigger>
           <TabsTrigger value="events"><Calendar className="mr-2 h-4 w-4" />My Events</TabsTrigger>
+          <TabsTrigger value="programs"><CreditCard className="mr-2 h-4 w-4" />My Programs</TabsTrigger>
           <TabsTrigger value="settings"><Settings className="mr-2 h-4 w-4" />Settings</TabsTrigger>
         </TabsList>
 
@@ -305,6 +315,42 @@ export default function ProfilePage() {
                       <div className="flex flex-col items-end gap-1">
                         <Badge variant={reg.status === 'registered' || reg.status === 'confirmed' ? 'default' : 'secondary'} className="text-xs">{reg.status}</Badge>
                         <Badge variant={reg.payment_status === 'paid' || reg.payment_status === 'free' ? 'outline' : 'secondary'} className="text-xs">{reg.payment_status}</Badge>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="programs" className="mt-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>My Program Enrollments</CardTitle>
+            </CardHeader>
+            <CardContent>
+              {regsLoading ? (
+                <div className="flex justify-center py-8"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>
+              ) : enrollments.length === 0 ? (
+                <div className="py-8 text-center">
+                  <CreditCard className="mx-auto mb-3 h-10 w-10 text-muted-foreground/40" />
+                  <p className="text-sm text-muted-foreground">No program enrollments yet.</p>
+                  <Button variant="outline" size="sm" className="mt-4" onClick={() => router.push(`/${locale}/coach-training`)}>Browse Programs</Button>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {enrollments.map((enr) => (
+                    <div key={enr.id} className="flex items-start justify-between rounded-lg border p-4">
+                      <div className="space-y-1">
+                        <p className="font-medium">{enr.programs?.name_en ?? 'Program'}</p>
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                          <span>{new Date(enr.created_at).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-end gap-1">
+                        <Badge variant={enr.status === 'enrolled' || enr.status === 'confirmed' ? 'default' : 'secondary'} className="text-xs">{enr.status}</Badge>
+                        <Badge variant={enr.payment_status === 'paid' || enr.payment_status === 'free' ? 'outline' : 'secondary'} className="text-xs">{enr.payment_status}</Badge>
                       </div>
                     </div>
                   ))}

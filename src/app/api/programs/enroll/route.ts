@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
     const { data: program, error: programError } = await adminSupabase
       .from('programs')
-      .select('id, name_en, price, currency, stripe_price_id, slug, start_date, duration, location')
+      .select('id, name_en, price, currency, stripe_price_id, slug, start_date, duration')
       .eq('id', programId)
       .eq('is_active', true)
       .maybeSingle();
@@ -108,7 +108,7 @@ export async function POST(request: Request) {
             program_title: program.name_en || 'Program',
             program_duration: program.duration || 'TBA',
             program_type: 'Coach Training',
-            program_location: program.location || 'TBA',
+            program_location: 'TBA',
             program_url: programUrl,
             order_id: orderId,
           },
@@ -129,8 +129,9 @@ export async function POST(request: Request) {
 
     // Bank transfer - send pending email and return reference
     if (method === 'bank_transfer') {
+      console.log('Processing bank transfer enrollment');
       const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-      
+
       // Send pending payment email
       try {
         const { data: profile } = await adminSupabase
@@ -141,7 +142,9 @@ export async function POST(request: Request) {
 
         const userName = profile?.full_name || user.email?.split('@')[0] || 'there';
         const programUrl = `${appUrl}/${locale}/coach-training/${program.slug}`;
-        
+
+        console.log('Preparing bank transfer email for:', user.email, 'Program:', program.name_en, 'Reference:', bankRef);
+
         const emailContent = prepareEmail({
           to: user.email!,
           subject: 'Enrollment Pending - Payment Required',
@@ -152,18 +155,20 @@ export async function POST(request: Request) {
             program_duration: program.duration || 'TBA',
             start_date: program.start_date ? new Date(program.start_date).toLocaleDateString(locale, { dateStyle: 'long' }) : 'TBA',
             program_time: program.start_date ? new Date(program.start_date).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false }) : 'TBA',
-            location: program.location || 'TBA',
+            location: 'TBA',
             payment_amount: program.price ? `${program.currency || 'CHF'} ${program.price}` : 'TBA',
             bank_reference: bankRef || 'N/A',
             program_url: programUrl,
           },
         });
 
+        console.log('Sending email to:', user.email);
         await sendEmail({
           to: user.email!,
           subject: emailContent.subject,
           html: emailContent.html,
         });
+        console.log('Bank transfer email sent successfully');
       } catch (emailError) {
         console.error('Failed to send pending payment email:', emailError);
         // Don't fail the enrollment if email fails

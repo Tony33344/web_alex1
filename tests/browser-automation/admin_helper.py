@@ -206,6 +206,12 @@ def get_donation_id_for_user(page, user_email: str):
     Returns the donation ID or None.
     """
     try:
+        # First get user ID from email
+        user_id = get_user_id_by_email(page, user_email)
+        if not user_id:
+            print("   Could not find user ID for email")
+            return None
+        
         response = page.context.request.get(f"{BASE_URL}/api/admin/donations")
         print(f"   Donations API status: {response.status}")
         if response.status == 200:
@@ -213,11 +219,9 @@ def get_donation_id_for_user(page, user_email: str):
             print(f"   Donations API returned {len(data) if isinstance(data, list) else 'non-list'} items")
             if isinstance(data, list):
                 for record in sorted(data, key=lambda x: x.get('created_at', ''), reverse=True):
-                    # The API returns profile:profiles(email, full_name) as nested relation
-                    profile = record.get('profile', {})
-                    record_email = profile.get('email') if isinstance(profile, dict) else None
-                    print(f"   Checking donation {record.get('id', '?')[:8]}... email: {record_email}")
-                    if record_email == user_email:
+                    record_user_id = record.get('user_id')
+                    print(f"   Checking donation {record.get('id', '?')[:8]}... user_id: {record_user_id}")
+                    if record_user_id == user_id:
                         return record.get('id')
         else:
             print(f"   Donations API error: {response.status} - {response.text()[:200]}")

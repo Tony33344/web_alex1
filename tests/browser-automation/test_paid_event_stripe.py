@@ -85,9 +85,23 @@ def test_paid_event_stripe():
             page.wait_for_selector('button:has-text("Enroll Now")', timeout=15000)
             print("✅ Step 4: Enroll Now button is visible")
             
-            enroll_button = page.get_by_role("button", name=re.compile(r"Enroll Now|Register Now", re.I)).first
+            # Find and click enroll button (robust pattern from bank transfer tests)
+            enroll_button = None
+            for text in ["Enroll Now", "Enroll", "Register Now", "Register"]:
+                try:
+                    button = page.get_by_role("button", name=text, exact=True)
+                    if button.is_visible():
+                        enroll_button = button
+                        print(f"   Found enroll button: {text}")
+                        break
+                except:
+                    continue
+            if not enroll_button:
+                enroll_button = page.locator('button:has-text("Enroll")').first
+            
             enroll_button.click()
-            print("✅ Step 4: Clicked enroll button - waiting for dialog")
+            page.wait_for_timeout(3000)
+            print("✅ Step 4: Clicked enroll button - dialog should open")
             
             # Hard-assert dialog opened
             try:

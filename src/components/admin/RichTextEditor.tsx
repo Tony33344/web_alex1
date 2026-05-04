@@ -497,6 +497,12 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
         throw new Error(error.error || 'Upload failed');
       }
       const data = await response.json();
+      // Clean up filename for display: remove extension, replace _/- with spaces, title case
+      const displayName = file.name
+        .replace(/\.pdf$/i, '')
+        .replace(/[_-]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
       // Insert PDF as a link
       editor.chain().focus().insertContent({
         type: 'paragraph',
@@ -516,7 +522,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
                 },
               },
             ],
-            text: file.name,
+            text: displayName || 'PDF Document',
           },
         ],
       }).run();

@@ -20,7 +20,7 @@ export async function GET() {
 
     const { data: donations, error } = await admin
       .from('donations')
-      .select('id, user_id, amount, currency, payment_method, payment_status, bank_transfer_reference, created_at, profile:profiles(email, full_name)')
+      .select('id, user_id, amount, currency, payment_method, payment_status, bank_transfer_reference, created_at')
       .order('created_at', { ascending: false });
 
     if (error) {

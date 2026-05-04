@@ -12,31 +12,16 @@ import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
 import { getActivePricing } from '@/lib/utils/pricing';
 import { PriceTag } from '@/components/shared/PriceTag';
-import { verifyAndActivateSession } from '@/lib/stripe/verify-session';
 
 interface EventsPageProps {
   params: Promise<{ locale: string }>;
-  searchParams: Promise<{ payment?: string; session_id?: string }>;
+  searchParams: Promise<{ payment?: string }>;
 }
 
 export default async function EventsPage({ params, searchParams }: EventsPageProps) {
   const { locale } = await params;
-  const { payment, session_id } = await searchParams;
+  const { payment } = await searchParams;
   const t = await getTranslations();
-
-  // If arriving from Stripe checkout, verify and activate the registration
-  // This ensures the confirmation email is sent even if the webhook is delayed
-  if (session_id) {
-    console.log('EventsPage: session_id detected, calling verifyAndActivateSession', { session_id });
-    const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      console.log('EventsPage: user found, calling verifyAndActivateSession', { userId: user.id });
-      await verifyAndActivateSession(session_id, user.id);
-    } else {
-      console.warn('EventsPage: no user found for verify-session');
-    }
-  }
 
   const [{ events }, page] = await Promise.all([
     getEvents({ upcoming: true }),

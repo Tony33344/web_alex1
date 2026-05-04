@@ -206,23 +206,21 @@ def get_donation_id_for_user(page, user_email: str):
     Returns the donation ID or None.
     """
     try:
-        # Call admin donations API (if it exists)
         response = page.context.request.get(f"{BASE_URL}/api/admin/donations")
+        print(f"   Donations API status: {response.status}")
         if response.status == 200:
             data = response.json()
+            print(f"   Donations API returned {len(data) if isinstance(data, list) else 'non-list'} items")
             if isinstance(data, list):
                 for record in sorted(data, key=lambda x: x.get('created_at', ''), reverse=True):
-                    if record.get('user', {}).get('email') == user_email or record.get('email') == user_email:
+                    # The API returns profile:profiles(email, full_name) as nested relation
+                    profile = record.get('profile', {})
+                    record_email = profile.get('email') if isinstance(profile, dict) else None
+                    print(f"   Checking donation {record.get('id', '?')[:8]}... email: {record_email}")
+                    if record_email == user_email:
                         return record.get('id')
-        # Fallback: check registrations API for donations (if included)
-        response = page.context.request.get(f"{BASE_URL}/api/admin/registrations")
-        if response.status == 200:
-            data = response.json()
-            # Check if donations are in the response
-            if 'donations' in data:
-                for record in sorted(data['donations'], key=lambda x: x.get('created_at', ''), reverse=True):
-                    if record.get('profile', {}).get('email') == user_email:
-                        return record.get('id')
+        else:
+            print(f"   Donations API error: {response.status} - {response.text()[:200]}")
         return None
     except Exception as e:
         print(f"❌ Error fetching donation ID: {e}")

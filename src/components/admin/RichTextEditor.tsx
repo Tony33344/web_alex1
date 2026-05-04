@@ -35,6 +35,7 @@ import {
   Trash2,
   Loader2,
   Type,
+  FileText,
 } from 'lucide-react';
 import { useEffect, useCallback, useRef, useState } from 'react';
 
@@ -437,6 +438,10 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
   const [uploadingVideo, setUploadingVideo] = useState(false);
   const [videoError, setVideoError] = useState('');
 
+  const pdfInputRef = useRef<HTMLInputElement>(null);
+  const [uploadingPdf, setUploadingPdf] = useState(false);
+  const [pdfError, setPdfError] = useState('');
+
   const handleVideoUpload = useCallback(async (file: File) => {
     if (!editor) return;
     if (!file.type.startsWith('video/')) {
@@ -466,6 +471,59 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
       setVideoError('Upload failed');
     }
     setUploadingVideo(false);
+  }, [editor]);
+
+  const handlePdfUpload = useCallback(async (file: File) => {
+    if (!editor) return;
+    if (file.type !== 'application/pdf') {
+      setPdfError('Only PDF files are allowed');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setPdfError('PDF must be under 10MB');
+      return;
+    }
+    setUploadingPdf(true);
+    setPdfError('');
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await fetch('/api/admin/upload-pdf', {
+        method: 'POST',
+        body: formData,
+      });
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Upload failed');
+      }
+      const data = await response.json();
+      // Insert PDF as a link
+      editor.chain().focus().insertContent({
+        type: 'paragraph',
+        content: [
+          {
+            type: 'text',
+            text: '📄 ',
+          },
+          {
+            type: 'text',
+            marks: [
+              {
+                type: 'link',
+                attrs: {
+                  href: data.url,
+                  target: '_blank',
+                },
+              },
+            ],
+            text: file.name,
+          },
+        ],
+      }).run();
+    } catch (error) {
+      setPdfError(error instanceof Error ? error.message : 'Upload failed');
+    }
+    setUploadingPdf(false);
   }, [editor]);
 
   const setLink = useCallback(() => {
@@ -641,6 +699,13 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
           {uploadingVideo ? <Loader2 className="h-4 w-4 animate-spin" /> : <Film className="h-4 w-4" />}
         </ToolbarButton>
         <ToolbarButton
+          onClick={() => pdfInputRef.current?.click()}
+          title="Upload PDF from your device"
+          disabled={uploadingPdf}
+        >
+          {uploadingPdf ? <Loader2 className="h-4 w-4 animate-spin" /> : <FileText className="h-4 w-4" />}
+        </ToolbarButton>
+        <ToolbarButton
           onClick={() => {
             if (editor.isActive('video') || editor.isActive('youtube')) {
               editor.chain().focus().deleteSelection().run();
@@ -660,6 +725,17 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
             const f = e.target.files?.[0];
             if (f) handleVideoUpload(f);
             if (videoInputRef.current) videoInputRef.current.value = '';
+          }}
+        />
+        <input
+          ref={pdfInputRef}
+          type="file"
+          accept="application/pdf"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) handlePdfUpload(f);
+            if (pdfInputRef.current) pdfInputRef.current.value = '';
           }}
         />
 
@@ -710,6 +786,7 @@ export function RichTextEditor({ value, onChange, placeholder }: RichTextEditorP
       {/* Editor */}
       <EditorContent editor={editor} />
       {videoError && <p className="px-4 py-2 text-xs text-destructive">{videoError}</p>}
+      {pdfError && <p className="px-4 py-2 text-xs text-destructive">{pdfError}</p>}
     </div>
   );
 }

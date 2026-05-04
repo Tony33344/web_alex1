@@ -148,11 +148,14 @@ export async function PATCH(request: Request) {
           }
         }
       } else if (table === 'program_enrollments') {
-        const { data: enr } = await admin
+        const { data: enr, error: enrError } = await admin
           .from('program_enrollments')
-          .select('user_id, price_paid, program:programs(id, name_en, slug, duration, start_date, location, max_participants, price, currency)')
+          .select('user_id, program:programs(id, name_en, slug, duration, start_date, location, max_participants, price, currency)')
           .eq('id', id)
           .single();
+        if (enrError) {
+          console.error('Program enrollment query error:', enrError.message);
+        }
         if (enr) {
           const { data: userProfile } = await admin
             .from('profiles')
@@ -162,8 +165,8 @@ export async function PATCH(request: Request) {
           const { data: { user: enrUser } } = await admin.auth.admin.getUserById(enr.user_id);
           const recipientEmail = userProfile?.email || enrUser?.email;
           const program = enr.program as unknown as { id: string; name_en: string; slug: string; duration: string | null; start_date: string | null; location: string | null; max_participants: number | null; price: number | null; currency: string | null } | null;
-          // Use price_paid if available (actual amount paid), otherwise fall back to regular price
-          const actualPrice = enr.price_paid !== null ? enr.price_paid : program?.price;
+          const actualPrice = program?.price;
+          console.log('Program confirmation email:', { recipientEmail, programName: program?.name_en, hasProgram: !!program });
           if (recipientEmail && program) {
             const userName = userProfile?.full_name || recipientEmail.split('@')[0] || 'there';
             const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';

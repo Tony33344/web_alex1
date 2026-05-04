@@ -27,10 +27,14 @@ export default async function EventsPage({ params, searchParams }: EventsPagePro
   // If arriving from Stripe checkout, verify and activate the registration
   // This ensures the confirmation email is sent even if the webhook is delayed
   if (session_id) {
+    console.log('EventsPage: session_id detected, calling verifyAndActivateSession', { session_id });
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {
+      console.log('EventsPage: user found, calling verifyAndActivateSession', { userId: user.id });
       await verifyAndActivateSession(session_id, user.id);
+    } else {
+      console.warn('EventsPage: no user found for verify-session');
     }
   }
 

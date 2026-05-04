@@ -14,7 +14,7 @@ export async function GET() {
       .order('created_at', { ascending: false }),
     admin
       .from('program_enrollments')
-      .select('*, program:programs(id, name_en, slug, price, currency), profile:profiles(email, full_name, phone)')
+      .select('*, program:programs(id, name_en, slug, price, currency), profile:profiles!program_enrollments_user_id_fkey(email, full_name, phone)')
       .order('created_at', { ascending: false }),
   ]);
 

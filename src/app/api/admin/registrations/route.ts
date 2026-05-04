@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { EmailTemplates, prepareEmail } from '@/lib/email/templates';
+import { sendEmail } from '@/lib/email/transporter';
 
 export async function GET() {
   const admin = createAdminClient();
@@ -83,5 +85,84 @@ export async function PATCH(request: Request) {
 
   const { error } = await admin.from(table).update(data).eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Send confirmation email when admin marks payment as paid
+  if (data?.payment_status === 'paid') {
+    try {
+      if (table === 'event_registrations') {
+        const { data: reg } = await admin
+          .from('event_registrations')
+          .select('user_id, event:events(id, title_en, start_date, is_online, location)')
+          .eq('id', id)
+          .single();
+        if (reg) {
+          const { data: userProfile } = await admin
+            .from('profiles')
+            .select('full_name, email')
+            .eq('id', reg.user_id)
+            .single();
+          const { data: { user: regUser } } = await admin.auth.admin.getUserById(reg.user_id);
+          const recipientEmail = userProfile?.email || regUser?.email;
+          // event is returned as relation - typed as any due to Supabase relation typing
+          const event = reg.event as unknown as { id: string; title_en: string; start_date: string; is_online: boolean; location: string | null } | null;
+          if (recipientEmail && event) {
+            const userName = userProfile?.full_name || recipientEmail.split('@')[0] || 'there';
+            const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+            const eventUrl = `${appUrl}/en/events/${event.id}`;
+            const emailContent = prepareEmail({
+              to: recipientEmail,
+              subject: 'Event Registration Confirmed',
+              template: EmailTemplates.EVENT_REGISTRATION,
+              variables: {
+                user_name: userName,
+                event_title: event.title_en || 'Event',
+                event_date: event.start_date ? new Date(event.start_date).toLocaleDateString('en', { dateStyle: 'long' }) : 'TBA',
+                event_time: event.start_date ? new Date(event.start_date).toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', hour12: false }) : 'TBA',
+                event_location: event.is_online ? 'Online' : (event.location || 'TBA'),
+                event_url: eventUrl,
+                calendar_url: eventUrl,
+                order_id: `EVT-${id.substring(0, 8).toUpperCase()}`,
+              },
+            });
+            await sendEmail({ to: recipientEmail, subject: emailContent.subject, html: emailContent.html });
+          }
+        }
+      } else if (table === 'program_enrollments') {
+        const { data: enr } = await admin
+          .from('program_enrollments')
+          .select('user_id, program:programs(id, name_en)')
+          .eq('id', id)
+          .single();
+        if (enr) {
+          const { data: userProfile } = await admin
+            .from('profiles')
+            .select('full_name, email')
+            .eq('id', enr.user_id)
+            .single();
+          const { data: { user: enrUser } } = await admin.auth.admin.getUserById(enr.user_id);
+          const recipientEmail = userProfile?.email || enrUser?.email;
+          const program = enr.program as unknown as { id: string; name_en: string } | null;
+          if (recipientEmail && program) {
+            const userName = userProfile?.full_name || recipientEmail.split('@')[0] || 'there';
+            const emailContent = prepareEmail({
+              to: recipientEmail,
+              subject: 'Program Enrollment Confirmed',
+              template: EmailTemplates.COACH_TRAINING_REGISTRATION,
+              variables: {
+                user_name: userName,
+                program_name: program.name_en || 'Program',
+                order_id: `PRG-${id.substring(0, 8).toUpperCase()}`,
+              },
+            });
+            await sendEmail({ to: recipientEmail, subject: emailContent.subject, html: emailContent.html });
+          }
+        }
+      }
+    } catch (emailError) {
+      console.error('Failed to send confirmation email after marking paid:', emailError);
+      // Don't fail the request if email fails
+    }
+  }
+
   return NextResponse.json({ success: true });
 }

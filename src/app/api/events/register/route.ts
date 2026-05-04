@@ -4,6 +4,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { createCheckoutSession, createDynamicCheckoutSession, createOrRetrieveCustomer } from '@/lib/stripe/helpers';
 import { EmailTemplates, prepareEmail } from '@/lib/email/templates';
 import { sendEmail } from '@/lib/email/transporter';
+import { formatDateRangeWithTime } from '@/lib/utils/dates';
 
 export async function POST(request: Request) {
   try {
@@ -96,8 +97,45 @@ export async function POST(request: Request) {
         .eq('id', eventId);
     }
 
-    // Free events — done
+    // Free events — send confirmation email
     if (isFree) {
+      try {
+        const { data: profile } = await adminSupabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single();
+
+        const userName = profile?.full_name || user.email?.split('@')[0] || 'there';
+        const eventUrl = `${appUrl}/${locale}/events/${eventId}`;
+        const orderId = `FREE-${Date.now().toString(36).toUpperCase()}`;
+        
+        const emailContent = prepareEmail({
+          to: user.email!,
+          subject: 'Free Event Registration Confirmed',
+          template: EmailTemplates.FREE_EVENT_REGISTRATION,
+          variables: {
+            user_name: userName,
+            event_title: event.title_en || 'Event',
+            event_date: event.start_date ? new Date(event.start_date).toLocaleDateString(locale, { dateStyle: 'long' }) : 'TBA',
+            event_time: event.start_date ? new Date(event.start_date).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false }) : 'TBA',
+            event_location: event.is_online ? 'Online' : (event.location || 'TBA'),
+            event_url: eventUrl,
+            calendar_url: eventUrl,
+            order_id: orderId,
+          },
+        });
+
+        await sendEmail({
+          to: user.email!,
+          subject: emailContent.subject,
+          html: emailContent.html,
+        });
+      } catch (emailError) {
+        console.error('Failed to send free event confirmation email:', emailError);
+        // Don't fail the registration if email fails
+      }
+
       return NextResponse.json({ success: true, status });
     }
 

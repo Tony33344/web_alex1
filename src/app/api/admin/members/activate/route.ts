@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { EmailTemplates, prepareEmail } from '@/lib/email/templates';
+import { sendEmail } from '@/lib/email/transporter';
 
 export async function POST(request: Request) {
   try {
@@ -45,6 +47,36 @@ export async function POST(request: Request) {
       .eq('id', userId);
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+    // Send membership confirmation email
+    try {
+      const { data: profile } = await admin
+        .from('profiles')
+        .select('full_name, email')
+        .eq('id', userId)
+        .single();
+      const { data: { user: memberUser } } = await admin.auth.admin.getUserById(userId);
+      const recipientEmail = profile?.email || memberUser?.email;
+      if (recipientEmail) {
+        const userName = profile?.full_name || recipientEmail.split('@')[0] || 'there';
+        const emailContent = prepareEmail({
+          to: recipientEmail,
+          subject: 'Membership Activated',
+          template: EmailTemplates.MEMBERSHIP_CONFIRMATION,
+          variables: {
+            user_name: userName,
+            membership_name: plan === 'yearly' ? 'Yearly Membership' : 'Monthly Membership',
+            billing_cycle: plan === 'yearly' ? 'Yearly' : 'Monthly',
+            next_billing_date: endDate.toLocaleDateString('en', { dateStyle: 'long' }),
+            member_id: userId.substring(0, 8).toUpperCase(),
+          },
+        });
+        await sendEmail({ to: recipientEmail, subject: emailContent.subject, html: emailContent.html });
+      }
+    } catch (emailError) {
+      console.error('Failed to send membership confirmation email:', emailError);
+    }
+
     return NextResponse.json({ success: true });
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown error';

@@ -7,13 +7,27 @@ const SMTP_USER = process.env.SMTP_USER || '';
 const SMTP_PASS = process.env.SMTP_PASS || '';
 const SMTP_FROM = process.env.SMTP_FROM || 'Infinity Role Teachers <support@infinityroleteachers.com>';
 
+// Test mode: use Mailhog
+const USE_MAILHOG = process.env.USE_MAILHOG === 'true';
+
 // Verify SMTP is configured
 export function isEmailConfigured(): boolean {
+  if (USE_MAILHOG) return true; // Mailhog doesn't require auth
   return Boolean(SMTP_USER && SMTP_PASS);
 }
 
 // Create transporter
 export function createTransporter() {
+  // Test mode: use Mailhog
+  if (USE_MAILHOG) {
+    console.log('📧 Using Mailhog for email testing (localhost:1025)');
+    return nodemailer.createTransport({
+      host: 'localhost',
+      port: 1025,
+      // Mailhog doesn't require authentication
+    });
+  }
+
   if (!isEmailConfigured()) {
     console.warn('SMTP not configured. Emails will be logged but not sent.');
     return null;

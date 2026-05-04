@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { EmailTemplates, prepareEmail } from '@/lib/email/templates';
+import { sendEmail } from '@/lib/email/transporter';
 
 export async function POST(request: Request) {
   try {
@@ -35,6 +37,48 @@ export async function POST(request: Request) {
     if (error) {
       console.error('Membership bank transfer error:', error);
       return NextResponse.json({ error: 'Failed to create bank transfer request: ' + error.message }, { status: 500 });
+    }
+
+    // Send pending payment email
+    try {
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+      const { data: profile } = await adminSupabase
+        .from('profiles')
+        .select('full_name')
+        .eq('id', user.id)
+        .single();
+
+      const userName = profile?.full_name || user.email?.split('@')[0] || 'there';
+      const membershipUrl = `${appUrl}/en/membership`;
+      const membershipName = plan === 'yearly' ? 'Annual Membership' : 'Monthly Membership';
+      const paymentAmount = plan === 'yearly' ? 'TBA' : 'TBA'; // Will need to fetch actual price from database
+      
+      const emailContent = prepareEmail({
+        to: user.email!,
+        subject: 'Membership Pending - Payment Required',
+        template: EmailTemplates.MEMBERSHIP_PENDING,
+        variables: {
+          user_name: userName,
+          membership_name: membershipName,
+          billing_cycle: plan === 'yearly' ? 'Yearly' : 'Monthly',
+          payment_amount: paymentAmount,
+          reference: bankRef,
+          membership_url: membershipUrl,
+          bank_name: 'UBS Switzerland AG', // TODO: Get from settings
+          bank_account: 'CH1234567890123456789', // TODO: Get from settings
+          bank_iban: 'CH89 1234 5678 9012 3456 7890', // TODO: Get from settings
+          bank_bic: 'UBSWCHZH80A', // TODO: Get from settings
+        },
+      });
+
+      await sendEmail({
+        to: user.email!,
+        subject: emailContent.subject,
+        html: emailContent.html,
+      });
+    } catch (emailError) {
+      console.error('Failed to send membership pending email:', emailError);
+      // Don't fail the request if email fails
     }
 
     return NextResponse.json({ success: true, reference: bankRef });

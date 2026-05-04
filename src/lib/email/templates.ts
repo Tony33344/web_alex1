@@ -34,13 +34,17 @@ export function renderTemplate(template: string, variables: Record<string, strin
 export const EmailTemplates = {
   EVENT_REGISTRATION: 'event-registration',
   EVENT_REGISTRATION_PENDING: 'event-registration-pending',
+  FREE_EVENT_REGISTRATION: 'free-event-registration',
   COACH_TRAINING_REGISTRATION: 'coach-training-registration',
   COACH_TRAINING_REGISTRATION_PENDING: 'coach-training-registration-pending',
+  FREE_PROGRAM_ENROLLMENT: 'free-program-enrollment',
   MEMBERSHIP_CONFIRMATION: 'membership-confirmation',
+  MEMBERSHIP_PENDING: 'membership-pending',
   DONATION_CONFIRMATION: 'donation-confirmation',
   PASSWORD_RESET: 'password-reset',
   SUPABASE_VERIFICATION: 'supabase-verification',
   WELCOME: 'welcome',
+  EVENT_WAITLIST_CONFIRMATION: 'event-waitlist-confirmation',
 } as const;
 
 export type EmailTemplateName = typeof EmailTemplates[keyof typeof EmailTemplates];

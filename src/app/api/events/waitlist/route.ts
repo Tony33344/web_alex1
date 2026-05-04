@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
+import { EmailTemplates, prepareEmail } from '@/lib/email/templates';
+import { sendEmail } from '@/lib/email/transporter';
 
 export async function POST(request: Request) {
   try {
@@ -72,6 +74,44 @@ export async function POST(request: Request) {
     if (error) {
       console.error('Waitlist insert error:', error.message);
       return NextResponse.json({ error: 'Failed to join waitlist' }, { status: 500 });
+    }
+
+    // Send waitlist confirmation email
+    try {
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+      const { data: event } = await adminSupabase
+        .from('events')
+        .select('title_en, start_date, is_online, location')
+        .eq('id', eventId)
+        .single();
+
+      if (event) {
+        const eventUrl = `${appUrl}/en/events/${eventId}`;
+        
+        const emailContent = prepareEmail({
+          to: email.toLowerCase(),
+          subject: 'Waitlist Confirmation',
+          template: EmailTemplates.EVENT_WAITLIST_CONFIRMATION,
+          variables: {
+            user_name: name,
+            event_title: event.title_en || 'Event',
+            event_date: event.start_date ? new Date(event.start_date).toLocaleDateString('en', { dateStyle: 'long' }) : 'TBA',
+            event_time: event.start_date ? new Date(event.start_date).toLocaleTimeString('en', { hour: '2-digit', minute: '2-digit', hour12: false }) : 'TBA',
+            event_location: event.is_online ? 'Online' : (event.location || 'TBA'),
+            position: entry.position.toString(),
+            event_url: eventUrl,
+          },
+        });
+
+        await sendEmail({
+          to: email.toLowerCase(),
+          subject: emailContent.subject,
+          html: emailContent.html,
+        });
+      }
+    } catch (emailError) {
+      console.error('Failed to send waitlist confirmation email:', emailError);
+      // Don't fail the waitlist join if email fails
     }
 
     return NextResponse.json({ success: true, position: entry.position, participantType });

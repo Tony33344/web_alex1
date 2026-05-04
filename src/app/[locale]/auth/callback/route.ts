@@ -1,5 +1,8 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
+import { EmailTemplates, prepareEmail } from '@/lib/email/templates';
+import { sendEmail } from '@/lib/email/transporter';
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
@@ -18,6 +21,43 @@ export async function GET(request: Request) {
       const type = searchParams.get('type');
       const localeMatch = request.url.match(/\/([a-z]{2})\/auth\/callback/);
       const locale = localeMatch ? localeMatch[1] : 'en';
+      
+      // Send welcome email after email verification
+      if (type === 'signup' || type === 'email_confirmation') {
+        try {
+          const adminSupabase = createAdminClient();
+          const { data: profile } = await adminSupabase
+            .from('profiles')
+            .select('full_name')
+            .eq('id', data.user.id)
+            .single();
+
+          const userName = profile?.full_name || data.user.email?.split('@')[0] || 'there';
+          const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+          
+          const emailContent = prepareEmail({
+            to: data.user.email!,
+            subject: 'Welcome to Infinity Role Teachers',
+            template: EmailTemplates.WELCOME,
+            variables: {
+              user_name: userName,
+              profile_url: `${appUrl}/${locale}/profile`,
+              events_url: `${appUrl}/${locale}/events`,
+              programs_url: `${appUrl}/${locale}/coach-training`,
+              membership_url: `${appUrl}/${locale}/membership`,
+            },
+          });
+
+          await sendEmail({
+            to: data.user.email!,
+            subject: emailContent.subject,
+            html: emailContent.html,
+          });
+        } catch (emailError) {
+          console.error('Failed to send welcome email:', emailError);
+          // Don't fail the auth flow if email fails
+        }
+      }
       
       // If type=recovery, redirect to reset-password
       if (type === 'recovery') {

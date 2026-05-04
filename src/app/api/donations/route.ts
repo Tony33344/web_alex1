@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { createDynamicCheckoutSession, createOrRetrieveCustomer } from '@/lib/stripe/helpers';
+import { EmailTemplates, prepareEmail } from '@/lib/email/templates';
+import { sendEmail } from '@/lib/email/transporter';
 
 export async function POST(request: Request) {
   try {
@@ -41,8 +43,31 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Donation failed: ' + insertError.message }, { status: 500 });
     }
 
-    // Bank transfer — return reference
+    // Bank transfer — send pending email and return reference
     if (paymentMethod === 'bank_transfer') {
+      // Send pending donation email
+      try {
+        const { data: profile } = await adminSupabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single();
+        const userName = profile?.full_name || user.email?.split('@')[0] || 'there';
+        const emailContent = prepareEmail({
+          to: user.email!,
+          subject: 'Donation Pending - Bank Transfer Required',
+          template: EmailTemplates.DONATION_CONFIRMATION,
+          variables: {
+            user_name: userName,
+            donation_amount: `CHF ${amount.toFixed(2)}`,
+            donation_date: new Date().toLocaleDateString('en', { dateStyle: 'long' }),
+            receipt_id: bankRef || 'N/A',
+          },
+        });
+        await sendEmail({ to: user.email!, subject: emailContent.subject, html: emailContent.html });
+      } catch (emailError) {
+        console.error('Failed to send donation pending email:', emailError);
+      }
       return NextResponse.json({ success: true, reference: bankRef });
     }
 

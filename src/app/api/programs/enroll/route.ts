@@ -78,8 +78,46 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Enrollment failed: ' + insertError.message }, { status: 500 });
     }
 
-    // Free program
+    // Free program — send confirmation email
     if (isFree) {
+      const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+      
+      try {
+        const { data: profile } = await adminSupabase
+          .from('profiles')
+          .select('full_name')
+          .eq('id', user.id)
+          .single();
+
+        const userName = profile?.full_name || user.email?.split('@')[0] || 'there';
+        const programUrl = `${appUrl}/${locale}/coach-training/${programSlug}`;
+        const orderId = `FREE-${Date.now().toString(36).toUpperCase()}`;
+        
+        const emailContent = prepareEmail({
+          to: user.email!,
+          subject: 'Free Program Enrollment Confirmed',
+          template: EmailTemplates.FREE_PROGRAM_ENROLLMENT,
+          variables: {
+            user_name: userName,
+            program_title: program.name_en || 'Program',
+            program_duration: program.duration || 'TBA',
+            program_type: 'Coach Training',
+            program_location: program.location || 'TBA',
+            program_url: programUrl,
+            order_id: orderId,
+          },
+        });
+
+        await sendEmail({
+          to: user.email!,
+          subject: emailContent.subject,
+          html: emailContent.html,
+        });
+      } catch (emailError) {
+        console.error('Failed to send free program confirmation email:', emailError);
+        // Don't fail the enrollment if email fails
+      }
+
       return NextResponse.json({ success: true, status: 'enrolled' });
     }
 

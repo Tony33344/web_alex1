@@ -153,7 +153,7 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
         // Get program details for email
         const { data: program } = await admin
           .from('programs')
-          .select('name_en, name_de, duration, start_date')
+          .select('name_en, name_de, duration, start_date, location, max_participants')
           .eq('id', programId)
           .single();
 
@@ -171,9 +171,13 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
                 user_name: profile.full_name || 'Valued Member',
                 program_name: program.name_en || program.name_de || 'Program',
                 start_date: program.start_date ? new Date(program.start_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : 'TBA',
+                program_time: program.start_date ? new Date(program.start_date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }) : 'TBA',
                 program_duration: program.duration || 'TBA',
+                location: program.location || 'TBA',
+                max_participants: program.max_participants?.toString() || 'TBA',
                 order_id: session.id,
                 payment_amount: `CHF ${amount}`,
+                program_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/coach-training/${programId}`,
               },
             });
             await sendEmail({ to: profile.email, subject: 'Coach Training Enrollment Confirmed - Infinity Role Teachers', html });

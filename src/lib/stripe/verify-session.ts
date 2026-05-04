@@ -92,12 +92,19 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
 
     if (type === 'event') {
       const eventId = session.metadata?.event_id;
+      console.log('verifyAndActivateSession: Processing event payment', { eventId, effectiveUserId });
       if (eventId) {
-        const { error } = await admin
+        const { error: updateError } = await admin
           .from('event_registrations')
           .update({ payment_status: 'paid', status: 'confirmed', confirmed_at: new Date().toISOString() })
           .eq('event_id', eventId)
           .eq('user_id', effectiveUserId);
+        
+        if (updateError) {
+          console.error('verifyAndActivateSession: Failed to update event registration:', updateError);
+        } else {
+          console.log('verifyAndActivateSession: Event registration updated successfully');
+        }
 
         // Get event details for email
         const { data: event } = await admin
@@ -105,6 +112,8 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
           .select('title_en, title_de, start_date, location, is_online')
           .eq('id', eventId)
           .single();
+
+        console.log('verifyAndActivateSession: Event data fetched', { event, profile: !!profile });
 
         // Send event confirmation email
         if (profile?.email && event) {
@@ -129,7 +138,11 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
           } catch (emailError) {
             console.error('Failed to send event email:', emailError);
           }
+        } else {
+          console.warn('verifyAndActivateSession: Cannot send event email - missing profile.email or event data', { hasEmail: !!profile?.email, hasEvent: !!event });
         }
+      } else {
+        console.warn('verifyAndActivateSession: Event payment but no eventId in metadata');
       }
       return true;
     }

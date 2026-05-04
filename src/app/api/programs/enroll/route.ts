@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 
     const { data: program, error: programError } = await adminSupabase
       .from('programs')
-      .select('id, name_en, price, currency, stripe_price_id, slug, start_date, duration')
+      .select('id, name_en, price, currency, stripe_price_id, slug, start_date, duration, location')
       .eq('id', programId)
       .eq('is_active', true)
       .maybeSingle();
@@ -108,7 +108,7 @@ export async function POST(request: Request) {
             program_title: program.name_en || 'Program',
             program_duration: program.duration || 'TBA',
             program_type: 'Coach Training',
-            program_location: 'TBA',
+            program_location: (program as any).location || 'TBA',
             program_url: programUrl,
             order_id: orderId,
           },
@@ -155,7 +155,7 @@ export async function POST(request: Request) {
             program_duration: program.duration || 'TBA',
             start_date: program.start_date ? new Date(program.start_date).toLocaleDateString(locale, { dateStyle: 'long' }) : 'TBA',
             program_time: program.start_date ? new Date(program.start_date).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false }) : 'TBA',
-            location: 'TBA',
+            location: (program as any).location || 'TBA',
             payment_amount: program.price ? `${program.currency || 'CHF'} ${program.price}` : 'TBA',
             bank_reference: bankRef || 'N/A',
             program_url: programUrl,

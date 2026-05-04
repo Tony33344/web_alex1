@@ -4,6 +4,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { createCheckoutSession, createDynamicCheckoutSession, createOrRetrieveCustomer } from '@/lib/stripe/helpers';
 import { EmailTemplates, prepareEmail } from '@/lib/email/templates';
 import { sendEmail } from '@/lib/email/transporter';
+import { getActivePricing } from '@/lib/utils/pricing';
 
 // Force redeploy - v3
 export async function POST(request: Request) {
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
 
     const { data: program, error: programError } = await adminSupabase
       .from('programs')
-      .select('id, name_en, price, currency, stripe_price_id, slug, start_date, duration, location')
+      .select('id, name_en, price, currency, stripe_price_id, early_bird_price, early_bird_deadline, early_bird_stripe_price_id, slug, start_date, duration, location, max_participants')
       .eq('id', programId)
       .eq('is_active', true)
       .maybeSingle();
@@ -39,6 +40,11 @@ export async function POST(request: Request) {
       console.error('Program lookup failed:', programError?.message);
       return NextResponse.json({ error: 'Program not found' }, { status: 404 });
     }
+
+    // Get active pricing (early bird if applicable)
+    const pricing = getActivePricing(program);
+    const activePrice = pricing.activePrice;
+    const activeStripePriceId = pricing.activeStripePriceId;
 
     // Clean up any old cancelled enrollments for this user+program to allow fresh enrollment
     await adminSupabase
@@ -130,6 +136,17 @@ export async function POST(request: Request) {
     // Bank transfer - send pending email and return reference
     if (method === 'bank_transfer') {
       console.log('Processing bank transfer enrollment');
+      
+      // Store the active price in the enrollment
+      const { error: updateError } = await adminSupabase
+        .from('program_enrollments')
+        .update({ price_paid: activePrice })
+        .eq('program_id', program.id)
+        .eq('user_id', user.id);
+      if (updateError) {
+        console.error('Failed to update price_paid:', updateError);
+      }
+      
       const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
 
       // Fetch bank info from settings
@@ -179,7 +196,7 @@ export async function POST(request: Request) {
             start_date: program.start_date ? new Date(program.start_date).toLocaleDateString(locale, { dateStyle: 'long' }) : 'TBA',
             program_time: program.start_date ? new Date(program.start_date).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false }) : 'TBA',
             location: (program as any).location || 'TBA',
-            payment_amount: program.price ? `${program.currency || 'CHF'} ${program.price}` : 'TBA',
+            payment_amount: activePrice ? `${program.currency || 'CHF'} ${activePrice}` : 'TBA',
             bank_reference: bankRef || 'N/A',
             program_url: programUrl,
             bank_name: bankName,
@@ -229,10 +246,10 @@ export async function POST(request: Request) {
     const cancelUrl = `${appUrl}/${locale}/coach-training/${program.slug}?payment=cancelled`;
 
     let session;
-    if (program.stripe_price_id) {
+    if (activeStripePriceId) {
       session = await createCheckoutSession({
         customerId,
-        priceId: program.stripe_price_id,
+        priceId: activeStripePriceId,
         mode: 'payment',
         successUrl,
         cancelUrl,

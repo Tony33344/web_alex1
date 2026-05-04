@@ -63,7 +63,7 @@ def test_donation_bank_transfer():
             print(f"✅ Step 2: Signed in with {test_email}")
             
             # ===== STEP 3: NAVIGATE TO DONATE PAGE =====
-            page.goto(f"{BASE_URL}/donate")
+            page.goto(f"{BASE_URL}/en/about/donate")
             page.wait_for_load_state("networkidle")
             print("✅ Step 3: Navigated to donate page")
             
@@ -73,78 +73,64 @@ def test_donation_bank_transfer():
             
             # ===== STEP 4: ENTER AMOUNT AND SELECT BANK TRANSFER =====
             # Fill donation amount
-            amount_input = page.locator("input[name='amount'], input[placeholder*='amount' i]").first
+            amount_input = page.locator("input[name='amount'], input[type='number']").first
             if amount_input.is_visible():
                 amount_input.fill("50")
                 print("✅ Step 4: Entered donation amount: CHF 50")
             else:
-                # Try finding any number input
-                inputs = page.query_selector_all("input[type='number']")
-                if inputs:
-                    inputs[0].fill("50")
-                    print("✅ Step 4: Entered donation amount")
+                print("❌ Step 4: Amount input not found")
+                browser.close()
+                return False
             
-            # Select bank transfer
+            # Click "Donate" button to open checkout dialog
+            donate_btn = page.get_by_role("button", name="Donate").first
+            if not donate_btn.is_visible():
+                print("❌ Step 4: Donate button not found")
+                browser.close()
+                return False
+            donate_btn.click()
+            print("✅ Step 4: Clicked Donate button - waiting for dialog")
+            
+            # Hard-assert dialog opened
             try:
-                bank_option = page.locator('text=Bank Transfer').first
-                if bank_option.is_visible():
-                    bank_option.click()
-                    print("   Clicked Bank Transfer by text locator")
-                else:
-                    bank_radio = page.locator('[role="radio"]:has-text("Bank")').first
-                    if bank_radio.is_visible():
-                        bank_radio.click()
-                        print("   Clicked Bank Transfer by radio role")
-                    else:
-                        page.evaluate("""() => {
-                            const allDivs = document.querySelectorAll('div');
-                            for (const div of allDivs) {
-                                const text = div.textContent || '';
-                                if ((text.includes('Bank Transfer') || text.includes('SEPA')) && 
-                                    (div.getAttribute('role') === 'radio' || div.onclick || 
-                                     div.parentElement?.getAttribute('role') === 'radio')) {
-                                    div.click();
-                                    div.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-                                    return 'clicked-div';
-                                }
-                            }
-                            const paymentOption = document.querySelector('[data-payment-method="bank_transfer"], [value="bank_transfer"]');
-                            if (paymentOption) {
-                                paymentOption.click();
-                                return 'clicked-data-attr';
-                            }
-                            return 'not-found';
-                        }""")
-                        print("   Attempted JS fallback for Bank Transfer")
-            except Exception as e:
-                print(f"   Warning: Bank Transfer click issue: {e}")
+                page.wait_for_selector('text=Choose payment method', timeout=10000)
+                print("✅ Step 4: Checkout dialog opened")
+            except Exception:
+                print("❌ Step 4: Checkout dialog did not open")
+                browser.close()
+                return False
             
-            page.wait_for_timeout(1000)
+            # Select Bank Transfer in dialog
+            bank_btn = page.locator('button:has-text("Bank Transfer")').first
+            if not bank_btn.is_visible():
+                print("❌ Step 4: Bank Transfer button not found in dialog")
+                browser.close()
+                return False
+            bank_btn.click()
+            try:
+                page.wait_for_selector('button:has-text("Get Transfer Details")', timeout=5000)
+            except Exception:
+                print("❌ Step 4: Bank Transfer click did not change submit button")
+                browser.close()
+                return False
             print("✅ Step 4: Selected Bank Transfer")
             
-            # Submit donation
+            # Click "Get Transfer Details" submit button
+            submit_btn = page.locator('button:has-text("Get Transfer Details")').first
+            if not submit_btn.is_visible():
+                print("❌ Step 4: Submit button not found")
+                browser.close()
+                return False
+            submit_btn.click()
             try:
-                submit_btn = page.get_by_role("button", name="Donate").first
-                if submit_btn and submit_btn.is_visible():
-                    submit_btn.click()
-                else:
-                    page.locator("button[type='submit']").first.click()
-                print("   Clicked submit button")
-            except Exception as e:
-                page.evaluate("""() => {
-                    const buttons = document.querySelectorAll('button');
-                    for (const btn of buttons) {
-                        const text = btn.textContent || '';
-                        if (text.includes('Donate') || text.includes('Pay') || text.includes('Submit')) {
-                            btn.click();
-                            return true;
-                        }
-                    }
-                    return false;
-                }""")
+                page.wait_for_selector("text=Bank Transfer Initiated", timeout=15000)
+            except Exception:
+                print("❌ Step 4: No 'Bank Transfer Initiated' appeared after submit")
+                browser.close()
+                return False
             page.wait_for_load_state("networkidle")
             page.wait_for_timeout(2000)
-            print("✅ Step 4: Submitted donation")
+            print("✅ Step 4: Submitted bank transfer donation")
             
             # ===== STEP 5: VERIFY PENDING EMAIL =====
             print("⏳ Step 5: Waiting for PENDING email...")

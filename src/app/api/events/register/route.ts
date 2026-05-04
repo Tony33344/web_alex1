@@ -5,6 +5,7 @@ import { createCheckoutSession, createDynamicCheckoutSession, createOrRetrieveCu
 import { EmailTemplates, prepareEmail } from '@/lib/email/templates';
 import { sendEmail } from '@/lib/email/transporter';
 import { formatDateRangeWithTime } from '@/lib/utils/dates';
+import { getActivePricing } from '@/lib/utils/pricing';
 
 export async function POST(request: Request) {
   try {
@@ -33,13 +34,18 @@ export async function POST(request: Request) {
 
     const { data: event } = await adminSupabase
       .from('events')
-      .select('id, title_en, max_attendees, current_attendees, price, currency, stripe_price_id, start_date, is_online, location')
+      .select('id, title_en, max_attendees, current_attendees, price, currency, stripe_price_id, early_bird_price, early_bird_deadline, early_bird_stripe_price_id, start_date, is_online, location')
       .eq('id', eventId)
       .single();
 
     if (!event) {
       return NextResponse.json({ error: 'Event not found' }, { status: 404 });
     }
+
+    // Get active pricing (early bird if applicable)
+    const pricing = getActivePricing(event);
+    const activePrice = pricing.activePrice;
+    const activeStripePriceId = pricing.activeStripePriceId;
 
     // Check for existing ACTIVE registration (cancelled ones allow re-registration)
     const { data: existing } = await adminSupabase
@@ -141,6 +147,16 @@ export async function POST(request: Request) {
 
     // Bank transfer — send pending email and return reference
     if (method === 'bank_transfer') {
+      // Store the active price in the registration
+      const { error: updateError } = await adminSupabase
+        .from('event_registrations')
+        .update({ price_paid: activePrice })
+        .eq('event_id', eventId)
+        .eq('user_id', user.id);
+      if (updateError) {
+        console.error('Failed to update price_paid:', updateError);
+      }
+
       // Send pending payment email
       try {
         const { data: profile } = await adminSupabase
@@ -162,7 +178,7 @@ export async function POST(request: Request) {
             event_date: event.start_date ? new Date(event.start_date).toLocaleDateString(locale, { dateStyle: 'long' }) : 'TBA',
             event_time: event.start_date ? new Date(event.start_date).toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit', hour12: false }) : 'TBA',
             event_location: event.is_online ? 'Online' : (event.location || 'TBA'),
-            payment_amount: event.price ? `${event.currency || 'CHF'} ${event.price}` : 'TBA',
+            payment_amount: activePrice ? `${event.currency || 'CHF'} ${activePrice}` : 'TBA',
             bank_reference: bankRef || 'N/A',
             event_url: eventUrl,
           },
@@ -205,11 +221,11 @@ export async function POST(request: Request) {
       const cancelUrl = `${appUrl}/${locale}/events?payment=cancelled`;
 
       let session;
-      if (event.stripe_price_id) {
-        // Use pre-created Stripe Price
+      if (activeStripePriceId) {
+        // Use active Stripe price (early bird if applicable)
         session = await createCheckoutSession({
           customerId,
-          priceId: event.stripe_price_id,
+          priceId: activeStripePriceId,
           mode: 'payment',
           successUrl,
           cancelUrl,

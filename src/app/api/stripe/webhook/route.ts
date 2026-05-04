@@ -152,6 +152,7 @@ export async function POST(request: Request) {
         if (existingReg?.payment_status === 'paid') {
           console.log(`🎫 Event registration already paid, skipping update: eventId=${eventId}, userId=${userId}`);
         } else {
+          const amount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';
           const { error: updateError } = await supabase
             .from('event_registrations')
             .update({
@@ -159,6 +160,7 @@ export async function POST(request: Request) {
               status: 'confirmed',
               stripe_payment_intent_id: session.payment_intent as string || null,
               confirmed_at: new Date().toISOString(),
+              price_paid: parseFloat(amount),
             })
             .eq('event_id', eventId)
             .eq('user_id', userId);
@@ -171,13 +173,14 @@ export async function POST(request: Request) {
         // Always attempt to send confirmation email (even if already paid, email might have failed before)
         const { data: eventData } = await supabase
           .from('events')
-          .select('title_en, start_date, location')
+          .select('title_en, start_date, location, currency')
           .eq('id', eventId)
           .single();
         
         if (eventData) {
           const amount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';
           const orderId = session.id.slice(-8).toUpperCase();
+          const currency = eventData.currency || 'CHF';
           await sendConfirmationEmail(
             EmailTemplates.EVENT_REGISTRATION,
             userId,
@@ -192,7 +195,7 @@ export async function POST(request: Request) {
               }),
               event_location: eventData.location || 'TBD',
               order_id: orderId,
-              payment_amount: `CHF ${amount}`,
+              payment_amount: `${currency} ${amount}`,
             }
           );
         } else {
@@ -202,11 +205,13 @@ export async function POST(request: Request) {
 
       // One-time program payment
       if (type === 'program' && userId && programId) {
+        const amount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';
         await supabase
           .from('program_enrollments')
           .update({
             payment_status: 'paid',
             status: 'confirmed',
+            price_paid: parseFloat(amount),
             stripe_payment_intent_id: session.payment_intent as string || null,
             confirmed_at: new Date().toISOString(),
           })
@@ -216,13 +221,14 @@ export async function POST(request: Request) {
         // Get program details and send confirmation email
         const { data: programData } = await supabase
           .from('programs')
-          .select('name_en, start_date, duration, location, max_participants')
+          .select('name_en, start_date, duration, location, max_participants, currency')
           .eq('id', programId)
           .single();
         
         if (programData) {
           const amount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';
           const orderId = session.id.slice(-8).toUpperCase();
+          const currency = programData.currency || 'CHF';
           await sendConfirmationEmail(
             EmailTemplates.COACH_TRAINING_REGISTRATION,
             userId,
@@ -239,7 +245,7 @@ export async function POST(request: Request) {
               location: programData.location || 'TBD',
               max_participants: programData.max_participants?.toString() || 'TBD',
               order_id: orderId,
-              payment_amount: `CHF ${amount}`,
+              payment_amount: `${currency} ${amount}`,
               program_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/coach-training/${programId}`,
             }
           );

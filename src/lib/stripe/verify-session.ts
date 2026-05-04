@@ -94,9 +94,10 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
       const eventId = session.metadata?.event_id;
       console.log('verifyAndActivateSession: Processing event payment', { eventId, effectiveUserId });
       if (eventId) {
+        const amount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';
         const { error: updateError } = await admin
           .from('event_registrations')
-          .update({ payment_status: 'paid', status: 'confirmed', confirmed_at: new Date().toISOString() })
+          .update({ payment_status: 'paid', status: 'confirmed', confirmed_at: new Date().toISOString(), price_paid: parseFloat(amount) })
           .eq('event_id', eventId)
           .eq('user_id', effectiveUserId);
         
@@ -109,7 +110,7 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
         // Get event details for email
         const { data: event } = await admin
           .from('events')
-          .select('title_en, title_de, start_date, location, is_online')
+          .select('title_en, title_de, start_date, location, is_online, currency')
           .eq('id', eventId)
           .single();
 
@@ -118,7 +119,7 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
         // Send event confirmation email
         if (profile?.email && event) {
           try {
-            const amount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';
+            const currency = event.currency || 'CHF';
             const { html } = prepareEmail({
               to: profile.email,
               template: EmailTemplates.EVENT_REGISTRATION,
@@ -130,7 +131,7 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
                 event_time: new Date(event.start_date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' }),
                 event_location: event.is_online ? 'Online' : event.location || 'TBA',
                 order_id: session.id,
-                payment_amount: `CHF ${amount}`,
+                payment_amount: `${currency} ${amount}`,
               },
             });
             await sendEmail({ to: profile.email, subject: 'Event Registration Confirmed - Infinity Role Teachers', html });
@@ -151,12 +152,13 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
       const programId = session.metadata?.program_id;
       console.log('verifyAndActivateSession: Processing program payment', { programId, effectiveUserId });
       if (programId) {
+        const amount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';
         const { error: updateError } = await admin
           .from('program_enrollments')
-          .update({ payment_status: 'paid', status: 'confirmed', confirmed_at: new Date().toISOString() })
+          .update({ payment_status: 'paid', status: 'confirmed', confirmed_at: new Date().toISOString(), price_paid: parseFloat(amount) })
           .eq('program_id', programId)
           .eq('user_id', effectiveUserId);
-        
+
         if (updateError) {
           console.error('verifyAndActivateSession: Failed to update program enrollment:', updateError);
         } else {
@@ -166,7 +168,7 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
         // Get program details for email
         const { data: program } = await admin
           .from('programs')
-          .select('name_en, name_de, duration, start_date, location, max_participants')
+          .select('name_en, duration, location, max_participants, currency')
           .eq('id', programId)
           .single();
 
@@ -175,21 +177,21 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
         // Send program confirmation email
         if (profile?.email && program) {
           try {
-            const amount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';
+            const currency = program.currency || 'CHF';
             const { html } = prepareEmail({
               to: profile.email,
               template: EmailTemplates.COACH_TRAINING_REGISTRATION,
-              subject: 'Coach Training Enrollment Confirmed - Infinity Role Teachers',
+              subject: 'Program Enrollment Confirmed - Infinity Role Teachers',
               variables: {
                 user_name: profile.full_name || 'Valued Member',
-                program_name: program.name_en || program.name_de || 'Program',
-                start_date: program.start_date ? new Date(program.start_date).toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) : 'TBA',
-                program_time: program.start_date ? new Date(program.start_date).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }) : 'TBA',
+                program_name: program.name_en || 'Program',
+                start_date: 'See program details',
+                program_time: 'See program details',
                 program_duration: program.duration || 'TBA',
                 location: program.location || 'TBA',
                 max_participants: program.max_participants?.toString() || 'TBA',
                 order_id: session.id,
-                payment_amount: `CHF ${amount}`,
+                payment_amount: `${currency} ${amount}`,
                 program_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/coach-training/${programId}`,
               },
             });

@@ -171,7 +171,7 @@ export async function POST(request: Request) {
         // Always attempt to send confirmation email (even if already paid, email might have failed before)
         const { data: eventData } = await supabase
           .from('events')
-          .select('title, start_date, location')
+          .select('title_en, start_date, location')
           .eq('id', eventId)
           .single();
         
@@ -181,9 +181,9 @@ export async function POST(request: Request) {
           await sendConfirmationEmail(
             EmailTemplates.EVENT_REGISTRATION,
             userId,
-            `Registration Confirmed: ${eventData.title}`,
+            `Registration Confirmed: ${eventData.title_en}`,
             {
-              event_title: eventData.title,
+              event_title: eventData.title_en,
               event_date: new Date(eventData.start_date).toLocaleDateString('en-US', { 
                 weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
               }),

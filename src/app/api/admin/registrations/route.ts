@@ -106,7 +106,7 @@ export async function PATCH(request: Request) {
       if (table === 'event_registrations') {
         const { data: reg } = await admin
           .from('event_registrations')
-          .select('user_id, event:events(id, title_en, start_date, is_online, location)')
+          .select('user_id, event:events(id, title_en, start_date, is_online, location, price, currency)')
           .eq('id', id)
           .single();
         if (reg) {
@@ -118,7 +118,7 @@ export async function PATCH(request: Request) {
           const { data: { user: regUser } } = await admin.auth.admin.getUserById(reg.user_id);
           const recipientEmail = userProfile?.email || regUser?.email;
           // event is returned as relation - typed as any due to Supabase relation typing
-          const event = reg.event as unknown as { id: string; title_en: string; start_date: string; is_online: boolean; location: string | null } | null;
+          const event = reg.event as unknown as { id: string; title_en: string; start_date: string; is_online: boolean; location: string | null; price: number | null; currency: string | null } | null;
           if (recipientEmail && event) {
             const userName = userProfile?.full_name || recipientEmail.split('@')[0] || 'there';
             const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
@@ -136,6 +136,7 @@ export async function PATCH(request: Request) {
                 event_url: eventUrl,
                 calendar_url: eventUrl,
                 order_id: `EVT-${id.substring(0, 8).toUpperCase()}`,
+                payment_amount: event.price ? `${event.currency || 'CHF'} ${event.price}` : 'TBA',
               },
             });
             await sendEmail({ to: recipientEmail, subject: emailContent.subject, html: emailContent.html });

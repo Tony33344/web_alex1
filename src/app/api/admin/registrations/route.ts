@@ -104,11 +104,14 @@ export async function PATCH(request: Request) {
   if (data?.payment_status === 'paid') {
     try {
       if (table === 'event_registrations') {
-        const { data: reg } = await admin
+        const { data: reg, error: regError } = await admin
           .from('event_registrations')
-          .select('user_id, price_paid, event:events(id, title_en, start_date, is_online, location, price, currency)')
+          .select('user_id, event:events(id, title_en, slug, start_date, is_online, location, price, currency)')
           .eq('id', id)
           .single();
+        if (regError) {
+          console.error('Event registration query error:', regError.message);
+        }
         if (reg) {
           const { data: userProfile } = await admin
             .from('profiles')
@@ -118,13 +121,13 @@ export async function PATCH(request: Request) {
           const { data: { user: regUser } } = await admin.auth.admin.getUserById(reg.user_id);
           const recipientEmail = userProfile?.email || regUser?.email;
           // event is returned as relation - typed as any due to Supabase relation typing
-          const event = reg.event as unknown as { id: string; title_en: string; start_date: string; is_online: boolean; location: string | null; price: number | null; currency: string | null } | null;
-          // Use price_paid if available (actual amount paid), otherwise fall back to regular price
-          const actualPrice = reg.price_paid !== null ? reg.price_paid : event?.price;
+          const event = reg.event as unknown as { id: string; slug: string; title_en: string; start_date: string; is_online: boolean; location: string | null; price: number | null; currency: string | null } | null;
+          const actualPrice = event?.price;
+          console.log('Event confirmation email:', { recipientEmail, eventTitle: event?.title_en, hasEvent: !!event });
           if (recipientEmail && event) {
             const userName = userProfile?.full_name || recipientEmail.split('@')[0] || 'there';
             const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-            const eventUrl = `${appUrl}/en/events/${event.id}`;
+            const eventUrl = `${appUrl}/en/events/${event.slug}`;
             const emailContent = prepareEmail({
               to: recipientEmail,
               subject: 'Event Registration Confirmed',

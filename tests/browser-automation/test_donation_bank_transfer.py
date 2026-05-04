@@ -10,7 +10,7 @@ Step 7: Verify CONFIRMED email arrives
 """
 from playwright.sync_api import sync_playwright
 from mailhog_client import wait_for_email, clear_all_emails
-from admin_helper import admin_sign_in, confirm_donation, get_user_id_by_email
+from admin_helper import admin_sign_in, confirm_donation, get_user_id_by_email, get_donation_id_for_user
 import random
 import string
 
@@ -158,23 +158,22 @@ def test_donation_bank_transfer():
                 browser.close()
                 return False
             
-            # Get user ID and find donation
-            # Note: admin_helper needs to query donations table
-            # For now, we'll need to get the donation ID via API
-            user_id = get_user_id_by_email(admin_page, test_email)
-            if not user_id:
-                print("❌ Step 6: Could not find user ID")
+            # Get donation ID for this user
+            donation_id = get_donation_id_for_user(admin_page, test_email)
+            if not donation_id:
+                print("❌ Step 6: Could not find donation ID")
                 admin_context.close()
                 browser.close()
                 return False
             
-            # TODO: Get donation ID from donations API endpoint
-            # For now, we assume it exists and try to confirm
-            # This requires adding a donations endpoint to admin_helper
-            print(f"   User ID: {user_id} - need donation ID to confirm")
-            print("   Note: Donation confirm endpoint exists at /api/admin/donations/confirm")
+            # Confirm the donation
+            if not confirm_donation(admin_page, donation_id):
+                print("❌ Step 6: Failed to confirm donation")
+                admin_context.close()
+                browser.close()
+                return False
             
-            print("✅ Step 6: Skipped donation confirm (needs donation ID retrieval)")
+            print("✅ Step 6: Admin confirmed donation")
             admin_context.close()
             
             # ===== STEP 7: VERIFY CONFIRMED EMAIL =====

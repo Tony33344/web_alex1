@@ -73,8 +73,9 @@ def test_program_bank_transfer():
             page.screenshot(path=f"{SCREENSHOT_DIR}/02_program_signed_in.png")
             
             # ===== STEP 3: NAVIGATE TO PROGRAMS =====
-            page.goto(f"{BASE_URL}/en/coach-training")
-            page.wait_for_load_state("networkidle")
+            page.goto(f"{BASE_URL}/en/coach-training", timeout=60000)
+            page.wait_for_load_state("domcontentloaded")
+            page.wait_for_timeout(3000)
             print("✅ Step 3: Navigated to programs page")
             page.screenshot(path=f"{SCREENSHOT_DIR}/03_programs_list.png")
             

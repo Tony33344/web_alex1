@@ -8,8 +8,10 @@ Step 5: Verify confirmation email (requires webhook)
 """
 from playwright.sync_api import sync_playwright
 from mailhog_client import wait_for_email, clear_all_emails
+from stripe_helper import fill_stripe_checkout
 import random
 import string
+import re
 
 def generate_test_email():
     random_str = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
@@ -60,91 +62,67 @@ def test_donation_stripe():
             print(f"✅ Step 2: Signed in with {test_email}")
             
             # ===== STEP 3: NAVIGATE TO DONATE PAGE =====
-            page.goto(f"{BASE_URL}/donate")
+            page.goto(f"{BASE_URL}/en/about/donate")
             page.wait_for_load_state("networkidle")
             print("✅ Step 3: Navigated to donate page")
             
+            # Wait for "Donate" button to render
+            page.wait_for_selector('button:has-text("Donate")', timeout=15000)
+            print("✅ Step 3: Donate button is visible")
+            
             # ===== STEP 4: ENTER AMOUNT AND PAY WITH STRIPE =====
             # Fill donation amount
-            amount_input = page.locator("input[name='amount'], input[placeholder*='amount' i]").first
+            amount_input = page.locator("input[name='amount'], input[type='number']").first
             if amount_input.is_visible():
                 amount_input.fill("100")
                 print("✅ Step 4: Entered donation amount: CHF 100")
             else:
-                inputs = page.query_selector_all("input[type='number']")
-                if inputs:
-                    inputs[0].fill("100")
-                    print("✅ Step 4: Entered donation amount")
-            
-            # Select Stripe/Credit Card
-            page.evaluate("""() => {
-                const buttons = document.querySelectorAll('button');
-                for (const btn of buttons) {
-                    if (btn.textContent.includes('Credit Card') || btn.textContent.includes('Stripe') || 
-                        btn.textContent.includes('Card')) {
-                        btn.click();
-                        return true;
-                    }
-                }
-                return false;
-            }""")
-            page.wait_for_timeout(500)
-            print("✅ Step 4: Selected Credit Card payment")
-            
-            # Submit
-            submit_btn = page.get_by_role("button", name="Donate").first
-            if not submit_btn or not submit_btn.is_visible():
-                submit_btn = page.locator("button[type='submit']").first
-            
-            if submit_btn and submit_btn.is_visible():
-                submit_btn.click()
-                page.wait_for_load_state("networkidle")
-                page.wait_for_timeout(5000)
-                print("✅ Step 4: Proceeded to Stripe checkout")
-            else:
-                print("❌ Step 4: No submit button found")
+                print("❌ Step 4: Amount input not found")
                 browser.close()
                 return False
             
-            # Fill Stripe test card
+            # Click "Donate" button to open checkout dialog
+            donate_btn = page.get_by_role("button", name="Donate").first
+            if not donate_btn.is_visible():
+                print("❌ Step 4: Donate button not found")
+                browser.close()
+                return False
+            donate_btn.click()
+            print("✅ Step 4: Clicked Donate button - waiting for dialog")
+            
+            # Hard-assert dialog opened
             try:
-                page.wait_for_timeout(5000)
-                print("   Filling Stripe test card details...")
-                
-                email_input = page.locator("input[name='email']").first
-                if email_input.is_visible():
-                    email_input.fill(test_email)
-                
-                card_iframe = page.locator("iframe[title*='card number' i]").first
-                if card_iframe.is_visible():
-                    card_frame = card_iframe.content_frame()
-                    if card_frame:
-                        card_frame.locator("input[name='cardnumber']").fill("4242424242424242")
-                        print("✅ Step 4b: Filled card number")
-                
-                expiry_iframe = page.locator("iframe[title*='expiration' i]").first
-                if expiry_iframe.is_visible():
-                    expiry_frame = expiry_iframe.content_frame()
-                    if expiry_frame:
-                        expiry_frame.locator("input[name='exp-date']").fill("12/34")
-                        print("✅ Step 4b: Filled expiry")
-                
-                cvc_iframe = page.locator("iframe[title*='CVC' i]").first
-                if cvc_iframe.is_visible():
-                    cvc_frame = cvc_iframe.content_frame()
-                    if cvc_frame:
-                        cvc_frame.locator("input[name='cvc']").fill("123")
-                        print("✅ Step 4b: Filled CVC")
-                
-                name_input = page.locator("input[name='billingName']").first
-                if name_input.is_visible():
-                    name_input.fill("Test User")
-                
-                page.locator("button[type='submit']").click()
+                page.wait_for_selector('text=Choose payment method', timeout=10000)
+                print("✅ Step 4: Checkout dialog opened")
+            except Exception:
+                print("❌ Step 4: Checkout dialog did not open")
+                browser.close()
+                return False
+            
+            # Select "Card Payment" in dialog
+            card_btn = page.locator('button:has-text("Card Payment")').first
+            card_btn.click()
+            try:
+                page.wait_for_selector('button:has-text("Pay")', timeout=5000)
+            except Exception:
+                print("❌ Step 4: Card Payment click did not show Pay button")
+                browser.close()
+                return False
+            print("✅ Step 4: Selected Card Payment")
+            
+            # Click "Pay" submit button
+            submit_btn = page.locator('button:has-text("Pay")').first
+            submit_btn.click()
+            page.wait_for_load_state("networkidle")
+            page.wait_for_timeout(5000)
+            print("✅ Step 4: Proceeded to Stripe checkout")
+            
+            # Fill Stripe test card details using helper
+            try:
+                fill_stripe_checkout(page, test_email, "Test User")
                 page.wait_for_load_state("networkidle")
                 page.wait_for_timeout(5000)
                 print("✅ Step 4b: Submitted Stripe payment")
-                
             except Exception as stripe_error:
                 print(f"⚠️ Stripe checkout: {stripe_error}")
             

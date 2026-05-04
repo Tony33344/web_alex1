@@ -198,3 +198,32 @@ def get_user_id_by_email(page, email: str):
     except Exception as e:
         print(f"❌ Error getting user ID: {e}")
         return None
+
+
+def get_donation_id_for_user(page, user_email: str):
+    """
+    Use admin API to find the latest donation ID for a user by email.
+    Returns the donation ID or None.
+    """
+    try:
+        # Call admin donations API (if it exists)
+        response = page.context.request.get(f"{BASE_URL}/api/admin/donations")
+        if response.status == 200:
+            data = response.json()
+            if isinstance(data, list):
+                for record in sorted(data, key=lambda x: x.get('created_at', ''), reverse=True):
+                    if record.get('user', {}).get('email') == user_email or record.get('email') == user_email:
+                        return record.get('id')
+        # Fallback: check registrations API for donations (if included)
+        response = page.context.request.get(f"{BASE_URL}/api/admin/registrations")
+        if response.status == 200:
+            data = response.json()
+            # Check if donations are in the response
+            if 'donations' in data:
+                for record in sorted(data['donations'], key=lambda x: x.get('created_at', ''), reverse=True):
+                    if record.get('profile', {}).get('email') == user_email:
+                        return record.get('id')
+        return None
+    except Exception as e:
+        print(f"❌ Error fetching donation ID: {e}")
+        return None

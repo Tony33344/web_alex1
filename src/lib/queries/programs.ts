@@ -24,7 +24,7 @@ export async function getProgram(slug: string): Promise<Program | null> {
     .select('*')
     .eq('slug', slug)
     .eq('is_active', true)
-    .single();
+    .maybeSingle();
 
   if (error) {
     console.error('getProgram error:', error.message);

@@ -18,8 +18,12 @@ def generate_test_email():
     random_str = ''.join(random.choices(string.ascii_lowercase + string.digits, k=8))
     return f"test{random_str}@example.com"
 
+import os
+
 BASE_URL = "http://localhost:3000"
 TEST_PASSWORD = "TestPassword123!"
+SCREENSHOT_DIR = "/tmp/test_screenshots"
+os.makedirs(SCREENSHOT_DIR, exist_ok=True)
 
 def test_program_bank_transfer():
     clear_all_emails()
@@ -66,11 +70,13 @@ def test_program_bank_transfer():
                 browser.close()
                 return False
             print(f"✅ Step 2: Signed in with {test_email}")
+            page.screenshot(path=f"{SCREENSHOT_DIR}/02_program_signed_in.png")
             
             # ===== STEP 3: NAVIGATE TO PROGRAMS =====
             page.goto(f"{BASE_URL}/en/coach-training")
             page.wait_for_load_state("networkidle")
             print("✅ Step 3: Navigated to programs page")
+            page.screenshot(path=f"{SCREENSHOT_DIR}/03_programs_list.png")
             
             # Find program links
             program_links = page.locator("a[href*='/coach-training/']").all()
@@ -85,6 +91,7 @@ def test_program_bank_transfer():
             program_links[0].click()
             page.wait_for_load_state("networkidle")
             print("✅ Step 3: Clicked on first program")
+            page.screenshot(path=f"{SCREENSHOT_DIR}/03_program_detail.png")
             
             # Wait for "Enroll Now" button to render (client component in sticky sidebar)
             page.wait_for_selector('button:has-text("Enroll Now")', timeout=15000)
@@ -103,6 +110,7 @@ def test_program_bank_transfer():
                 browser.close()
                 return False
             print("✅ Step 4: Checkout dialog opened")
+            page.screenshot(path=f"{SCREENSHOT_DIR}/04_dialog_open.png")
             # Select Bank Transfer
             bank_btn = page.locator('button:has-text("Bank Transfer")').first
             bank_btn.click()
@@ -115,6 +123,7 @@ def test_program_bank_transfer():
                 browser.close()
                 return False
             print("✅ Step 4: Selected Bank Transfer")
+            page.screenshot(path=f"{SCREENSHOT_DIR}/04_bank_selected.png")
             # Click "Get Transfer Details"
             submit_btn = page.locator('button:has-text("Get Transfer Details")').first
             submit_btn.click()
@@ -130,6 +139,7 @@ def test_program_bank_transfer():
                 print(f"   Visible buttons: {[b.text_content().strip()[:40] for b in all_btns]}")
                 browser.close()
                 return False
+            page.screenshot(path=f"{SCREENSHOT_DIR}/05_after_submit.png")
             print("✅ Step 4: Submitted bank transfer enrollment")
             
             # ===== STEP 5: VERIFY PENDING EMAIL =====

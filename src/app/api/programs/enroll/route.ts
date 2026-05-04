@@ -27,7 +27,7 @@ export async function POST(request: Request) {
       .from('programs')
       .select('id, name_en, price, currency, stripe_price_id, slug, start_date, duration, location')
       .eq('slug', programSlug)
-      .single();
+      .maybeSingle();
 
     if (programError || !program) {
       console.error('Program lookup failed:', programError?.message);

@@ -39,6 +39,7 @@ export default function NewProgramPage() {
         slug, name_en: fd.get('name_en'), name_de: fd.get('name_de') || null,
         description_en: fd.get('description_en') || null,
         duration: fd.get('duration') || null,
+        location: fd.get('location') || null,
         start_date: startStr || null,
         end_date: endStr || null,
         price: parseFloat(fd.get('price') as string) || null,
@@ -87,6 +88,10 @@ export default function NewProgramPage() {
               <div className="space-y-2">
                 <Label htmlFor="duration">Duration</Label>
                 <Textarea id="duration" name="duration" rows={3} placeholder="e.g. 6 months&#10;2 days, 11. & 12. July" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="location">Location</Label>
+                <Input id="location" name="location" placeholder="e.g. Zurich, Switzerland" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="start_date">Start Date</Label>

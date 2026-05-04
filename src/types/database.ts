@@ -187,6 +187,7 @@ export interface Program {
   duration: string | null;
   start_date: string | null;
   end_date: string | null;
+  location: string | null;
   price: number | null;
   early_bird_price: number | null;
   early_bird_deadline: string | null;

@@ -5,20 +5,25 @@ import { createCheckoutSession, createDynamicCheckoutSession, createOrRetrieveCu
 import { EmailTemplates, prepareEmail } from '@/lib/email/templates';
 import { sendEmail } from '@/lib/email/transporter';
 
-// Force redeploy - v2
+// Force redeploy - v3
 export async function POST(request: Request) {
+  console.log('Program enroll API called');
   try {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
+      console.log('Unauthorized - no user');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { programSlug, paymentMethod, locale = 'en' } = await request.json();
+    const { programId, paymentMethod, locale = 'en' } = await request.json();
 
-    if (!programSlug) {
-      return NextResponse.json({ error: 'Missing programSlug' }, { status: 400 });
+    console.log('Program enrollment request:', { programId, paymentMethod, locale, userId: user.id });
+
+    if (!programId) {
+      console.log('Missing programId');
+      return NextResponse.json({ error: 'Missing programId' }, { status: 400 });
     }
 
     const adminSupabase = createAdminClient();
@@ -26,7 +31,8 @@ export async function POST(request: Request) {
     const { data: program, error: programError } = await adminSupabase
       .from('programs')
       .select('id, name_en, price, currency, stripe_price_id, slug, start_date, duration, location')
-      .eq('slug', programSlug)
+      .eq('id', programId)
+      .eq('is_active', true)
       .maybeSingle();
 
     if (programError || !program) {
@@ -90,7 +96,7 @@ export async function POST(request: Request) {
           .single();
 
         const userName = profile?.full_name || user.email?.split('@')[0] || 'there';
-        const programUrl = `${appUrl}/${locale}/coach-training/${programSlug}`;
+        const programUrl = `${appUrl}/${locale}/coach-training/${program.slug}`;
         const orderId = `FREE-${Date.now().toString(36).toUpperCase()}`;
         
         const emailContent = prepareEmail({
@@ -134,7 +140,7 @@ export async function POST(request: Request) {
           .single();
 
         const userName = profile?.full_name || user.email?.split('@')[0] || 'there';
-        const programUrl = `${appUrl}/${locale}/coach-training/${programSlug}`;
+        const programUrl = `${appUrl}/${locale}/coach-training/${program.slug}`;
         
         const emailContent = prepareEmail({
           to: user.email!,
@@ -187,7 +193,7 @@ export async function POST(request: Request) {
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
     const stripeMetadata = { user_id: user.id, program_id: program.id, type: 'program' };
     const successUrl = `${appUrl}/${locale}/coach-training?payment=success&session_id={CHECKOUT_SESSION_ID}`;
-    const cancelUrl = `${appUrl}/${locale}/coach-training/${programSlug}?payment=cancelled`;
+    const cancelUrl = `${appUrl}/${locale}/coach-training/${program.slug}?payment=cancelled`;
 
     let session;
     if (program.stripe_price_id) {

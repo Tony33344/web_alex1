@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { ArrowLeft, Clock, Users, Award, Check, Calendar } from 'lucide-react';
+import { ArrowLeft, Clock, Users, Award, Check, Calendar, MapPin } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
@@ -96,6 +96,9 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
                     <div className="flex items-center gap-3"><Calendar className="h-4 w-4 text-primary" />{formatDateRangeWithTime(program.start_date, end, locale)}</div>
                   );
                 })()}
+                {program.location && (
+                  <div className="flex items-center gap-3"><MapPin className="h-4 w-4 text-primary" />{program.location}</div>
+                )}
                 {program.duration && (
                   <div className="flex items-start gap-3"><Clock className="mt-0.5 h-4 w-4 shrink-0 text-primary" /><span className="whitespace-pre-line">{program.duration}</span></div>
                 )}
@@ -104,7 +107,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
                 )}
                 <div className="flex items-center gap-3"><Award className="h-4 w-4 text-primary" />Certificate included</div>
               </div>
-              <EnrollButtonClient locale={locale} programSlug={slug} label={t('common.enrollNow')} stripepriceId={program.stripe_price_id} price={program.price} currency={program.currency} programName={name} />
+              <EnrollButtonClient locale={locale} programId={program.id} label={t('common.enrollNow')} stripepriceId={program.stripe_price_id} price={program.price} currency={program.currency} programName={name} />
               <p className="text-xs text-center text-muted-foreground">Secure your spot — limited availability</p>
             </CardContent>
           </Card>

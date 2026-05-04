@@ -9,7 +9,7 @@ import { CheckoutDialog } from '@/components/checkout/CheckoutDialog';
 
 interface EnrollButtonProps {
   locale: string;
-  programSlug: string;
+  programId: string;
   label: string;
   stripepriceId?: string | null;
   price?: number | null;
@@ -18,7 +18,7 @@ interface EnrollButtonProps {
   autoOpenCheckout?: boolean;
 }
 
-export function EnrollButton({ locale, programSlug, label, price, currency, programName, autoOpenCheckout = false }: EnrollButtonProps) {
+export function EnrollButton({ locale, programId, label, price, currency, programName, autoOpenCheckout = false }: EnrollButtonProps) {
   const router = useRouter();
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
@@ -31,7 +31,7 @@ export function EnrollButton({ locale, programSlug, label, price, currency, prog
 
   async function handleClick() {
     if (!user) {
-      router.push(`/${locale}/login?redirect=/${locale}/coach-training/${programSlug}&intent=register`);
+      router.push(`/${locale}/login?redirect=/${locale}/coach-training&intent=register`);
       return;
     }
 
@@ -48,7 +48,7 @@ export function EnrollButton({ locale, programSlug, label, price, currency, prog
       const res = await fetch('/api/programs/enroll', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ programSlug }),
+        body: JSON.stringify({ programId }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error || 'Enrollment failed'); setLoading(false); return; }
@@ -64,7 +64,7 @@ export function EnrollButton({ locale, programSlug, label, price, currency, prog
       const res = await fetch('/api/programs/enroll', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ programSlug, paymentMethod, locale }),
+        body: JSON.stringify({ programId, paymentMethod, locale }),
       });
       const data = await res.json();
       if (!res.ok) {

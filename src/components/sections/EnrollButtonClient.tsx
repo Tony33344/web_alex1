@@ -6,7 +6,7 @@ import { EnrollButton } from './EnrollButton';
 
 interface EnrollButtonClientProps {
   locale: string;
-  programSlug: string;
+  programId: string;
   label: string;
   stripepriceId?: string | null;
   price?: number | null;
@@ -14,7 +14,7 @@ interface EnrollButtonClientProps {
   programName?: string;
 }
 
-export function EnrollButtonClient({ locale, programSlug, label, stripepriceId, price, currency, programName }: EnrollButtonClientProps) {
+export function EnrollButtonClient({ locale, programId, label, stripepriceId, price, currency, programName }: EnrollButtonClientProps) {
   const searchParams = useSearchParams();
   const intent = searchParams.get('intent');
   const [autoOpenCheckout, setAutoOpenCheckout] = useState(false);
@@ -29,5 +29,5 @@ export function EnrollButtonClient({ locale, programSlug, label, stripepriceId, 
     }
   }, [intent, price]);
 
-  return <EnrollButton locale={locale} programSlug={programSlug} label={label} stripepriceId={stripepriceId} price={price} currency={currency} programName={programName} autoOpenCheckout={autoOpenCheckout} />;
+  return <EnrollButton locale={locale} programId={programId} label={label} stripepriceId={stripepriceId} price={price} currency={currency} programName={programName} autoOpenCheckout={autoOpenCheckout} />;
 }

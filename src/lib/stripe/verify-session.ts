@@ -3,6 +3,14 @@ import { stripe } from '@/lib/stripe/client';
 import { sendEmail } from '@/lib/email/transporter';
 import { prepareEmail, EmailTemplates } from '@/lib/email/templates';
 
+function isUuid(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+}
+
+function generateSlug(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
 /**
  * Verifies a Stripe Checkout Session and activates the matching record.
  * Idempotent — safe to call multiple times.
@@ -168,7 +176,7 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
         // Get program details for email
         const { data: program } = await admin
           .from('programs')
-          .select('name_en, duration, location, max_participants, currency')
+          .select('name_en, slug, duration, location, max_participants, currency')
           .eq('id', programId)
           .single();
 
@@ -192,7 +200,7 @@ export async function verifyAndActivateSession(sessionId: string, userId: string
                 max_participants: program.max_participants?.toString() || 'TBA',
                 order_id: session.id,
                 payment_amount: `${currency} ${amount}`,
-                program_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/coach-training/${programId}`,
+                program_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/coach-training/${program.slug && !isUuid(program.slug) ? program.slug : generateSlug(program.name_en)}`,
               },
             });
             await sendEmail({ to: profile.email, subject: 'Coach Training Enrollment Confirmed - Infinity Role Teachers', html });

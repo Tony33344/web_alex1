@@ -41,6 +41,7 @@ export const EmailTemplates = {
   MEMBERSHIP_CONFIRMATION: 'membership-confirmation',
   MEMBERSHIP_PENDING: 'membership-pending',
   DONATION_CONFIRMATION: 'donation-confirmation',
+  DONATION_PENDING: 'donation-pending',
   PASSWORD_RESET: 'password-reset',
   SUPABASE_VERIFICATION: 'supabase-verification',
   WELCOME: 'welcome',

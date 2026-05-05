@@ -30,19 +30,22 @@ const colorPalette = [
   { bg: 'from-lime-500/80 to-green-700/80',      icon: 'bg-lime-100 text-lime-700',        accent: 'text-lime-300' },
 ];
 
-export default async function HomePage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ code?: string; type?: string }> }) {
+export default async function HomePage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ code?: string; type?: string; redirect_type?: string }> }) {
   const { locale } = await params;
-  const { code, type } = await searchParams;
+  const { code, type, redirect_type: redirectType } = await searchParams;
   const t = await getTranslations();
 
-  // Handle password reset code from Supabase
-  if (code && type === 'recovery') {
+  // Handle password reset code from Supabase (fallback when redirectTo is not used)
+  if (code && (type === 'recovery' || redirectType === 'recovery')) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
       // Successfully exchanged, redirect to reset-password
       redirect(`/${locale}/reset-password`);
     }
+    // Log error and redirect to login with error message
+    console.error('Root page recovery code exchange failed:', error.message);
+    redirect(`/${locale}/login?error=recovery_failed&message=${encodeURIComponent(error.message)}`);
   }
 
   const [teachers, programs, { posts }, testimonials, featuredEvent, { events: upcomingEvents }, healthCategories, missionPage, visionPage, homePage, healthPage, roleTeachersPage, coachTrainingPage, blogPage, membershipPage, contactPage, settings] = await Promise.all([

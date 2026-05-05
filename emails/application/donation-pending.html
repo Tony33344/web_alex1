@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registration Pending - Infinity Role Teachers</title>
+  <title>Donation Pending - Infinity Role Teachers</title>
   <style>
     body {
       margin: 0;
@@ -20,203 +20,189 @@
     }
     .header {
       background: linear-gradient(90deg, #a35dea 0%, #e7b8ea 100%);
-      padding: 15px 40px 12px;
+      padding: 18px 40px 15px;
       text-align: center;
     }
     .logo-wrapper {
       display: inline-block;
-      margin-bottom: 14px;
+      margin-bottom: 16px;
     }
     .logo {
-      width: 60px;
+      width: 65px;
       height: auto;
       display: block;
     }
     .header h1 {
       color: #ffffff;
-      font-size: 15px;
+      font-size: 16px;
       margin: 0;
       font-weight: 400;
-      letter-spacing: 1.5px;
+      letter-spacing: 2px;
       text-transform: uppercase;
       font-family: Georgia, serif;
     }
+    .header-subtitle {
+      color: rgba(255,255,255,0.85);
+      font-size: 11px;
+      margin-top: 8px;
+      font-style: italic;
+    }
     .pending-badge {
       display: inline-block;
-      background-color: rgba(255,255,255,0.2);
+      background-color: rgba(255,193,7,0.3);
       color: #ffffff;
       padding: 6px 15px;
       border-radius: 2px;
       font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 1px;
-      margin-top: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
       font-family: Arial, sans-serif;
+      margin-top: 12px;
     }
     .content {
-      padding: 45px 40px;
-      color: #3d3d3d;
+      padding: 36px 40px 30px;
+      color: #333333;
+      font-size: 14px;
+      line-height: 1.7;
     }
     .greeting {
       font-size: 18px;
-      font-weight: 400;
-      margin-bottom: 20px;
       color: #4C1D95;
-      font-style: italic;
+      margin: 0 0 16px 0;
+      font-weight: 400;
+      font-family: Georgia, serif;
     }
     .message {
-      font-size: 15px;
-      line-height: 1.8;
-      margin-bottom: 35px;
-      color: #5a5a5a;
+      margin: 0 0 20px 0;
+      color: #555555;
     }
-    .event-card {
-      background-color: #FEF3C7;
-      border: 1px solid #FBBF24;
+    .donation-card {
+      background: #FAFAFA;
       border-radius: 4px;
-      padding: 35px;
-      margin: 30px 0;
+      padding: 24px;
+      margin: 24px 0;
+      border: 1px solid #E9E3F6;
     }
-    .event-title {
-      font-size: 22px;
-      font-weight: 400;
+    .donation-card h2 {
+      font-size: 16px;
       color: #4C1D95;
-      margin-bottom: 25px;
-      font-style: italic;
+      margin: 0 0 18px 0;
+      font-weight: 500;
+      font-family: Georgia, serif;
     }
-    .event-detail {
+    .donation-detail {
       display: flex;
-      align-items: flex-start;
-      margin-bottom: 14px;
-      font-size: 14px;
-      color: #666666;
-      font-family: Arial, sans-serif;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #F0EBFA;
+      font-size: 13px;
     }
-    .event-detail-icon {
-      width: 24px;
-      margin-right: 12px;
-      text-align: center;
-      color: #6B46C1;
+    .donation-detail:last-child {
+      border-bottom: none;
+    }
+    .detail-icon {
+      margin-right: 10px;
+      font-size: 16px;
     }
     .detail-label {
       font-weight: 600;
       color: #4C1D95;
-      min-width: 90px;
+      min-width: 100px;
+      font-size: 12px;
+      font-family: Arial, sans-serif;
     }
     .reference-box {
       background: linear-gradient(90deg, #b58cde 0%, #e7b8ea 100%);
       border-radius: 4px;
-      padding: 30px;
-      margin: 35px 0;
-      color: #ffffff;
+      padding: 28px;
       text-align: center;
+      margin: 24px 0;
     }
     .reference-label {
+      color: #ffffff;
       font-size: 11px;
       text-transform: uppercase;
-      letter-spacing: 2px;
-      margin-bottom: 10px;
-      opacity: 0.85;
+      letter-spacing: 1.5px;
+      margin: 0 0 10px 0;
       font-family: Arial, sans-serif;
     }
     .reference-number {
       font-size: 26px;
       font-weight: 300;
+      color: #ffffff;
+      margin: 0;
       font-family: 'Courier New', monospace;
-      letter-spacing: 3px;
+      letter-spacing: 2px;
     }
     .button-container {
       text-align: center;
-      margin: 35px 0;
+      margin: 28px 0;
     }
     .action-button {
       display: inline-block;
-      background-color: #6B46C1;
+      background: linear-gradient(90deg, #a35dea 0%, #e7b8ea 100%);
       color: #ffffff;
+      padding: 14px 36px;
       text-decoration: none;
-      padding: 14px 35px;
-      border-radius: 2px;
+      border-radius: 4px;
       font-size: 13px;
-      font-weight: 500;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       font-family: Arial, sans-serif;
     }
     .info-box {
-      background-color: #F5F3FF;
-      border-left: 3px solid #8B5CF6;
-      padding: 22px;
-      margin: 30px 0;
+      background: #FAFAFA;
+      border-radius: 4px;
+      padding: 20px 24px;
+      margin: 20px 0;
+      border: 1px solid #E9E3F6;
     }
     .info-box-title {
-      font-weight: 600;
-      color: #4C1D95;
-      margin-bottom: 10px;
-      font-size: 14px;
-      font-family: Arial, sans-serif;
-    }
-    .info-box-text {
-      color: #666666;
-      font-size: 14px;
-      line-height: 1.6;
-    }
-    .footer {
-      background-color: #EDE9FE;
-      padding: 40px;
-      text-align: center;
-    }
-    .footer-logo {
-      width: 45px;
-      height: auto;
-      margin-bottom: 18px;
-      opacity: 0.7;
-    }
-    .company-name {
       font-size: 13px;
       font-weight: 600;
       color: #4C1D95;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-    .footer-text {
-      font-size: 12px;
-      color: #999999;
-      margin-bottom: 6px;
+      margin: 0 0 10px 0;
       font-family: Arial, sans-serif;
     }
-    .footer a {
-      color: #6B46C1;
-      text-decoration: none;
+    .info-box-text {
+      font-size: 13px;
+      color: #666666;
+      margin: 0;
+      line-height: 1.6;
     }
     .divider {
       border: none;
-      border-top: 1px solid #e8e0d5;
-      margin: 35px 0;
+      border-top: 1px solid #E9E3F6;
+      margin: 28px 0;
     }
-    @media only screen and (max-width: 600px) {
-      .content {
-        padding: 35px 25px;
-      }
-      .header {
-        padding: 35px 25px 30px;
-      }
-      .event-card {
-        padding: 25px;
-      }
-      .action-button {
-        display: block;
-        margin: 10px 0;
-        text-align: center;
-      }
+    .footer {
+      background: linear-gradient(90deg, #f8f5ff 0%, #f0e6f7 100%);
+      padding: 28px 40px 24px;
+      text-align: center;
+    }
+    .footer-logo {
+      width: 50px;
+      height: auto;
+      margin-bottom: 10px;
+    }
+    .company-name {
+      font-size: 13px;
+      color: #4C1D95;
+      margin: 0 0 4px 0;
+      font-weight: 500;
+    }
+    .footer-text {
+      font-size: 11px;
+      color: #888888;
+      margin: 0;
     }
   </style>
 </head>
 <body>
-  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+  <table class="container" cellpadding="0" cellspacing="0" border="0" width="100%">
     <tr>
-      <td align="center" style="padding: 30px 15px;">
-        <table role="presentation" class="container" cellspacing="0" cellpadding="0" border="0" width="560">
-          <!-- Header -->
+      <td>
+        <!-- Header -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
           <tr>
             <td class="header">
               <div class="logo-wrapper">
@@ -224,53 +210,50 @@
                      alt="Infinity Role Teachers" 
                      class="logo">
               </div>
-              <h1>Registration Pending</h1>
-              <span class="pending-badge">Awaiting Payment</span>
+              <h1>Infinity Role Teachers</h1>
+              <p class="header-subtitle">Wellness & Transformation</p>
+              <div class="pending-badge">Payment Pending</div>
             </td>
           </tr>
-          
-          <!-- Content -->
+        </table>
+
+        <!-- Content -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
           <tr>
             <td class="content">
               <p class="greeting">Dear {{user_name}},</p>
               
               <p class="message">
-                We have received your registration request. Your spot will be reserved once we receive your bank transfer payment.
+                Thank you for your generous donation to Infinity Role Teachers. Your contribution helps us continue our mission of wellness and transformation.
               </p>
               
-              <!-- Event Details -->
-              <div class="event-card">
-                <h2 class="event-title">{{event_title}}</h2>
+              <!-- Donation Details -->
+              <div class="donation-card">
+                <h2>Donation Details</h2>
                 
-                <div class="event-detail">
-                  <span class="event-detail-icon">📅</span>
-                  <span class="detail-label">Date:</span>
-                  <span>{{event_date}}</span>
-                </div>
-                
-                <div class="event-detail">
-                  <span class="event-detail-icon">🕐</span>
-                  <span class="detail-label">Time:</span>
-                  <span>{{event_time}}</span>
-                </div>
-                
-                <div class="event-detail">
-                  <span class="event-detail-icon">📍</span>
-                  <span class="detail-label">Location:</span>
-                  <span>{{event_location}}</span>
-                </div>
-                
-                <div class="event-detail">
-                  <span class="event-detail-icon">💳</span>
+                <div class="donation-detail">
+                  <span class="detail-icon">💝</span>
                   <span class="detail-label">Amount:</span>
-                  <span>{{payment_amount}}</span>
+                  <span>{{donation_amount}}</span>
+                </div>
+                
+                <div class="donation-detail">
+                  <span class="detail-icon">📅</span>
+                  <span class="detail-label">Date:</span>
+                  <span>{{donation_date}}</span>
+                </div>
+                
+                <div class="donation-detail">
+                  <span class="detail-icon">💳</span>
+                  <span class="detail-label">Method:</span>
+                  <span>Bank Transfer</span>
                 </div>
               </div>
               
               <!-- Bank Transfer Reference -->
               <div class="reference-box">
                 <p class="reference-label">Bank Transfer Reference</p>
-                <p class="reference-number">{{bank_reference}}</p>
+                <p class="reference-number">{{receipt_id}}</p>
                 <p style="font-size: 12px; margin-top: 10px; opacity: 0.85;">Please include this reference in your transfer</p>
               </div>
 
@@ -295,47 +278,42 @@
                 </div>
                 <div style="margin-bottom: 15px;">
                   <span style="font-weight: 600; color: #4C1D95; font-size: 12px; min-width: 90px; display: inline-block; font-family: Arial, sans-serif;">Reference:</span>
-                  <span style="color: #666666; font-size: 14px; margin-left: 10px; font-family: 'Courier New', monospace;"><strong>{{bank_reference}}</strong></span>
+                  <span style="color: #666666; font-size: 14px; margin-left: 10px; font-family: 'Courier New', monospace;"><strong>{{receipt_id}}</strong></span>
                 </div>
                 {{qr_code_image}}
-              </div>
-              
-              <!-- Action Button -->
-              <div class="button-container">
-                <a href="{{event_url}}" class="action-button">View Event Details</a>
               </div>
               
               <!-- Important Info -->
               <div class="info-box">
                 <p class="info-box-title">📌 Payment Instructions</p>
                 <p class="info-box-text">
-                  Please complete your bank transfer within 48 hours using the reference number above. Your registration will be confirmed once payment is received.
+                  Please complete your bank transfer within 48 hours using the reference number above. You can scan the QR code with your banking app for quick payment.
                   <br><br>
-                  You can scan the QR code above with your banking app for quick payment, or use the bank details provided.
+                  Your donation receipt will be sent once payment is received.
                   <br><br>
-                  Should you have any questions, require additional information, or need assistance, please don't hesitate to reach out to us anytime. You can simply reply to this email.
+                  Should you have any questions, please don't hesitate to reach out to us anytime. You can simply reply to this email.
                 </p>
               </div>
               
               <hr class="divider">
               
               <p class="message" style="font-size: 14px; color: #666666;">
-                We'll send you a confirmation email once your payment is received.
+                With gratitude,<br>
+                The Infinity Role Teachers Team
               </p>
             </td>
           </tr>
-          
-          <!-- Footer -->
+        </table>
+        
+        <!-- Footer -->
+        <table width="100%" cellpadding="0" cellspacing="0" border="0">
           <tr>
             <td class="footer">
               <img src="https://nchbiryeykludxrrdfaw.supabase.co/storage/v1/object/public/images/logo%20small%20transparent.png" 
                    alt="Infinity Role Teachers" 
                    class="footer-logo">
               <p class="company-name">Infinity Role Teachers</p>
-              <p class="footer-text">AMS4EVER AG • Switzerland</p>
-              <p class="footer-text">
-                <a href="mailto:support@infinityroleteachers.com">support@infinityroleteachers.com</a>
-              </p>
+              <p class="footer-text">AMS4EVER AG &bull; Switzerland</p>
             </td>
           </tr>
         </table>

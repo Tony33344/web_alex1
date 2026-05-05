@@ -6,7 +6,7 @@ import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import { Loader2, Mail, Lock, User as UserIcon, Phone } from 'lucide-react';
+import { Loader2, Mail, Lock, Eye, EyeOff, User as UserIcon, Phone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -28,6 +28,8 @@ export default function RegisterPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     register,
@@ -159,7 +161,22 @@ export default function RegisterPage() {
               <Label htmlFor="password">{t('password')}</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input id="password" type="password" className="pl-10" placeholder="••••••••" {...register('password')} />
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  className="pl-10 pr-10"
+                  placeholder="••••••••"
+                  {...register('password')}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  tabIndex={-1}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
               {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
             </div>
@@ -168,7 +185,22 @@ export default function RegisterPage() {
               <Label htmlFor="confirm_password">{t('confirmPassword')}</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input id="confirm_password" type="password" className="pl-10" placeholder="••••••••" {...register('confirm_password')} />
+                <Input
+                  id="confirm_password"
+                  type={showConfirmPassword ? 'text' : 'password'}
+                  className="pl-10 pr-10"
+                  placeholder="••••••••"
+                  {...register('confirm_password')}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  tabIndex={-1}
+                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
               </div>
               {errors.confirm_password && <p className="text-xs text-destructive">{errors.confirm_password.message}</p>}
             </div>

@@ -51,7 +51,30 @@ export async function POST(request: Request) {
       const userName = profile?.full_name || user.email?.split('@')[0] || 'there';
       const membershipUrl = `${appUrl}/en/membership`;
       const membershipName = plan === 'yearly' ? 'Annual Membership' : 'Monthly Membership';
-      const paymentAmount = plan === 'yearly' ? 'TBA' : 'TBA'; // Will need to fetch actual price from database
+      const paymentAmount = plan === 'yearly' ? 'CHF 120' : 'CHF 15';
+
+      // Fetch bank info from settings
+      const { data: bankSettings } = await adminSupabase
+        .from('site_settings')
+        .select('key, value')
+        .in('key', ['bank_name', 'bank_iban', 'bank_bic', 'bank_account_holder']);
+
+      const bankInfo: Record<string, string> = {};
+      (bankSettings ?? []).forEach((row: { key: string; value: unknown }) => {
+        const val = String(row.value).replace(/"/g, '').trim();
+        if (val) bankInfo[row.key] = val;
+      });
+
+      const bankName = bankInfo.bank_name || 'UBS Switzerland AG';
+      const bankIban = bankInfo.bank_iban || 'CH93 0076 2011 6238 5295 7';
+      const bankBic = bankInfo.bank_bic || 'AEAGCH22';
+      const bankAccountHolder = bankInfo.bank_account_holder || 'AMS4EVER AG';
+
+      // Generate QR code for bank transfer
+      const qrCodeImage = `<div style="text-align: center; margin-top: 20px; padding: 15px; background: white; border: 1px dashed #DDD6FE; border-radius: 4px;">
+        <p style="font-size: 12px; color: #666666; margin: 0 0 10px 0;">Scan with your banking app to pay</p>
+        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=BCD\n001\n1\nCHF\n${plan === 'yearly' ? '120' : '15'}\nS\n${bankIban.replace(/\s/g, '')}\n${bankAccountHolder.replace(/\s/g, '')}\n\n${bankRef}\n" alt="Bank Transfer QR Code" style="width: 150px; height: 150px; display: inline-block;">
+      </div>`;
       
       const emailContent = prepareEmail({
         to: user.email!,
@@ -64,10 +87,11 @@ export async function POST(request: Request) {
           payment_amount: paymentAmount,
           reference: bankRef,
           membership_url: membershipUrl,
-          bank_name: 'UBS Switzerland AG', // TODO: Get from settings
-          bank_account: 'CH1234567890123456789', // TODO: Get from settings
-          bank_iban: 'CH89 1234 5678 9012 3456 7890', // TODO: Get from settings
-          bank_bic: 'UBSWCHZH80A', // TODO: Get from settings
+          bank_name: bankName,
+          bank_iban: bankIban,
+          bank_bic: bankBic,
+          bank_account_holder: bankAccountHolder,
+          qr_code_image: qrCodeImage,
         },
       });
 

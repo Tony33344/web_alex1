@@ -59,8 +59,9 @@ export async function GET(request: Request) {
         }
       }
       
-      // If type=recovery, redirect to reset-password
-      if (type === 'recovery') {
+      // If type=recovery OR redirect_type=recovery, redirect to reset-password
+      const redirectType = searchParams.get('redirect_type');
+      if (type === 'recovery' || redirectType === 'recovery') {
         console.log('Recovery flow detected, redirecting to reset-password');
         return NextResponse.redirect(`${origin}/${locale}/reset-password`);
       }

@@ -59,6 +59,7 @@ export async function POST(request: Request) {
       const recipientEmail = profile?.email || memberUser?.email;
       if (recipientEmail) {
         const userName = profile?.full_name || recipientEmail.split('@')[0] || 'there';
+        const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
         const emailContent = prepareEmail({
           to: recipientEmail,
           subject: 'Membership Activated',
@@ -66,9 +67,18 @@ export async function POST(request: Request) {
           variables: {
             user_name: userName,
             membership_name: plan === 'yearly' ? 'Yearly Membership' : 'Monthly Membership',
+            plan_type: plan === 'yearly' ? 'Yearly Membership' : 'Monthly Membership',
             billing_cycle: plan === 'yearly' ? 'Yearly' : 'Monthly',
+            payment_amount: plan === 'yearly' ? 'CHF 120' : 'CHF 15',
+            start_date: now.toLocaleDateString('en', { dateStyle: 'long' }),
             next_billing_date: endDate.toLocaleDateString('en', { dateStyle: 'long' }),
             member_id: userId.substring(0, 8).toUpperCase(),
+            dashboard_url: `${appUrl}/dashboard`,
+            programs_url: `${appUrl}/en/coach-training`,
+            user_email: recipientEmail,
+            payment_method: 'Bank Transfer',
+            invoice_url: `${appUrl}/dashboard`,
+            help_center_url: `${appUrl}/en/about`,
           },
         });
         await sendEmail({ to: recipientEmail, subject: emailContent.subject, html: emailContent.html });

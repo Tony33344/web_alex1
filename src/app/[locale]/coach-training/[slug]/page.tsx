@@ -6,10 +6,12 @@ import { getTranslations } from 'next-intl/server';
 import { Card, CardContent } from '@/components/ui/card';
 import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 import { GalleryGrid } from '@/components/shared/GalleryGrid';
+import { PriceTag } from '@/components/shared/PriceTag';
 import { getProgram } from '@/lib/queries/programs';
 import { getGalleryImages } from '@/lib/queries/gallery';
 import { getLocalizedField } from '@/lib/localization';
 import { formatDateRange, formatDateRangeWithTime, parseDurationDays, computeEndDate } from '@/lib/utils/dates';
+import { getActivePricing } from '@/lib/utils/pricing';
 import { EnrollButtonClient } from '@/components/sections/EnrollButtonClient';
 import { SmartImage } from '@/components/shared/SmartImage';
 
@@ -38,7 +40,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
   const name = getLocalizedField(program, 'name', locale) || program.name_en;
   const description = getLocalizedField(program, 'description', locale) || '';
   const longContent = getLocalizedField(program, 'long_content', locale) || '';
-  const priceLabel = program.price ? `${program.currency} ${program.price}` : t('common.free');
+  const pricing = getActivePricing(program);
   const galleryImages = await getGalleryImages('program', program.id);
 
   return (
@@ -87,7 +89,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
         <div className="space-y-4 lg:sticky lg:top-24 lg:self-start">
           <Card>
             <CardContent className="space-y-4 pt-6">
-              <div className="text-3xl font-bold text-primary">{priceLabel}</div>
+              <PriceTag pricing={pricing} freeLabel={t('common.free')} locale={locale} size="lg" />
               <div className="space-y-3 text-sm text-muted-foreground">
                 {program.start_date && (() => {
                   const days = parseDurationDays(program.duration);
@@ -107,7 +109,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
                 )}
                 <div className="flex items-center gap-3"><Award className="h-4 w-4 text-primary" />Certificate included</div>
               </div>
-              <EnrollButtonClient locale={locale} programId={program.id} label={t('common.enrollNow')} stripepriceId={program.stripe_price_id} price={program.price} currency={program.currency} programName={name} />
+              <EnrollButtonClient locale={locale} programId={program.id} label={t('common.enrollNow')} stripepriceId={pricing.activeStripePriceId} price={pricing.activePrice} currency={pricing.currency} programName={name} />
               <p className="text-xs text-center text-muted-foreground">Secure your spot — limited availability</p>
             </CardContent>
           </Card>

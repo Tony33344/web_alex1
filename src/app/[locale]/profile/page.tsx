@@ -366,6 +366,14 @@ export default function ProfilePage() {
               <CardTitle>Account Settings</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {profile.stripe_customer_id && (
+                <form action="/api/stripe/portal" method="POST">
+                  <Button type="submit" variant="outline" className="w-full">
+                    <CreditCard className="mr-2 h-4 w-4" />
+                    View Invoices & Payment History
+                  </Button>
+                </form>
+              )}
               <Button variant="outline" onClick={() => router.push(`/${locale}/reset-password`)}>
                 Change Password
               </Button>

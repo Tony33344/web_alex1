@@ -204,6 +204,8 @@ export async function POST(request: Request) {
           const amount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';
           const orderId = session.id.slice(-8).toUpperCase();
           const currency = eventData.currency || 'CHF';
+          const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+          const eventUrl = `${appUrl}/en/events/${eventId}`;
           await sendConfirmationEmail(
             EmailTemplates.EVENT_REGISTRATION,
             userId,
@@ -219,6 +221,8 @@ export async function POST(request: Request) {
               event_location: eventData.location || 'TBD',
               order_id: orderId,
               payment_amount: `${currency} ${amount}`,
+              event_url: eventUrl,
+              calendar_url: eventUrl,
             }
           );
         } else {

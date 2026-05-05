@@ -6,6 +6,19 @@ import { EmailTemplates, prepareEmail } from '@/lib/email/templates';
 import { sendEmail } from '@/lib/email/transporter';
 import { getActivePricing } from '@/lib/utils/pricing';
 
+function isUuid(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+}
+
+function generateSlug(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
+function getProgramSlug(program: { slug: string; name_en: string }): string {
+  if (program.slug && !isUuid(program.slug)) return program.slug;
+  return generateSlug(program.name_en);
+}
+
 // Force redeploy - v3
 export async function POST(request: Request) {
   console.log('Program enroll API called');
@@ -102,7 +115,8 @@ export async function POST(request: Request) {
           .single();
 
         const userName = profile?.full_name || user.email?.split('@')[0] || 'there';
-        const programUrl = `${appUrl}/${locale}/coach-training/${program.slug}`;
+        const programSlug = getProgramSlug(program);
+        const programUrl = `${appUrl}/${locale}/coach-training/${programSlug}`;
         const orderId = `FREE-${Date.now().toString(36).toUpperCase()}`;
         
         const emailContent = prepareEmail({
@@ -181,7 +195,8 @@ export async function POST(request: Request) {
           .single();
 
         const userName = profile?.full_name || user.email?.split('@')[0] || 'there';
-        const programUrl = `${appUrl}/${locale}/coach-training/${program.slug}`;
+        const programSlug = getProgramSlug(program);
+        const programUrl = `${appUrl}/${locale}/coach-training/${programSlug}`;
 
         console.log('Preparing bank transfer email for:', user.email, 'Program:', program.name_en, 'Reference:', bankRef);
 
@@ -242,8 +257,9 @@ export async function POST(request: Request) {
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
     const stripeMetadata = { user_id: user.id, program_id: program.id, type: 'program' };
+    const programSlug = getProgramSlug(program);
     const successUrl = `${appUrl}/${locale}/coach-training?payment=success&session_id={CHECKOUT_SESSION_ID}`;
-    const cancelUrl = `${appUrl}/${locale}/coach-training/${program.slug}?payment=cancelled`;
+    const cancelUrl = `${appUrl}/${locale}/coach-training/${programSlug}?payment=cancelled`;
 
     let session;
     if (activeStripePriceId) {

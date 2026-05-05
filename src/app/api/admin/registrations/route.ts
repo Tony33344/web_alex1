@@ -4,6 +4,27 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { EmailTemplates, prepareEmail } from '@/lib/email/templates';
 import { sendEmail } from '@/lib/email/transporter';
 
+// Check if a string looks like a UUID (e.g. 6fddb208-c2c1-47fc-9745-43c27fcd2414)
+function isUuid(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+}
+
+// Generate a URL-friendly slug from program name
+function generateSlug(name: string): string {
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+// Get a valid program slug: use stored slug if it's readable, otherwise generate from name
+function getProgramSlug(program: { slug: string; name_en: string }): string {
+  if (program.slug && !isUuid(program.slug)) {
+    return program.slug;
+  }
+  return generateSlug(program.name_en);
+}
+
 export async function GET() {
   const admin = createAdminClient();
 
@@ -170,7 +191,8 @@ export async function PATCH(request: Request) {
           if (recipientEmail && program) {
             const userName = userProfile?.full_name || recipientEmail.split('@')[0] || 'there';
             const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-            const programUrl = `${appUrl}/coach-training/${program.slug}`;
+            const programSlug = getProgramSlug(program);
+            const programUrl = `${appUrl}/coach-training/${programSlug}`;
             const emailVariables = {
               user_name: userName,
               program_name: program.name_en || 'Program',

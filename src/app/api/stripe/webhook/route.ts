@@ -6,6 +6,14 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import { sendEmail } from '@/lib/email/transporter';
 import { prepareEmail, EmailTemplates } from '@/lib/email/templates';
 
+function isUuid(value: string): boolean {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+}
+
+function generateSlug(name: string): string {
+  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+}
+
 export async function POST(request: Request) {
   const body = await request.text();
   const headersList = await headers();
@@ -221,7 +229,7 @@ export async function POST(request: Request) {
         // Get program details and send confirmation email
         const { data: programData } = await supabase
           .from('programs')
-          .select('name_en, start_date, duration, location, max_participants, currency')
+          .select('name_en, slug, start_date, duration, location, max_participants, currency')
           .eq('id', programId)
           .single();
         
@@ -246,7 +254,7 @@ export async function POST(request: Request) {
               max_participants: programData.max_participants?.toString() || 'TBD',
               order_id: orderId,
               payment_amount: `${currency} ${amount}`,
-              program_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/coach-training/${programId}`,
+              program_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/coach-training/${programData.slug && !isUuid(programData.slug) ? programData.slug : generateSlug(programData.name_en)}`,
             }
           );
         }

@@ -96,14 +96,7 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Registration failed: ' + error.message }, { status: 500 });
     }
 
-    if (!isFull) {
-      await adminSupabase
-        .from('events')
-        .update({ current_attendees: event.current_attendees + 1 })
-        .eq('id', eventId);
-    }
-
-    // Free events — send confirmation email
+    // Free events — send confirmation email and increment count
     if (isFree) {
       try {
         const { data: profile } = await adminSupabase
@@ -141,6 +134,12 @@ export async function POST(request: Request) {
         console.error('Failed to send free event confirmation email:', emailError);
         // Don't fail the registration if email fails
       }
+
+      // Increment attendee count for free events (confirmed immediately)
+      await adminSupabase
+        .from('events')
+        .update({ current_attendees: event.current_attendees + 1 })
+        .eq('id', eventId);
 
       return NextResponse.json({ success: true, status });
     }

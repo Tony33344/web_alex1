@@ -175,6 +175,21 @@ export async function POST(request: Request) {
           
           if (updateError) {
             console.error(`🎫 Failed to update event registration:`, updateError);
+          } else {
+            // Increment attendee count only after successful payment confirmation
+            const { data: eventData } = await supabase
+              .from('events')
+              .select('current_attendees')
+              .eq('id', eventId)
+              .single();
+            
+            if (eventData) {
+              await supabase
+                .from('events')
+                .update({ current_attendees: eventData.current_attendees + 1 })
+                .eq('id', eventId);
+              console.log(`🎫 Incremented attendee count for event ${eventId}`);
+            }
           }
         }
 

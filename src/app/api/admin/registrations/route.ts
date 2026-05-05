@@ -121,6 +121,30 @@ export async function PATCH(request: Request) {
   const { error } = await admin.from(table).update(data).eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
+  // Increment attendee count when confirming event payment (for bank transfers)
+  if (data?.payment_status === 'paid' && table === 'event_registrations') {
+    const { data: reg } = await admin
+      .from('event_registrations')
+      .select('event_id')
+      .eq('id', id)
+      .single();
+    
+    if (reg) {
+      const { data: eventData } = await admin
+        .from('events')
+        .select('current_attendees')
+        .eq('id', reg.event_id)
+        .single();
+      
+      if (eventData) {
+        await admin
+          .from('events')
+          .update({ current_attendees: eventData.current_attendees + 1 })
+          .eq('id', reg.event_id);
+      }
+    }
+  }
+
   // Send confirmation email when admin marks payment as paid
   if (data?.payment_status === 'paid') {
     try {

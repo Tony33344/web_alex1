@@ -62,8 +62,8 @@ export function Footer({ locale, logoUrl }: FooterProps) {
         <div className="space-y-4">
           <h3 className="text-sm font-semibold uppercase tracking-wider text-background/90">{t('footer.programs')}</h3>
           <ul className="space-y-2 text-sm text-background/70">
-            <li><Link href={p('/coach-training/sunyoga-training')} className="hover:text-background transition-colors">Sunyoga Coach Training</Link></li>
-            <li><Link href={p('/coach-training/acupresura-training')} className="hover:text-background transition-colors">Acupressure Coach Training</Link></li>
+            <li><Link href={p('/coach-training/sunyoga-training')} className="hover:text-background transition-colors">{t('programs.sunyogaTraining')}</Link></li>
+            <li><Link href={p('/coach-training/acupresura-training')} className="hover:text-background transition-colors">{t('programs.acupressureTraining')}</Link></li>
             <li><Link href={p('/coach-training/awaken-inner-compass')} className="hover:text-background transition-colors">{t('home.awakenInnerCompass')}</Link></li>
           </ul>
         </div>
@@ -124,7 +124,7 @@ export function Footer({ locale, logoUrl }: FooterProps) {
       <div className="border-t border-background/10">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-background/50 sm:flex-row sm:px-6 lg:px-8">
           <span>{t('footer.rights', { year })}</span>
-          <span className="font-medium text-background/60">AMS4EVER AG</span>
+          <span className="font-medium text-background/60">{t('footer.company')}</span>
           <div className="flex gap-4">
             <Link href={p('/support')} className="hover:text-background transition-colors">{t('common.support')}</Link>
             <Link href={p('/terms')} className="hover:text-background transition-colors">{t('footer.terms')}</Link>

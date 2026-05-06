@@ -42,8 +42,8 @@ export default async function EventsPage({ params, searchParams }: EventsPagePro
           <div className="flex items-center gap-3 rounded-lg bg-amber-50 p-4 text-amber-800 dark:bg-amber-900/20 dark:text-amber-200">
             <XCircle className="h-5 w-5 shrink-0" />
             <div>
-              <p className="font-medium">Payment cancelled</p>
-              <p className="text-sm opacity-90">No worries — your spot wasn&apos;t reserved. You can try again anytime.</p>
+              <p className="font-medium">{t('events.paymentCancelled')}</p>
+              <p className="text-sm opacity-90">{t('events.paymentCancelledDesc')}</p>
             </div>
           </div>
         </div>
@@ -51,7 +51,7 @@ export default async function EventsPage({ params, searchParams }: EventsPagePro
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         {events.length === 0 ? (
-          <p className="text-center text-muted-foreground">No upcoming events. Check back soon!</p>
+          <p className="text-center text-muted-foreground">{t('events.noUpcomingEvents')}</p>
         ) : (
           <div className="flex flex-wrap justify-center gap-8">
             {events.map((event) => {
@@ -73,7 +73,7 @@ export default async function EventsPage({ params, searchParams }: EventsPagePro
                         <img src={event.image_url} alt={title} className="h-full w-full object-cover" />
                       )}
                       {event.is_featured && (
-                        <Badge className="absolute left-3 top-3 bg-secondary text-secondary-foreground">Featured</Badge>
+                        <Badge className="absolute left-3 top-3 bg-secondary text-secondary-foreground">{t('events.featured')}</Badge>
                       )}
                     </div>
                     <CardHeader>
@@ -86,9 +86,9 @@ export default async function EventsPage({ params, searchParams }: EventsPagePro
                     <CardContent className="space-y-3">
                       <div className="space-y-2 text-sm text-muted-foreground">
                         <div className="flex items-center gap-2"><Calendar className="h-4 w-4 flex-shrink-0" />{dateRangeDisplay}</div>
-                        <div className="flex items-center gap-2"><MapPin className="h-4 w-4" />{event.is_online ? 'Online' : event.location || 'TBA'}</div>
+                        <div className="flex items-center gap-2"><MapPin className="h-4 w-4" />{event.is_online ? t('events.online') : event.location || t('events.tba')}</div>
                         {spotsLeft !== null && (
-                          <div className="flex items-center gap-2"><Users className="h-4 w-4" />{spotsLeft > 0 ? `${spotsLeft} spots left` : t('common.eventFull')}</div>
+                          <div className="flex items-center gap-2"><Users className="h-4 w-4" />{spotsLeft > 0 ? t('events.spotsLeft', { count: spotsLeft }) : t('common.eventFull')}</div>
                         )}
                       </div>
                       <Button className="w-full">{t('common.enrollNow')}</Button>

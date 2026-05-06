@@ -141,7 +141,19 @@
     "newPassword": "Neues Passwort",
     "acceptTerms": "Ich akzeptiere die AGB",
     "subscribeNewsletter": "Newsletter abonnieren",
-    "preferredLanguage": "Bevorzugte Sprache"
+    "preferredLanguage": "Bevorzugte Sprache",
+    "emailConfirmed": "E-Mail bestätigt!",
+    "emailConfirmedDesc": "Ihre E-Mail wurde verifiziert. Bitte melden Sie sich an, um fortzufahren.",
+    "emailConfirmationFailed": "E-Mail-Bestätigung fehlgeschlagen. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.",
+    "passwordResetExpired": "Link zum Zurücksetzen des Passworts abgelaufen oder ungültig. Bitte fordern Sie einen neuen an.",
+    "emailNotConfirmed": "Bitte bestätigen Sie Ihre E-Mail-Adresse vor der Anmeldung. Überprüfen Sie Ihren Posteingang auf den Bestätigungslink.",
+    "checkYourEmail": "Überprüfen Sie Ihre E-Mail!",
+    "checkYourEmailDesc": "Wir haben einen Bestätigungslink an Ihre E-Mail gesendet. Bitte klicken Sie darauf, um Ihr Konto zu aktivieren, bevor Sie sich anmelden.",
+    "didntReceiveEmail": "Nicht erhalten? Überprüfen Sie Ihren Spam-Ordner oder versuchen Sie, sich anzumelden, um es erneut zu senden.",
+    "phone": "Telefon",
+    "terms": "AGB",
+    "hidePassword": "Passwort ausblenden",
+    "showPassword": "Passwort anzeigen"
   },
   "contact": {
     "title": "Kontakt aufnehmen",
@@ -170,7 +182,12 @@
     "yearly": "Jährlich",
     "manageSubscription": "Abonnement verwalten",
     "bankTransfer": "Lieber per Banküberweisung?",
-    "faq": "Häufig gestellte Fragen"
+    "faq": "Häufig gestellte Fragen",
+    "gallery": "Galerie",
+    "popular": "Beliebt",
+    "saveVsMonthly": "Sparen gegenüber monatlichem Plan",
+    "alreadyActive": "Sie haben bereits ein aktives Abonnement. Besuchen Sie Ihr Profil, um Ihr Abonnement zu verwalten.",
+    "bankTransferDesc": "Kontaktieren Sie uns, um eine direkte Banküberweisung zu vereinbaren. Wir aktivieren Ihre Mitgliedschaft manuell."
   },
   "footer": {
     "quickLinks": "Schnelllinks",
@@ -179,6 +196,64 @@
     "newsletter": "Newsletter",
     "rights": "© {year} Infinity Role Teachers. Alle Rechte vorbehalten.",
     "terms": "AGB",
-    "privacy": "Datenschutz"
+    "privacy": "Datenschutz",
+    "company": "AMS4EVER AG"
+  },
+  "header": {
+    "about": "Über uns",
+    "roleTeachers": "Rollenlehrer",
+    "meetTeachers": "Lernen Sie Ihre Rollenlehrer kennen",
+    "health": "Gesundheit",
+    "overview": "Übersicht",
+    "coachTraining": "Coach-Ausbildung",
+    "allPrograms": "Alle Programme",
+    "events": "Veranstaltungen",
+    "membership": "Mitgliedschaft",
+    "blog": "Blog",
+    "contact": "Kontakt",
+    "donate": "Spenden",
+    "volunteer": "Freiwillig",
+    "myProfile": "Mein Profil",
+    "membersArea": "Mitgliederbereich",
+    "adminDashboard": "Admin-Dashboard",
+    "logOut": "Abmelden"
+  },
+  "programs": {
+    "sunyogaTraining": "Sunyoga Coach-Ausbildung",
+    "acupressureTraining": "Akupressur Coach-Ausbildung",
+    "awakenInnerCompass": "Erwecken Sie Ihren inneren Kompass"
+  },
+  "events": {
+    "paymentCancelled": "Zahlung storniert",
+    "paymentCancelledDesc": "Keine Sorge — Ihr Platz wurde nicht reserviert. Sie können es jederzeit erneut versuchen.",
+    "noUpcomingEvents": "Keine bevorstehenden Veranstaltungen. Schauen Sie bald wieder vorbei!",
+    "featured": "Empfohlen",
+    "online": "Online",
+    "tba": "Noch nicht bekannt",
+    "spotsLeft": "{count} Plätze frei"
+  },
+  "profile": {
+    "editProfile": "Profil bearbeiten",
+    "subscription": "Abonnement",
+    "manageMembership": "Mitgliedschaft verwalten",
+    "viewPlans": "Pläne anzeigen & beitreten",
+    "active": "Aktiv",
+    "myEvents": "Meine Veranstaltungen",
+    "accountSettings": "Kontoeinstellungen",
+    "membersArea": "Mitgliederbereich",
+    "friend": "Freund"
+  },
+  "about": {
+    "contentComingSoon": "Inhalt folgt bald.",
+    "ourMission": "Unsere Mission",
+    "ourVision": "Unsere Vision",
+    "donate": "Spenden",
+    "donateDesc": "Unterstützen Sie unsere Arbeit und helfen Sie uns, ein Zuhause für den Suchenden zu bauen.",
+    "volunteer": "Freiwillig",
+    "volunteerDesc": "Treten Sie unserer Gemeinschaft bei und tragen Sie Ihre Zeit und Fähigkeiten bei."
+  },
+  "legal": {
+    "termsAndConditions": "Allgemeine Geschäftsbedingungen",
+    "disclaimer": "Haftungsausschluss"
   }
 }

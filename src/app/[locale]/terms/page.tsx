@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { FileText } from 'lucide-react';
+import { getTranslations } from 'next-intl/server';
 import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
 import { processContent } from '@/lib/utils/text';
@@ -7,8 +8,9 @@ import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
+  const t = await getTranslations();
   const page = await getPage('terms');
-  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : 'Terms & Conditions';
+  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : t('legal.termsAndConditions');
   const desc = page ? (getLocalizedField(page, 'meta_description', locale) || page.meta_description_en || '') : '';
   return {
     title: `${title} | Infinity Role Teachers`,
@@ -19,9 +21,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function TermsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
+  const t = await getTranslations();
   const page = await getPage('terms');
 
-  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : 'Terms & Conditions';
+  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : t('legal.termsAndConditions');
   const content = page ? (getLocalizedField(page, 'content', locale) || page.content_en) : null;
   const textColor = page?.text_color || '#1a1a1a';
 

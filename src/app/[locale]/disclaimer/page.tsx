@@ -8,8 +8,9 @@ import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
+  const t = await getTranslations();
   const page = await getPage('disclaimer');
-  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : 'Disclaimer';
+  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : t('legal.disclaimer');
   const desc = page ? (getLocalizedField(page, 'meta_description', locale) || page.meta_description_en || '') : '';
   return {
     title: `${title} | Infinity Role Teachers`,
@@ -23,7 +24,7 @@ export default async function DisclaimerPage({ params }: { params: Promise<{ loc
   const t = await getTranslations();
   const page = await getPage('disclaimer');
 
-  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : 'Disclaimer';
+  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : t('legal.disclaimer');
   const content = page ? (getLocalizedField(page, 'content', locale) || page.content_en) : null;
   const textColor = page?.text_color || '#1a1a1a';
 

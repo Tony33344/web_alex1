@@ -36,10 +36,10 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   const pageContent = aboutPage ? (getLocalizedField(aboutPage, 'content', locale) || '') : '';
 
   const cardDefs = [
-    { slug: 'mission', fallbackTitle: 'Our Mission', fallbackExcerpt: 'Discover the purpose and driving force behind everything we do.', icon: Target, gradient: 'from-primary/10 via-primary/5 to-secondary/10' },
-    { slug: 'vision', fallbackTitle: 'Our Vision', fallbackExcerpt: 'Explore the future we envision and the path we walk together.', icon: Compass, gradient: 'from-secondary/10 via-secondary/5 to-primary/10' },
-    { slug: 'donate', fallbackTitle: 'Donate', fallbackExcerpt: 'Support our work and help us build a home for the seeker.', icon: Heart, gradient: 'from-rose-50 via-primary/5 to-secondary/10 dark:from-rose-950/20' },
-    { slug: 'volunteer', fallbackTitle: 'Volunteer', fallbackExcerpt: 'Join our community and contribute your time and skills.', icon: HandHeart, gradient: 'from-emerald-50 via-primary/5 to-secondary/10 dark:from-emerald-950/20' },
+    { slug: 'mission', fallbackTitle: t('about.ourMission'), fallbackExcerpt: 'Discover the purpose and driving force behind everything we do.', icon: Target, gradient: 'from-primary/10 via-primary/5 to-secondary/10' },
+    { slug: 'vision', fallbackTitle: t('about.ourVision'), fallbackExcerpt: 'Explore the future we envision and the path we walk together.', icon: Compass, gradient: 'from-secondary/10 via-secondary/5 to-primary/10' },
+    { slug: 'donate', fallbackTitle: t('about.donate'), fallbackExcerpt: t('about.donateDesc'), icon: Heart, gradient: 'from-rose-50 via-primary/5 to-secondary/10 dark:from-rose-950/20' },
+    { slug: 'volunteer', fallbackTitle: t('about.volunteer'), fallbackExcerpt: t('about.volunteerDesc'), icon: HandHeart, gradient: 'from-emerald-50 via-primary/5 to-secondary/10 dark:from-emerald-950/20' },
   ];
 
   const cards = cardDefs.map((def) => {
@@ -128,7 +128,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
                   )}
                   <CardContent className="p-6 space-y-4">
                     <p className="text-muted-foreground leading-relaxed line-clamp-3">
-                      {card.excerpt || 'Content coming soon.'}
+                      {card.excerpt || t('about.contentComingSoon')}
                     </p>
                     <div className="flex items-center gap-2 text-sm font-medium text-primary transition-colors group-hover:gap-3">
                       {t('common.learnMore')}

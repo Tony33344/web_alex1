@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 import {
   ArrowRight, Calendar, Users, Crown, UserCog, CreditCard,
   Sparkles, Settings, Shield,
@@ -22,13 +23,14 @@ type HubCard = {
 };
 
 export default function WelcomePage() {
+  const t = useTranslations();
   const params = useParams();
   const searchParams = useSearchParams();
   const locale = params.locale as string;
   const { user, profile, isAdmin } = useUser();
 
   const isActiveMember = profile?.subscription_status === 'active';
-  const name = profile?.full_name || user?.email?.split('@')[0] || 'friend';
+  const name = profile?.full_name || user?.email?.split('@')[0] || t('profile.friend');
 
   // Verify session if session_id in URL (after Stripe payment)
   useEffect(() => {
@@ -53,29 +55,29 @@ export default function WelcomePage() {
     {
       href: `/${locale}/profile`,
       icon: UserCog,
-      title: 'Edit Profile',
+      title: t('profile.editProfile'),
       description: 'Update your name, phone, language',
       accent: 'text-blue-500 bg-blue-50 dark:bg-blue-950/30',
     },
     {
       href: `/${locale}/profile?tab=subscription`,
       icon: CreditCard,
-      title: 'Subscription',
-      description: isActiveMember ? 'Manage your membership' : 'View plans & join',
+      title: t('profile.subscription'),
+      description: isActiveMember ? t('profile.manageMembership') : t('profile.viewPlans'),
       accent: 'text-emerald-500 bg-emerald-50 dark:bg-emerald-950/30',
-      badge: isActiveMember ? 'Active' : undefined,
+      badge: isActiveMember ? t('profile.active') : undefined,
     },
     {
       href: `/${locale}/profile?tab=events`,
       icon: Calendar,
-      title: 'My Events',
+      title: t('profile.myEvents'),
       description: 'Your registrations & bookings',
       accent: 'text-violet-500 bg-violet-50 dark:bg-violet-950/30',
     },
     {
       href: `/${locale}/profile?tab=settings`,
       icon: Settings,
-      title: 'Account Settings',
+      title: t('profile.accountSettings'),
       description: 'Password & security',
       accent: 'text-slate-500 bg-slate-100 dark:bg-slate-900/50',
     },
@@ -87,7 +89,7 @@ export default function WelcomePage() {
         {
           href: `/${locale}/members`,
           icon: Crown,
-          title: 'Members Area',
+          title: t('profile.membersArea'),
           description: 'Exclusive content & resources',
           accent: 'text-amber-500 bg-amber-50 dark:bg-amber-950/30',
           badge: 'Members',
@@ -107,21 +109,21 @@ export default function WelcomePage() {
     {
       href: `/${locale}/events`,
       icon: Calendar,
-      title: 'Events',
+      title: t('header.events'),
       description: 'Browse and register for upcoming events',
       accent: 'text-primary bg-primary/10',
     },
     {
       href: `/${locale}/coach-training`,
       icon: Users,
-      title: 'Programs',
+      title: t('header.allPrograms'),
       description: 'Coach training & role teachers programs',
       accent: 'text-primary bg-primary/10',
     },
     {
       href: `/${locale}/membership`,
       icon: Crown,
-      title: 'Membership',
+      title: t('header.membership'),
       description: isActiveMember ? "You're already a member" : 'Join for exclusive benefits',
       accent: 'text-primary bg-primary/10',
     },
@@ -220,7 +222,7 @@ export default function WelcomePage() {
                 className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Shield className="h-4 w-4" />
-                Go to Admin Dashboard
+                {t('header.adminDashboard')}
               </Link>
             </div>
           )}

@@ -46,7 +46,7 @@ export function MembershipClient({ plans, pageTitle, pageContent, locale, galler
     }
     // Check if user already has active membership
     if (profile?.subscription_status === 'active') {
-      setCheckoutError('You already have an active membership. Visit your profile to manage your subscription.');
+      setCheckoutError(t('membership.alreadyActive'));
       return;
     }
     setCheckoutError('');
@@ -123,7 +123,7 @@ export function MembershipClient({ plans, pageTitle, pageContent, locale, galler
               {t('membership.yearly')}
               {yearlyPlan.is_popular && (
                 <Badge className="absolute -right-2 -top-3 bg-secondary text-secondary-foreground text-xs">
-                  Popular
+                  {t('membership.popular')}
                 </Badge>
               )}
             </button>
@@ -155,7 +155,7 @@ export function MembershipClient({ plans, pageTitle, pageContent, locale, galler
             {/* Gallery */}
             {activeGallery.length > 0 && (
               <div className="space-y-4">
-                <h2 className="text-xl font-semibold">Gallery</h2>
+                <h2 className="text-xl font-semibold">{t('membership.gallery')}</h2>
                 <GalleryGrid images={activeGallery} locale={locale} />
               </div>
             )}
@@ -177,7 +177,7 @@ export function MembershipClient({ plans, pageTitle, pageContent, locale, galler
                 </div>
                 {activePlan.plan_type === 'yearly' && monthlyPlan && (
                   <p className="mt-2 text-sm text-primary">
-                    Save vs monthly plan
+                    {t('membership.saveVsMonthly')}
                   </p>
                 )}
               </CardHeader>
@@ -213,7 +213,7 @@ export function MembershipClient({ plans, pageTitle, pageContent, locale, galler
       <div className="mt-12 rounded-xl border bg-muted/50 p-6 text-center">
         <h3 className="text-lg font-semibold">{t('membership.bankTransfer')}</h3>
         <p className="mt-2 text-sm text-muted-foreground">
-          Contact us to arrange a direct bank transfer. We&apos;ll activate your membership manually.
+          {t('membership.bankTransferDesc')}
         </p>
         <Button variant="outline" className="mt-4" onClick={() => router.push(`/${locale}/contact`)}>
           {t('common.contactUs')}

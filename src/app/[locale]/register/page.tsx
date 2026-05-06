@@ -96,12 +96,12 @@ export default function RegisterPage() {
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
               <Mail className="h-8 w-8 text-primary" />
             </div>
-            <h2 className="text-xl font-bold">Check Your Email!</h2>
+            <h2 className="text-xl font-bold">{t('auth.checkYourEmail')}</h2>
             <p className="text-sm text-muted-foreground">
-              We&apos;ve sent a confirmation link to your email. Please click it to activate your account before logging in.
+              {t('auth.checkYourEmailDesc')}
             </p>
             <p className="text-xs text-muted-foreground">
-              Didn&apos;t receive it? Check your spam folder or try logging in to resend.
+              {t('auth.didntReceiveEmail')}
             </p>
             <Link href={`/${locale}/login${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ''}`}>
               <Button className="mt-4">{t('signIn')}</Button>
@@ -149,7 +149,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Phone</Label>
+              <Label htmlFor="phone">{t('auth.phone')}</Label>
               <div className="relative">
                 <Phone className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input id="phone" type="tel" className="pl-10" placeholder="+41 79 123 45 67" {...register('phone')} />
@@ -172,8 +172,7 @@ export default function RegisterPage() {
                   type="button"
                   onClick={() => setShowPassword((v) => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  tabIndex={-1}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -196,8 +195,7 @@ export default function RegisterPage() {
                   type="button"
                   onClick={() => setShowConfirmPassword((v) => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  tabIndex={-1}
-                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                  aria-label={showConfirmPassword ? t('auth.hidePassword') : t('auth.showPassword')}
                 >
                   {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -225,7 +223,7 @@ export default function RegisterPage() {
               <Label htmlFor="accept_terms" className="text-sm font-normal">
                 {t('acceptTerms')}{' '}
                 <Link href={`/${locale}/terms`} className="text-primary hover:underline" target="_blank">
-                  Terms
+                  {t('auth.terms')}
                 </Link>
               </Label>
             </div>

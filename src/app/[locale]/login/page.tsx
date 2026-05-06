@@ -34,12 +34,12 @@ export default function LoginPage() {
   // Show error from URL query params
   useEffect(() => {
     if (urlError === 'email_confirmation_failed') {
-      setError(message || 'Email confirmation failed. Please try again or contact support.');
+      setError(message || t('auth.emailConfirmationFailed'));
     }
     if (urlError === 'recovery_failed') {
-      setError(message || 'Password reset link expired or invalid. Please request a new one.');
+      setError(message || t('auth.passwordResetExpired'));
     }
-  }, [urlError, message]);
+  }, [urlError, message, t]);
 
   const {
     register,
@@ -62,7 +62,7 @@ export default function LoginPage() {
     if (authError) {
       // Better error message for unconfirmed email
       if (authError.message?.toLowerCase().includes('email not confirmed')) {
-        setError('Please confirm your email address before logging in. Check your inbox for the confirmation link.');
+        setError(t('auth.emailNotConfirmed'));
       } else {
         setError(authError.message);
       }
@@ -107,9 +107,9 @@ export default function LoginPage() {
               <div className="rounded-md bg-green-50 p-3 text-sm text-green-700 border border-green-200">
                 <div className="flex items-center gap-2">
                   <CheckCircle className="h-4 w-4" />
-                  <span className="font-medium">Email confirmed!</span>
+                  <span className="font-medium">{t('auth.emailConfirmed')}</span>
                 </div>
-                <p className="mt-1 ml-6">Your email has been verified. Please sign in to continue.</p>
+                <p className="mt-1 ml-6">{t('auth.emailConfirmedDesc')}</p>
               </div>
             )}
             {error && (
@@ -146,7 +146,7 @@ export default function LoginPage() {
                   onClick={() => setShowPassword((v) => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   tabIndex={-1}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>

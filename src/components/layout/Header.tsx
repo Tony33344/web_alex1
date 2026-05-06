@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { Menu, X, ChevronDown, User, LogOut, LayoutDashboard, Crown } from 'lucide-react';
 import { Logo } from './Logo';
 import { LanguageSwitcher } from './LanguageSwitcher';
@@ -32,12 +33,13 @@ interface HeaderProps {
 }
 
 const defaultProgramLinks = [
-  { label: 'Sunyoga Coach Training', slug: 'sunyoga-training' },
-  { label: 'Acupressure Coach Training', slug: 'acupresura-training' },
-  { label: 'Awaken Your Inner Compass', slug: 'awaken-inner-compass' },
+  { label: 'programs.sunyogaTraining', slug: 'sunyoga-training' },
+  { label: 'programs.acupressureTraining', slug: 'acupresura-training' },
+  { label: 'programs.awakenInnerCompass', slug: 'awaken-inner-compass' },
 ];
 
 export function Header({ locale, logoUrl, logoSize = 70, logoTextGap = 0, logoTextSize = 14, logoBottomGap = 0, programs, teachers, healthCategories }: HeaderProps) {
+  const t = useTranslations();
   const programLinks = programs && programs.length > 0 ? programs : defaultProgramLinks;
   const teacherLinks = teachers && teachers.length > 0 ? teachers : [];
   const dynamicHealthLinks = healthCategories && healthCategories.length > 0 ? healthCategories : [];
@@ -80,35 +82,35 @@ export function Header({ locale, logoUrl, logoSize = 70, logoTextGap = 0, logoTe
         <nav className="hidden items-center gap-0.5 lg:flex">
           {/* About Dropdown */}
           <NavDropdown
-            label="About"
+            label={t('header.about')}
             active={isActive('/about')}
             items={[
-              { label: 'About Us', href: p('/about') },
-              { label: 'Our Mission', href: p('/about/mission') },
-              { label: 'Our Vision', href: p('/about/vision') },
+              { label: t('navigation.about'), href: p('/about') },
+              { label: t('home.ourMission'), href: p('/about/mission') },
+              { label: t('home.ourVision'), href: p('/about/vision') },
             ]}
           />
 
           {/* Role Teachers Dropdown */}
           <NavDropdown
-            label="Role Teachers"
+            label={t('header.roleTeachers')}
             active={isActive('/role-teachers')}
             items={[
-              { label: 'Meet Your Role Teachers', href: p('/role-teachers') },
+              { label: t('header.meetTeachers'), href: p('/role-teachers') },
               ...teacherLinks.map((t) => ({
                 label: t.label,
                 href: p(`/role-teachers/${t.slug}`),
               })),
-              { label: 'Testimonials', href: p('/role-teachers/testimonials') },
+              { label: t('navigation.testimonials'), href: p('/role-teachers/testimonials') },
             ]}
           />
 
           {/* Health Dropdown */}
           <NavDropdown
-            label="Health"
+            label={t('header.health')}
             active={isActive('/health')}
             items={[
-              { label: 'Overview', href: p('/health') },
+              { label: t('header.overview'), href: p('/health') },
               ...dynamicHealthLinks.map((h) => ({
                 label: h.label,
                 href: p(`/health/${h.slug}`),
@@ -118,12 +120,12 @@ export function Header({ locale, logoUrl, logoSize = 70, logoTextGap = 0, logoTe
 
           {/* Coach Training Dropdown */}
           <NavDropdown
-            label="Coach Training"
+            label={t('header.coachTraining')}
             active={isActive('/coach-training')}
             items={[
-              { label: 'All Programs', href: p('/coach-training') },
+              { label: t('header.allPrograms'), href: p('/coach-training') },
               ...programLinks.map((pr) => ({
-                label: pr.label,
+                label: pr.label.includes('.') ? t(pr.label) : pr.label,
                 href: p(`/coach-training/${pr.slug}`),
               })),
             ]}
@@ -135,7 +137,7 @@ export function Header({ locale, logoUrl, logoSize = 70, logoTextGap = 0, logoTe
               isActive('/events') ? 'text-primary' : 'text-foreground/70'
             }`}
           >
-            Events
+            {t('header.events')}
           </Link>
 
           <Link
@@ -144,7 +146,7 @@ export function Header({ locale, logoUrl, logoSize = 70, logoTextGap = 0, logoTe
               isActive('/membership') ? 'text-primary' : 'text-foreground/70'
             }`}
           >
-            Membership
+            {t('header.membership')}
           </Link>
 
           <Link
@@ -153,7 +155,7 @@ export function Header({ locale, logoUrl, logoSize = 70, logoTextGap = 0, logoTe
               isActive('/blog') ? 'text-primary' : 'text-foreground/70'
             }`}
           >
-            Blog
+            {t('header.blog')}
           </Link>
 
           <Link
@@ -162,7 +164,7 @@ export function Header({ locale, logoUrl, logoSize = 70, logoTextGap = 0, logoTe
               isActive('/contact') ? 'text-primary' : 'text-foreground/70'
             }`}
           >
-            Contact
+            {t('header.contact')}
           </Link>
 
           <Link
@@ -171,7 +173,7 @@ export function Header({ locale, logoUrl, logoSize = 70, logoTextGap = 0, logoTe
               isActive('/about/donate') ? 'text-primary' : 'text-foreground/70'
             }`}
           >
-            Donate
+            {t('header.donate')}
           </Link>
 
           <Link
@@ -180,7 +182,7 @@ export function Header({ locale, logoUrl, logoSize = 70, logoTextGap = 0, logoTe
               isActive('/about/volunteer') ? 'text-primary' : 'text-foreground/70'
             }`}
           >
-            Volunteer
+            {t('header.volunteer')}
           </Link>
         </nav>
 
@@ -204,24 +206,24 @@ export function Header({ locale, logoUrl, logoSize = 70, logoTextGap = 0, logoTe
               <DropdownMenuContent align="end" className="w-56">
                 <DropdownMenuItem onClick={() => (window.location.href = p('/welcome'))}>
                   <User className="mr-2 h-4 w-4" />
-                  My Profile
+                  {t('header.myProfile')}
                 </DropdownMenuItem>
                 {profile?.subscription_status === 'active' && (
                   <DropdownMenuItem onClick={() => (window.location.href = p('/members'))}>
                     <Crown className="mr-2 h-4 w-4 text-amber-500" />
-                    Members Area
+                    {t('header.membersArea')}
                   </DropdownMenuItem>
                 )}
                 {isAdmin && (
                   <DropdownMenuItem onClick={() => (window.location.href = '/admin')}>
                     <LayoutDashboard className="mr-2 h-4 w-4" />
-                    Admin Dashboard
+                    {t('header.adminDashboard')}
                   </DropdownMenuItem>
                 )}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleLogout}>
                   <LogOut className="mr-2 h-4 w-4" />
-                  Log Out
+                  {t('header.logOut')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -231,13 +233,13 @@ export function Header({ locale, logoUrl, logoSize = 70, logoTextGap = 0, logoTe
                 href={p('/login')}
                 className="rounded-md px-4 py-2 text-sm font-medium text-foreground/70 transition-colors hover:text-primary"
               >
-                Login
+                {t('navigation.login')}
               </Link>
               <Link
                 href={p('/register')}
                 className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
               >
-                Register
+                {t('navigation.register')}
               </Link>
             </div>
           )}
@@ -252,12 +254,12 @@ export function Header({ locale, logoUrl, logoSize = 70, logoTextGap = 0, logoTe
                 <Accordion className="w-full">
                   <AccordionItem value="about" className="border-none">
                     <AccordionTrigger className="py-2 text-sm font-medium hover:no-underline">
-                      About
+                      {t('header.about')}
                     </AccordionTrigger>
                     <AccordionContent className="flex flex-col gap-1 pl-4">
-                      <MobileLink href={p('/about')} label="About Us" onClick={() => setMobileOpen(false)} />
-                      <MobileLink href={p('/about/mission')} label="Our Mission" onClick={() => setMobileOpen(false)} />
-                      <MobileLink href={p('/about/vision')} label="Our Vision" onClick={() => setMobileOpen(false)} />
+                      <MobileLink href={p('/about')} label={t('navigation.about')} onClick={() => setMobileOpen(false)} />
+                      <MobileLink href={p('/about/mission')} label={t('home.ourMission')} onClick={() => setMobileOpen(false)} />
+                      <MobileLink href={p('/about/vision')} label={t('home.ourVision')} onClick={() => setMobileOpen(false)} />
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
@@ -265,23 +267,23 @@ export function Header({ locale, logoUrl, logoSize = 70, logoTextGap = 0, logoTe
                 <Accordion className="w-full">
                   <AccordionItem value="role-teachers" className="border-none">
                     <AccordionTrigger className="py-2 text-sm font-medium hover:no-underline">
-                      Role Teachers
+                      {t('header.roleTeachers')}
                     </AccordionTrigger>
                     <AccordionContent className="flex flex-col gap-1 pl-4">
-                      <MobileLink href={p('/role-teachers')} label="Meet Your Role Teachers" onClick={() => setMobileOpen(false)} />
+                      <MobileLink href={p('/role-teachers')} label={t('header.meetTeachers')} onClick={() => setMobileOpen(false)} />
                       {teacherLinks.map((t) => (
                         <MobileLink key={t.slug} href={p(`/role-teachers/${t.slug}`)} label={t.label} onClick={() => setMobileOpen(false)} />
                       ))}
-                      <MobileLink href={p('/role-teachers/testimonials')} label="Testimonials" onClick={() => setMobileOpen(false)} />
+                      <MobileLink href={p('/role-teachers/testimonials')} label={t('navigation.testimonials')} onClick={() => setMobileOpen(false)} />
                     </AccordionContent>
                   </AccordionItem>
 
                   <AccordionItem value="health" className="border-none">
                     <AccordionTrigger className="py-2 text-sm font-medium hover:no-underline">
-                      Health
+                      {t('header.health')}
                     </AccordionTrigger>
                     <AccordionContent className="flex flex-col gap-1 pl-4">
-                      <MobileLink href={p('/health')} label="Overview" onClick={() => setMobileOpen(false)} />
+                      <MobileLink href={p('/health')} label={t('header.overview')} onClick={() => setMobileOpen(false)} />
                       {dynamicHealthLinks.map((h) => (
                         <MobileLink
                           key={h.slug}
@@ -295,23 +297,23 @@ export function Header({ locale, logoUrl, logoSize = 70, logoTextGap = 0, logoTe
 
                   <AccordionItem value="coach-training" className="border-none">
                     <AccordionTrigger className="py-2 text-sm font-medium hover:no-underline">
-                      Coach Training
+                      {t('header.coachTraining')}
                     </AccordionTrigger>
                     <AccordionContent className="flex flex-col gap-1 pl-4">
-                      <MobileLink href={p('/coach-training')} label="All Programs" onClick={() => setMobileOpen(false)} />
+                      <MobileLink href={p('/coach-training')} label={t('header.allPrograms')} onClick={() => setMobileOpen(false)} />
                       {programLinks.map((pr) => (
-                        <MobileLink key={pr.slug} href={p(`/coach-training/${pr.slug}`)} label={pr.label} onClick={() => setMobileOpen(false)} />
+                        <MobileLink key={pr.slug} href={p(`/coach-training/${pr.slug}`)} label={pr.label.includes('.') ? t(pr.label) : pr.label} onClick={() => setMobileOpen(false)} />
                       ))}
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
 
-                <MobileLink href={p('/events')} label="Events" onClick={() => setMobileOpen(false)} />
-                <MobileLink href={p('/membership')} label="Membership" onClick={() => setMobileOpen(false)} />
-                <MobileLink href={p('/blog')} label="Blog" onClick={() => setMobileOpen(false)} />
-                <MobileLink href={p('/contact')} label="Contact" onClick={() => setMobileOpen(false)} />
-                <MobileLink href={p('/about/donate')} label="Donate" onClick={() => setMobileOpen(false)} />
-                <MobileLink href={p('/about/volunteer')} label="Volunteer" onClick={() => setMobileOpen(false)} />
+                <MobileLink href={p('/events')} label={t('header.events')} onClick={() => setMobileOpen(false)} />
+                <MobileLink href={p('/membership')} label={t('header.membership')} onClick={() => setMobileOpen(false)} />
+                <MobileLink href={p('/blog')} label={t('header.blog')} onClick={() => setMobileOpen(false)} />
+                <MobileLink href={p('/contact')} label={t('header.contact')} onClick={() => setMobileOpen(false)} />
+                <MobileLink href={p('/about/donate')} label={t('header.donate')} onClick={() => setMobileOpen(false)} />
+                <MobileLink href={p('/about/volunteer')} label={t('header.volunteer')} onClick={() => setMobileOpen(false)} />
 
                 {!user && (
                   <div className="mt-4 flex flex-col gap-2 border-t pt-4">
@@ -320,14 +322,14 @@ export function Header({ locale, logoUrl, logoSize = 70, logoTextGap = 0, logoTe
                       onClick={() => setMobileOpen(false)}
                       className="rounded-md px-4 py-2 text-center text-sm font-medium text-foreground/70 transition-colors hover:text-primary"
                     >
-                      Login
+                      {t('navigation.login')}
                     </Link>
                     <Link
                       href={p('/register')}
                       onClick={() => setMobileOpen(false)}
                       className="rounded-md bg-primary px-4 py-2 text-center text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
                     >
-                      Register
+                      {t('navigation.register')}
                     </Link>
                   </div>
                 )}

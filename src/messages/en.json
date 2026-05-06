@@ -141,7 +141,19 @@
     "newPassword": "New Password",
     "acceptTerms": "I accept the Terms & Conditions",
     "subscribeNewsletter": "Subscribe to newsletter",
-    "preferredLanguage": "Preferred Language"
+    "preferredLanguage": "Preferred Language",
+    "emailConfirmed": "Email confirmed!",
+    "emailConfirmedDesc": "Your email has been verified. Please sign in to continue.",
+    "emailConfirmationFailed": "Email confirmation failed. Please try again or contact support.",
+    "passwordResetExpired": "Password reset link expired or invalid. Please request a new one.",
+    "emailNotConfirmed": "Please confirm your email address before logging in. Check your inbox for the confirmation link.",
+    "checkYourEmail": "Check Your Email!",
+    "checkYourEmailDesc": "We've sent a confirmation link to your email. Please click it to activate your account before logging in.",
+    "didntReceiveEmail": "Didn't receive it? Check your spam folder or try logging in to resend.",
+    "phone": "Phone",
+    "terms": "Terms",
+    "hidePassword": "Hide password",
+    "showPassword": "Show password"
   },
   "contact": {
     "title": "Get in Touch",
@@ -170,7 +182,12 @@
     "yearly": "Yearly",
     "manageSubscription": "Manage Subscription",
     "bankTransfer": "Prefer Direct Bank Transfer?",
-    "faq": "Frequently Asked Questions"
+    "faq": "Frequently Asked Questions",
+    "gallery": "Gallery",
+    "popular": "Popular",
+    "saveVsMonthly": "Save vs monthly plan",
+    "alreadyActive": "You already have an active membership. Visit your profile to manage your subscription.",
+    "bankTransferDesc": "Contact us to arrange a direct bank transfer. We'll activate your membership manually."
   },
   "footer": {
     "quickLinks": "Quick Links",
@@ -179,6 +196,64 @@
     "newsletter": "Newsletter",
     "rights": "© {year} Infinity Role Teachers. All rights reserved.",
     "terms": "Terms & Conditions",
-    "privacy": "Privacy Policy"
+    "privacy": "Privacy Policy",
+    "company": "AMS4EVER AG"
+  },
+  "header": {
+    "about": "About",
+    "roleTeachers": "Role Teachers",
+    "meetTeachers": "Meet Your Role Teachers",
+    "health": "Health",
+    "overview": "Overview",
+    "coachTraining": "Coach Training",
+    "allPrograms": "All Programs",
+    "events": "Events",
+    "membership": "Membership",
+    "blog": "Blog",
+    "contact": "Contact",
+    "donate": "Donate",
+    "volunteer": "Volunteer",
+    "myProfile": "My Profile",
+    "membersArea": "Members Area",
+    "adminDashboard": "Admin Dashboard",
+    "logOut": "Log Out"
+  },
+  "programs": {
+    "sunyogaTraining": "Sunyoga Coach Training",
+    "acupressureTraining": "Acupressure Coach Training",
+    "awakenInnerCompass": "Awaken Your Inner Compass"
+  },
+  "events": {
+    "paymentCancelled": "Payment cancelled",
+    "paymentCancelledDesc": "No worries — your spot wasn't reserved. You can try again anytime.",
+    "noUpcomingEvents": "No upcoming events. Check back soon!",
+    "featured": "Featured",
+    "online": "Online",
+    "tba": "TBA",
+    "spotsLeft": "{count} spots left"
+  },
+  "profile": {
+    "editProfile": "Edit Profile",
+    "subscription": "Subscription",
+    "manageMembership": "Manage your membership",
+    "viewPlans": "View plans & join",
+    "active": "Active",
+    "myEvents": "My Events",
+    "accountSettings": "Account Settings",
+    "membersArea": "Members Area",
+    "friend": "friend"
+  },
+  "about": {
+    "contentComingSoon": "Content coming soon.",
+    "ourMission": "Our Mission",
+    "ourVision": "Our Vision",
+    "donate": "Donate",
+    "donateDesc": "Support our work and help us build a home for the seeker.",
+    "volunteer": "Volunteer",
+    "volunteerDesc": "Join our community and contribute your time and skills."
+  },
+  "legal": {
+    "termsAndConditions": "Terms & Conditions",
+    "disclaimer": "Disclaimer"
   }
 }

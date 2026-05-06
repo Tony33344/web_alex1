@@ -9,9 +9,13 @@ interface NewsletterSectionProps {
   logoUrl?: string;
   placeholder: string;
   buttonLabel: string;
+  altText?: string;
+  description?: string;
+  successMessage?: string;
+  errorMessage?: string;
 }
 
-export function NewsletterSection({ title, logoUrl, placeholder, buttonLabel }: NewsletterSectionProps) {
+export function NewsletterSection({ title, logoUrl, placeholder, buttonLabel, altText, description, successMessage, errorMessage }: NewsletterSectionProps) {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -31,7 +35,7 @@ export function NewsletterSection({ title, logoUrl, placeholder, buttonLabel }: 
       setSuccess(true);
       setEmail('');
     } catch {
-      setError('Something went wrong. Please try again.');
+      setError(errorMessage || 'Something went wrong. Please try again.');
     }
     setLoading(false);
   }
@@ -41,15 +45,15 @@ export function NewsletterSection({ title, logoUrl, placeholder, buttonLabel }: 
       <div className="mx-auto max-w-xl px-4 text-center sm:px-6">
         <img
           src={logoUrl || "/logo/logo.jpeg"}
-          alt="Infinity Role Teachers"
+          alt={altText || "Infinity Role Teachers"}
           className="mx-auto mb-6 h-48 w-auto"
         />
         <h2 className="text-2xl font-bold tracking-tight">{title}</h2>
-        <p className="mt-2 text-muted-foreground">Stay updated with our latest news, events, and wellness tips</p>
+        <p className="mt-2 text-muted-foreground">{description || "Stay updated with our latest news, events, and wellness tips"}</p>
         {success ? (
           <div className="mt-6 flex items-center justify-center gap-2 text-primary">
             <CheckCircle className="h-5 w-5" />
-            <span className="font-medium">Thank you for subscribing!</span>
+            <span className="font-medium">{successMessage || "Thank you for subscribing!"}</span>
           </div>
         ) : (
           <form className="mt-6 flex gap-2" onSubmit={handleSubmit}>

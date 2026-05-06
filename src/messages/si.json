@@ -43,7 +43,29 @@
     "newsletter": "Naročite se na naše novice",
     "newsletterPlaceholder": "Vnesite svoj email",
     "subscribe": "Naročite se",
-    "getInTouch": "Stopite v stik"
+    "getInTouch": "Stopite v stik",
+    "welcomeBadge": "Dobrodošli v Infinity Role Teachers",
+    "upcomingBadge": "Prihajajoče",
+    "secureSpot": "Zavarujte svoje mesto — omejena razpoložljivost",
+    "featured": "Izpostavljeno",
+    "earlyBird": "Zgodnja prijava",
+    "earlyBirdEnds": "Zgodnja prijava se konča",
+    "spotsLeft": "Še {count} prostih mest",
+    "aboutUs": "O nas",
+    "ourMission": "Naše poslanstvo",
+    "ourVision": "Naša vizija",
+    "authenticity": "Avtentičnost - Metode poučevanja, korenjene v stari modrosti in potrjene z modernim razumevanjem.",
+    "stayUpdated": "Ostanite na tekočem z našimi novicami, dogodki in nasveti za dobro počutje",
+    "quickLinks": "Hitre povezave",
+    "awakenInnerCompass": "Prebudite svoj notranji kompas",
+    "blogSubtitle": "Vpogledi, zgodbe in nasveti za dobro počutje",
+    "blogComingSoon": "Blog prispevki sledijo kmalu.",
+    "membershipDescription": "Odklenite ekskluzivno vsebino, dogodke samo za člane in posebne popuste na vse programe.",
+    "contactDescription": "Imate vprašanja? Radi bi vas slišali.",
+    "minRead": "{minutes} min branja",
+    "newsletterAltText": "Infinity Role Teachers",
+    "newsletterSuccessMessage": "Hvala za naročilo!",
+    "newsletterErrorMessage": "Nekaj je šlo narobe. Poskusite znova."
   },
   "common": {
     "learnMore": "Več informacij",
@@ -85,7 +107,10 @@
     "create": "Ustvari",
     "success": "Uspešno!",
     "error": "Napaka",
-    "required": "Obvezno"
+    "required": "Obvezno",
+    "donate": "Doniraj",
+    "support": "Podpora",
+    "disclaimer": "Izjava o omejitvi odgovornosti"
   },
   "auth": {
     "loginTitle": "Dobrodošli nazaj",

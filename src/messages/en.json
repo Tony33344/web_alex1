@@ -43,7 +43,29 @@
     "newsletter": "Subscribe to Our Newsletter",
     "newsletterPlaceholder": "Enter your email",
     "subscribe": "Subscribe",
-    "getInTouch": "Get in Touch"
+    "getInTouch": "Get in Touch",
+    "welcomeBadge": "Welcome to Infinity Role Teachers",
+    "upcomingBadge": "Upcoming",
+    "secureSpot": "Secure your spot — limited availability",
+    "featured": "Featured",
+    "earlyBird": "Early Bird",
+    "earlyBirdEnds": "Early bird ends on",
+    "spotsLeft": "{count} spots left",
+    "aboutUs": "About Us",
+    "ourMission": "Our Mission",
+    "ourVision": "Our Vision",
+    "authenticity": "Authenticity - Teaching methods rooted in ancient wisdom and validated by modern understanding.",
+    "stayUpdated": "Stay updated with our latest news, events, and wellness tips",
+    "quickLinks": "Quick Links",
+    "awakenInnerCompass": "Awaken Your Inner Compass",
+    "blogSubtitle": "Insights, stories, and wellness tips",
+    "blogComingSoon": "Blog posts coming soon.",
+    "membershipDescription": "Unlock exclusive content, member-only events, and special discounts on all programs.",
+    "contactDescription": "Have questions? We'd love to hear from you.",
+    "minRead": "{minutes} min read",
+    "newsletterAltText": "Infinity Role Teachers",
+    "newsletterSuccessMessage": "Thank you for subscribing!",
+    "newsletterErrorMessage": "Something went wrong. Please try again."
   },
   "common": {
     "learnMore": "Learn More",
@@ -85,7 +107,10 @@
     "create": "Create",
     "success": "Success!",
     "error": "Error",
-    "required": "Required"
+    "required": "Required",
+    "donate": "Donate",
+    "support": "Support",
+    "disclaimer": "Disclaimer"
   },
   "auth": {
     "loginTitle": "Welcome Back",

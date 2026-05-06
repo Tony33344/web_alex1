@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { Instagram, Facebook, Twitter, Linkedin, Youtube, Phone, Mail, Heart } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 interface FooterProps {
   locale: string;
@@ -10,6 +11,7 @@ interface FooterProps {
 }
 
 export function Footer({ locale, logoUrl }: FooterProps) {
+  const t = useTranslations();
   const p = (path: string) => `/${locale}${path}`;
   const year = new Date().getFullYear();
   const [settings, setSettings] = useState<Record<string, string>>({});
@@ -29,11 +31,11 @@ export function Footer({ locale, logoUrl }: FooterProps) {
         <div className="space-y-4">
           <img
             src={logoUrl || "https://infinityroleteachers.com/logo/logo.jpeg"}
-            alt="Infinity Role Teachers"
+            alt={t('home.newsletterAltText')}
             className="h-18 w-auto"
           />
           <p className="text-sm leading-relaxed text-background/70">
-            Transform your life through holistic wellness and coaching. Discover your infinite potential with our expert Role Teachers.
+            {t('home.stayUpdated')}
           </p>
           <div className="flex gap-3">
             {settings.social_instagram && <SocialIcon href={settings.social_instagram} icon={<Instagram className="h-4 w-4" />} />}
@@ -46,29 +48,29 @@ export function Footer({ locale, logoUrl }: FooterProps) {
 
         {/* Column 2 — Quick Links */}
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-background/90">Quick Links</h3>
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-background/90">{t('footer.quickLinks')}</h3>
           <ul className="space-y-2 text-sm text-background/70">
-            <li><Link href={p('/')} className="hover:text-background transition-colors">About</Link></li>
-            <li><Link href={p('/health')} className="hover:text-background transition-colors">Health</Link></li>
-            <li><Link href={p('/coach-training')} className="hover:text-background transition-colors">Coach Training</Link></li>
-            <li><Link href={p('/events')} className="hover:text-background transition-colors">Events</Link></li>
-            <li><Link href={p('/blog')} className="hover:text-background transition-colors">Blog</Link></li>
+            <li><Link href={p('/')} className="hover:text-background transition-colors">{t('navigation.about')}</Link></li>
+            <li><Link href={p('/health')} className="hover:text-background transition-colors">{t('navigation.health')}</Link></li>
+            <li><Link href={p('/coach-training')} className="hover:text-background transition-colors">{t('navigation.coachTraining')}</Link></li>
+            <li><Link href={p('/events')} className="hover:text-background transition-colors">{t('navigation.events')}</Link></li>
+            <li><Link href={p('/blog')} className="hover:text-background transition-colors">{t('navigation.blog')}</Link></li>
           </ul>
         </div>
 
         {/* Column 3 — Programs */}
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-background/90">Programs</h3>
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-background/90">{t('footer.programs')}</h3>
           <ul className="space-y-2 text-sm text-background/70">
             <li><Link href={p('/coach-training/sunyoga-training')} className="hover:text-background transition-colors">Sunyoga Coach Training</Link></li>
             <li><Link href={p('/coach-training/acupresura-training')} className="hover:text-background transition-colors">Acupressure Coach Training</Link></li>
-            <li><Link href={p('/coach-training/awaken-inner-compass')} className="hover:text-background transition-colors">Awaken Your Inner Compass</Link></li>
+            <li><Link href={p('/coach-training/awaken-inner-compass')} className="hover:text-background transition-colors">{t('home.awakenInnerCompass')}</Link></li>
           </ul>
         </div>
 
         {/* Column 4 — Contact */}
         <div className="space-y-4">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-background/90">Contact</h3>
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-background/90">{t('navigation.contact')}</h3>
           <ul className="space-y-2 text-sm text-background/70">
             <li className="flex items-center gap-2">
               <Mail className="h-3 w-3" />
@@ -93,13 +95,13 @@ export function Footer({ locale, logoUrl }: FooterProps) {
               className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
               <Heart className="h-4 w-4 fill-red-500 text-red-600" />
-              Donate
+              {t('common.donate')}
             </Link>
             <Link
               href={p('/contact')}
               className="inline-block rounded-md bg-secondary px-4 py-2 text-sm font-medium text-secondary-foreground transition-colors hover:bg-secondary/90"
             >
-              Contact Us
+              {t('common.contactUs')}
             </Link>
           </div>
         </div>
@@ -121,13 +123,13 @@ export function Footer({ locale, logoUrl }: FooterProps) {
       {/* Bottom Bar */}
       <div className="border-t border-background/10">
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-2 px-4 py-4 text-xs text-background/50 sm:flex-row sm:px-6 lg:px-8">
-          <span>&copy; {year} Infinity Role Teachers. All rights reserved.</span>
+          <span>{t('footer.rights', { year })}</span>
           <span className="font-medium text-background/60">AMS4EVER AG</span>
           <div className="flex gap-4">
-            <Link href={p('/support')} className="hover:text-background transition-colors">Support</Link>
-            <Link href={p('/terms')} className="hover:text-background transition-colors">Terms &amp; Conditions</Link>
-            <Link href={p('/privacy')} className="hover:text-background transition-colors">Privacy Policy</Link>
-            <Link href={p('/disclaimer')} className="hover:text-background transition-colors">Disclaimer</Link>
+            <Link href={p('/support')} className="hover:text-background transition-colors">{t('common.support')}</Link>
+            <Link href={p('/terms')} className="hover:text-background transition-colors">{t('footer.terms')}</Link>
+            <Link href={p('/privacy')} className="hover:text-background transition-colors">{t('footer.privacy')}</Link>
+            <Link href={p('/disclaimer')} className="hover:text-background transition-colors">{t('common.disclaimer')}</Link>
           </div>
         </div>
       </div>

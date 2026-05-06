@@ -43,7 +43,29 @@
     "newsletter": "Abonnez-vous à notre newsletter",
     "newsletterPlaceholder": "Entrez votre email",
     "subscribe": "S'abonner",
-    "getInTouch": "Nous contacter"
+    "getInTouch": "Nous contacter",
+    "welcomeBadge": "Bienvenue chez Infinity Role Teachers",
+    "upcomingBadge": "À venir",
+    "secureSpot": "Réservez votre place — disponibilité limitée",
+    "featured": "En vedette",
+    "earlyBird": "Tarif précoce",
+    "earlyBirdEnds": "Tarif précoce se termine le",
+    "spotsLeft": "{count} places restantes",
+    "aboutUs": "À propos de nous",
+    "ourMission": "Notre mission",
+    "ourVision": "Notre vision",
+    "authenticity": "Authenticité - Méthodes d'enseignement ancrées dans la sagesse ancienne et validées par la compréhension moderne.",
+    "stayUpdated": "Restez informé de nos dernières nouvelles, événements et conseils de bien-être",
+    "quickLinks": "Liens rapides",
+    "awakenInnerCompass": "Éveillez votre boussole intérieure",
+    "blogSubtitle": "Aperçus, histoires et conseils de bien-être",
+    "blogComingSoon": "Articles de blog à venir.",
+    "membershipDescription": "Débloquez du contenu exclusif, des événements réservés aux membres et des réductions spéciales sur tous les programmes.",
+    "contactDescription": "Des questions ? Nous aimerions avoir de vos nouvelles.",
+    "minRead": "{minutes} min de lecture",
+    "newsletterAltText": "Infinity Role Teachers",
+    "newsletterSuccessMessage": "Merci de vous être abonné !",
+    "newsletterErrorMessage": "Une erreur s'est produite. Veuillez réessayer."
   },
   "common": {
     "learnMore": "En savoir plus",
@@ -85,7 +107,10 @@
     "create": "Créer",
     "success": "Succès !",
     "error": "Erreur",
-    "required": "Obligatoire"
+    "required": "Obligatoire",
+    "donate": "Faire un don",
+    "support": "Support",
+    "disclaimer": "Avertissement"
   },
   "auth": {
     "loginTitle": "Bon retour",

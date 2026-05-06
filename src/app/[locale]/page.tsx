@@ -76,7 +76,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
         <div className="relative z-10 mx-auto max-w-7xl w-full px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <div className="space-y-8">
-              <Badge variant="secondary" className="px-4 py-1.5 text-sm">Welcome to Infinity Role Teachers</Badge>
+              <Badge variant="secondary" className="px-4 py-1.5 text-sm">{t('home.welcomeBadge')}</Badge>
               <h1 className="text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
                 {(homePage && getLocalizedField(homePage, 'title', locale)) || t('home.heroTitle')}
               </h1>
@@ -116,9 +116,9 @@ export default async function HomePage({ params, searchParams }: { params: Promi
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             {/* Centered title with accent band */}
             <div className="mb-10 text-center">
-              <Badge variant="secondary" className="mb-3">Upcoming</Badge>
+              <Badge variant="secondary" className="mb-3">{t('home.upcomingBadge')}</Badge>
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('navigation.events')}</h2>
-              <p className="mt-2 text-muted-foreground">Secure your spot — limited availability</p>
+              <p className="mt-2 text-muted-foreground">{t('home.secureSpot')}</p>
               {/* Accent band */}
               <div className="mx-auto mt-4 h-1 w-24 rounded-full bg-gradient-to-r from-primary via-secondary to-primary" />
             </div>
@@ -142,12 +142,12 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                           <img src={event.image_url} alt={evtTitle} className="h-full w-full object-cover" />
                         )}
                         {event.is_featured && (
-                          <Badge className="absolute left-3 top-3 bg-secondary text-secondary-foreground">Featured</Badge>
+                          <Badge className="absolute left-3 top-3 bg-secondary text-secondary-foreground">{t('home.featured')}</Badge>
                         )}
                         {pricing.isEarlyBird && (
                           <Badge className="absolute left-3 bottom-3 bg-amber-500 text-white gap-1">
                             <Timer className="h-3 w-3" />
-                            Early Bird
+                            {t('home.earlyBird')}
                           </Badge>
                         )}
                         {/* Price in upper right corner */}
@@ -175,11 +175,11 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                           {pricing.isEarlyBird && pricing.earlyBirdDeadline && (
                             <div className="flex items-center gap-2 text-amber-600 font-medium">
                               <Timer className="h-4 w-4" />
-                              Early bird ends on {pricing.earlyBirdDeadline.toLocaleDateString(locale, { month: 'short', day: 'numeric' })}
+                              {t('home.earlyBirdEnds')} {pricing.earlyBirdDeadline.toLocaleDateString(locale, { month: 'short', day: 'numeric' })}
                             </div>
                           )}
                           {spotsLeft !== null && (
-                            <div className={`flex items-center gap-2 ${spotsLeft <= 10 ? 'text-destructive font-medium' : ''}`}><Users className="h-4 w-4" />{spotsLeft > 0 ? `${spotsLeft} spots left` : t('common.eventFull')}</div>
+                            <div className={`flex items-center gap-2 ${spotsLeft <= 10 ? 'text-destructive font-medium' : ''}`}><Users className="h-4 w-4" />{spotsLeft > 0 ? t('home.spotsLeft', { count: spotsLeft }) : t('common.eventFull')}</div>
                           )}
                         </div>
                         <Button className="w-full">{t('common.registerNow')}</Button>
@@ -198,7 +198,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           {/* Centered title with accent band */}
           <div className="mb-10 text-center">
-            <Badge variant="secondary" className="mb-3">About Us</Badge>
+            <Badge variant="secondary" className="mb-3">{t('home.aboutUs')}</Badge>
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('home.aboutTitle') || 'Our Purpose'}</h2>
             <p className="mt-2 text-muted-foreground">{t('home.aboutSubtitle') || 'Discover what drives us forward'}</p>
             {/* Accent band */}
@@ -212,7 +212,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                   <div className="relative aspect-[16/9] overflow-hidden">
                     <img
                       src={missionPage.hero_image_url}
-                      alt={getLocalizedField(missionPage, 'title', locale) || 'Our Mission'}
+                      alt={getLocalizedField(missionPage, 'title', locale) || t('home.ourMission')}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
@@ -252,7 +252,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                   <div className="relative aspect-[16/9] overflow-hidden">
                     <img
                       src={visionPage.hero_image_url}
-                      alt={getLocalizedField(visionPage, 'title', locale) || 'Our Vision'}
+                      alt={getLocalizedField(visionPage, 'title', locale) || t('home.ourVision')}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
@@ -433,7 +433,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                   <div className="flex items-center gap-4 text-sm text-primary-foreground/70">
                     <span className="flex items-center gap-1.5"><Calendar className="h-4 w-4" /> {new Date(featuredEvent.start_date).toLocaleDateString(locale, { dateStyle: 'long' })}</span>
                     {featuredEvent.max_attendees && (
-                      <span className="flex items-center gap-1.5"><Users className="h-4 w-4" /> {featuredEvent.max_attendees - featuredEvent.current_attendees} spots left</span>
+                      <span className="flex items-center gap-1.5"><Users className="h-4 w-4" /> {t('home.spotsLeft', { count: featuredEvent.max_attendees - featuredEvent.current_attendees })}</span>
                     )}
                   </div>
                   <Link href={`/${locale}/events/${featuredEvent.slug}`}>
@@ -500,7 +500,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                         {pricing.isEarlyBird && (
                           <Badge className="absolute left-3 bottom-3 bg-amber-500 text-white gap-1">
                             <Timer className="h-3 w-3" />
-                            Early Bird
+                            {t('home.earlyBird')}
                           </Badge>
                         )}
                         {/* Price in upper right corner */}
@@ -526,7 +526,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                         {pricing.isEarlyBird && pricing.earlyBirdDeadline && (
                           <div className="flex items-center gap-2 text-xs text-amber-600 font-medium">
                             <Timer className="h-3 w-3" />
-                            Early bird ends on {pricing.earlyBirdDeadline.toLocaleDateString(locale, { month: 'short', day: 'numeric' })}
+                            {t('home.earlyBirdEnds')} {pricing.earlyBirdDeadline.toLocaleDateString(locale, { month: 'short', day: 'numeric' })}
                           </div>
                         )}
                         <Button variant="outline" className="w-full gap-2">
@@ -587,7 +587,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
               {(blogPage && getLocalizedField(blogPage, 'content', locale)) ? (
                 <div dangerouslySetInnerHTML={{ __html: getLocalizedField(blogPage, 'content', locale) || '' }} />
               ) : (
-                <p className="text-muted-foreground">Insights, stories, and wellness tips</p>
+                <p className="text-muted-foreground">{t('home.blogSubtitle')}</p>
               )}
             </div>
             <Link href={`/${locale}/blog`}>
@@ -614,7 +614,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                       </CardHeader>
                       <CardContent className="flex items-center gap-2 text-xs text-muted-foreground">
                         <BookOpen className="h-3.5 w-3.5" />
-                        <span>{post.reading_time_minutes} min read</span>
+                        <span>{t('home.minRead', { minutes: post.reading_time_minutes })}</span>
                         {date && <><span>&middot;</span><span>{date}</span></>}
                       </CardContent>
                     </Card>
@@ -623,7 +623,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
               })}
             </div>
           ) : (
-            <p className="text-center text-muted-foreground">Blog posts coming soon.</p>
+            <p className="text-center text-muted-foreground">{t('home.blogComingSoon')}</p>
           )}
         </div>
       </section>
@@ -639,7 +639,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
               <div dangerouslySetInnerHTML={{ __html: getLocalizedField(membershipPage, 'content', locale) || '' }} />
             ) : (
               <p className="text-muted-foreground">
-                Unlock exclusive content, member-only events, and special discounts on all programs.
+                {t('home.membershipDescription')}
               </p>
             )}
           </div>
@@ -660,6 +660,10 @@ export default async function HomePage({ params, searchParams }: { params: Promi
         placeholder={t('home.newsletterPlaceholder')}
         buttonLabel={t('home.subscribe')}
         logoUrl={membershipPage?.hero_image_url || settings?.logo || "/logo/logo.jpeg"}
+        altText={t('home.newsletterAltText')}
+        description={t('home.stayUpdated')}
+        successMessage={t('home.newsletterSuccessMessage')}
+        errorMessage={t('home.newsletterErrorMessage')}
       />
 
       {/* Section 11: Contact CTA */}
@@ -672,7 +676,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
             {(contactPage && getLocalizedField(contactPage, 'content', locale)) ? (
               <div dangerouslySetInnerHTML={{ __html: getLocalizedField(contactPage, 'content', locale) || '' }} />
             ) : (
-              <p className="text-muted-foreground">Have questions? We&apos;d love to hear from you.</p>
+              <p className="text-muted-foreground">{t('home.contactDescription')}</p>
             )}
           </div>
           <div className="mt-6">

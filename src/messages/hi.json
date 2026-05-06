@@ -43,7 +43,29 @@
     "newsletter": "हमारे न्यूज़लेटर की सदस्यता लें",
     "newsletterPlaceholder": "अपना ईमेल दर्ज करें",
     "subscribe": "सदस्यता लें",
-    "getInTouch": "संपर्क करें"
+    "getInTouch": "संपर्क करें",
+    "welcomeBadge": "Infinity Role Teachers में आपका स्वागत है",
+    "upcomingBadge": "आगामी",
+    "secureSpot": "अपना स्थान सुरक्षित करें — सीमित उपलब्धता",
+    "featured": "विशेष",
+    "earlyBird": "प्रारंभिक पंजीकरण",
+    "earlyBirdEnds": "प्रारंभिक पंजीकरण समाप्त",
+    "spotsLeft": "{count} स्थान शेष",
+    "aboutUs": "हमारे बारे में",
+    "ourMission": "हमारा मिशन",
+    "ourVision": "हमारा विज़न",
+    "authenticity": "प्रामाणिकता - प्राचीन ज्ञान में निहित और आधुनिक समझ से प्रमाणित शिक्षण विधियाँ।",
+    "stayUpdated": "हमारी नवीनतम खबरों, कार्यक्रमों और स्वास्थ्य युक्तियों से अपडेट रहें",
+    "quickLinks": "त्वरित लिंक",
+    "awakenInnerCompass": "अपने आंतरिक कंपास को जगाएं",
+    "blogSubtitle": "अंतर्दृष्टि, कहानियाँ और स्वास्थ्य युक्तियाँ",
+    "blogComingSoon": "ब्लॉग पोस्ट जल्द आ रहे हैं।",
+    "membershipDescription": "विशेष सामग्री, सदस्य-केवल घटनाएं और सभी कार्यक्रमों पर विशेष छूट अनलॉक करें।",
+    "contactDescription": "कोई प्रश्न है? हम आपसे सुनना चाहेंगे।",
+    "minRead": "{minutes} मिनट पढ़ने का समय",
+    "newsletterAltText": "Infinity Role Teachers",
+    "newsletterSuccessMessage": "सदस्यता लेने के लिए धन्यवाद!",
+    "newsletterErrorMessage": "कुछ गलत हो गया। कृपया पुनः प्रयास करें।"
   },
   "common": {
     "learnMore": "और जानें",
@@ -85,7 +107,10 @@
     "create": "बनाएं",
     "success": "सफल!",
     "error": "त्रुटि",
-    "required": "आवश्यक"
+    "required": "आवश्यक",
+    "donate": "दान करें",
+    "support": "सहायता",
+    "disclaimer": "अस्वीकरण"
   },
   "auth": {
     "loginTitle": "वापस स्वागत है",

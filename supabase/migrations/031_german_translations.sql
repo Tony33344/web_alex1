@@ -1,25 +1,21 @@
 -- Populate German translations for events
 UPDATE events SET 
   title_de = 'BEWEGTE MEDITATION WORKSHOP mit Meister Zhen Hua Yang - Innere Harmonie: 2-Tage Nei Gong',
-  brief_description_de = 'Innere Harmonie - Bewegte Meditation. Fühlen Sie sich, als ob Ihr Körper und Geist nicht synchron sind? Stellen Sie das Gleichgewicht durch Innere Harmonie wieder her, einen 2-tägigen Workshop unter der Leitung von Meister Zhen Hua Yang. Eine Einführung in Organ...',
   description_de = 'Innere Harmonie - Bewegte Meditation. Fühlen Sie sich, als ob Ihr Körper und Geist nicht synchron sind? Stellen Sie das Gleichgewicht durch Innere Harmonie wieder her, einen 2-tägigen Workshop unter der Leitung von Meister Zhen Hua Yang.'
 WHERE title_en = 'MOVING MEDITATION WORKSHOP with Master Zhen Hua Yang - Inner Harmony: 2-Days Nei Gong';
 
 UPDATE events SET 
   title_de = 'SUNYOGA ist Sonnenmeditation mit SUNYOGI, 3 Tage wissenschaftliche spirituelle Heilung (Stufen 1-3)',
-  brief_description_de = 'SUNYOGA ist Sonnenmeditation mit SUNYOGI, 3 Tage wissenschaftliche spirituelle Heilung (Stufen 1-3)',
   description_de = 'SUNYOGA ist Sonnenmeditation mit SUNYOGI, 3 Tage wissenschaftliche spirituelle Heilung (Stufen 1-3)'
 WHERE title_en = 'SUNYOGA is Sun Meditation with SUNYOGI, 3-days of Scientific Spiritual Healing (Levels1-3)';
 
 UPDATE events SET 
   title_de = 'LEHRERKURS FÜR AKUPRESSUR mit Swamiji SUNYOGI, 4 Tage wissenschaftliche spirituelle Heilung (Stufen 1-4)',
-  brief_description_de = 'LEHRERKURS FÜR AKUPRESSUR mit Swamiji SUNYOGI, 4 Tage wissenschaftliche spirituelle Heilung (Stufen 1-4)',
   description_de = 'LEHRERKURS FÜR AKUPRESSUR mit Swamiji SUNYOGI, 4 Tage wissenschaftliche spirituelle Heilung (Stufen 1-4)'
 WHERE title_en = 'TEACHER COURSE for ACUPRESSURE with Swamiji SUNYOGI, 4-days of Scientific Spiritual Healing (Levels1-4)';
 
 UPDATE events SET 
   title_de = 'HARMONIE INNEN: 2-Tage Reise zur Ganzheit',
-  brief_description_de = 'HARMONIE INNEN: 2-Tage Reise zur Ganzheit',
   description_de = 'HARMONIE INNEN: 2-Tage Reise zur Ganzheit'
 WHERE title_en = 'HARMONY WITHIN: 2 - days journey to wholeness';
 

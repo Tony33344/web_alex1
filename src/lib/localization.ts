@@ -1,3 +1,99 @@
+// Common translations for fallback when database German content is missing
+const commonTranslations: Record<string, Record<string, string>> = {
+  en: {
+    'Transform Your Life': 'Transform Your Life',
+    'When teachers become Infinity Role Teachers, and every heart beats with love, the planet awakens—and so do we.': 'When teachers become Infinity Role Teachers, and every heart beats with love, the planet awakens—and so do we.',
+    'Together, we give birth to a new era of conscious evolution.': 'Together, we give birth to a new era of conscious evolution.',
+    'Switzerland': 'Switzerland',
+    'Slovenia': 'Slovenia',
+    'Our Mission': 'Our Mission',
+    'Our Vision': 'Our Vision',
+    'Discover what drives us forward': 'Discover what drives us forward',
+    'Empower individuals on their journey to holistic wellness by providing transformative education, authentic healing practices, and a supportive global community guided by experienced role teachers.': 'Empower individuals on their journey to holistic wellness by providing transformative education, authentic healing practices, and a supportive global community guided by experienced role teachers.',
+    'A world where everyone has access to ancient wisdom and modern practices necessary to achieve balance, health, and their unlimited potential.': 'A world where everyone has access to ancient wisdom and modern practices necessary to achieve balance, health, and their unlimited potential.',
+    'Together, we birth a new era of conscious evolution.': 'Together, we birth a new era of conscious evolution.',
+    'Embodied guide for inner orientation': 'Embodied guide for inner orientation',
+    'Meditation': 'Meditation',
+    'Holistic Healing': 'Holistic Healing',
+    'Nutrition': 'Nutrition',
+    'Special body exercises': 'Special body exercises',
+    'Life Guidance': 'Life Guidance',
+    'Bridging Traditional Wisdom and Modern Technology for Holistic Health': 'Bridging Traditional Wisdom and Modern Technology for Holistic Health',
+    'Physician': 'Physician',
+    'Educator': 'Educator',
+    'Quantum Diagnostic': 'Quantum Diagnostic',
+    'Teacher of awareness, pure love and spirituality': 'Teacher of awareness, pure love and spirituality',
+    'Yoga & Meditation': 'Yoga & Meditation',
+    'Wellness Coaching': 'Wellness Coaching',
+    'Acupressure': 'Acupressure',
+    'Reconnection Healing': 'Reconnection Healing',
+    'Health is the harmony of body, mind, and spirit.': 'Health is the harmony of body, mind, and spirit.',
+    'Nutrition as Aliveness': 'Nutrition as Aliveness',
+    'Your body is an alchemical lab. Food is a bundle of memory and intelligence. That\'s life talking to life.': 'Your body is an alchemical lab. Food is a bundle of memory and intelligence. That\'s life talking to life.',
+    'Yoga Exercises': 'Yoga Exercises',
+    'Yoga helps you feel calmer, more flexible, and stronger. It eases stress and just makes your body feel way better.': 'Yoga helps you feel calmer, more flexible, and stronger. It eases stress and just makes your body feel way better.',
+    'Sunyoga (= sun meditation)': 'Sunyoga (= sun meditation)',
+    'It helps open your mind to spiritual awakening, fostering a deep connection with your inner self and one step closer to...': 'It helps open your mind to spiritual awakening, fostering a deep connection with your inner self and one step closer to...',
+    'Aligns your body, mind, and energy, transforming joy from a chance event into your natural, constant state of being.': 'Aligns your body, mind, and energy, transforming joy from a chance event into your natural, constant state of being.',
+    'Precision beats power, and timing beats speed': 'Precision beats power, and timing beats speed',
+    '= strength + speed. It makes you faster, stronger in bursts, safer on your feet, burns more calories, keeps you feeling...': '= strength + speed. It makes you faster, stronger in bursts, safer on your feet, burns more calories, keeps you feeling...',
+    'By stimulating these energy points, acupressure helps harmonize the flow of life force energy (Qi or Prana), empowering...': 'By stimulating these energy points, acupressure helps harmonize the flow of life force energy (Qi or Prana), empowering...',
+    'Authenticity - Teaching methods rooted in ancient wisdom and validated by modern understanding.': 'Authenticity - Teaching methods rooted in ancient wisdom and validated by modern understanding.',
+    'What our participants say': 'What our participants say',
+    'Every individual lives in alignment with their soul\'s purpose, contributing to a thriving, conscious civilization.': 'Every individual lives in alignment with their soul\'s purpose, contributing to a thriving, conscious civilization.',
+    'Designing Spaces for Healing': 'Designing Spaces for Healing',
+    'Ritual and Rhythm in Modern Life': 'Ritual and Rhythm in Modern Life',
+    'Your expert is your partner, celebrating victories and navigating challenges with you.': 'Your expert is your partner, celebrating victories and navigating challenges with you.',
+    'We envision a future where holistic wellness practices are woven into the fabric of everyday life, where people don\'t just treat symptoms, but cultivate lasting vitality and inner peace.': 'We envision a future where holistic wellness practices are woven into the fabric of everyday life, where people don\'t just treat symptoms, but cultivate lasting vitality and inner peace.',
+  },
+  de: {
+    'Transform Your Life': 'Transformieren Sie Ihr Leben',
+    'When teachers become Infinity Role Teachers, and every heart beats with love, the planet awakens—and so do we.': 'Wenn Lehrer zu Infinity Role Teachers werden und jedes Herz mit Liebe schlägt, erwacht der Planet – und auch wir.',
+    'Together, we give birth to a new era of conscious evolution.': 'Gemeinsam gebären wir eine neue Ära des bewussten Wandels.',
+    'Switzerland': 'Schweiz',
+    'Slovenia': 'Slowenien',
+    'Our Mission': 'Unsere Mission',
+    'Our Vision': 'Unsere Vision',
+    'Discover what drives us forward': 'Entdecken Sie, was uns antreibt',
+    'Empower individuals on their journey to holistic wellness by providing transformative education, authentic healing practices, and a supportive global community guided by experienced role teachers.': 'Individuen auf ihrer Reise zum ganzheitlichen Wohlbefinden zu stärken, indem wir transformative Bildung, authentische Heilpraktiken und eine unterstützende globale Gemeinschaft unter Anleitung erfahrener Rollenlehrer bieten.',
+    'A world where everyone has access to ancient wisdom and modern practices necessary to achieve balance, health, and their unlimited potential.': 'Eine Welt, in der jeder Zugang zur alten Weisheit und modernen Praktiken hat, die notwendig sind, um Balance, Gesundheit und ihr unbegrenztes Potenzial zu erreichen.',
+    'Together, we birth a new era of conscious evolution.': 'Gemeinsam gebären wir eine neue Ära des bewussten Wandels.',
+    'Embodied guide for inner orientation': 'Verkörperter Führer für innere Orientierung',
+    'Meditation': 'Meditation',
+    'Holistic Healing': 'Ganzheitliche Heilung',
+    'Nutrition': 'Ernährung',
+    'Special body exercises': 'Spezielle Körperübungen',
+    'Life Guidance': 'Lebensberatung',
+    'Bridging Traditional Wisdom and Modern Technology for Holistic Health': 'Traditionelle Weisheit und moderne Technologie für ganzheitliche Gesundheit verbinden',
+    'Physician': 'Arzt',
+    'Educator': 'Pädagoge',
+    'Quantum Diagnostic': 'Quantendiagnostik',
+    'Teacher of awareness, pure love and spirituality': 'Lehrer des Bewusstseins, der reinen Liebe und Spiritualität',
+    'Yoga & Meditation': 'Yoga & Meditation',
+    'Wellness Coaching': 'Wellness-Coaching',
+    'Acupressure': 'Akupressur',
+    'Reconnection Healing': 'Reconnection-Heilung',
+    'Health is the harmony of body, mind, and spirit.': 'Gesundheit ist die Harmonie von Körper, Geist und Seele.',
+    'Nutrition as Aliveness': 'Ernährung als Lebendigkeit',
+    'Your body is an alchemical lab. Food is a bundle of memory and intelligence. That\'s life talking to life.': 'Ihr Körper ist ein alchemistisches Labor. Nahrung ist ein Bündel aus Erinnerung und Intelligenz. Das ist Leben, das mit Leben spricht.',
+    'Yoga Exercises': 'Yoga-Übungen',
+    'Yoga helps you feel calmer, more flexible, and stronger. It eases stress and just makes your body feel way better.': 'Yoga hilft Ihnen, sich ruhiger, flexibler und stärker zu fühlen. Es lindert Stress und lässt Ihren Körper einfach besser fühlen.',
+    'Sunyoga (= sun meditation)': 'Sunyoga (= Sonnenmeditation)',
+    'It helps open your mind to spiritual awakening, fostering a deep connection with your inner self and one step closer to...': 'Es hilft, Ihren Geist für spirituelles Erwachen zu öffnen und fördert eine tiefe Verbindung zu Ihrem inneren Selbst und einen Schritt näher an...',
+    'Aligns your body, mind, and energy, transforming joy from a chance event into your natural, constant state of being.': 'Richtet Ihren Körper, Geist und Energie aus und verwandelt Freude von einem zufälligen Ereignis in Ihren natürlichen, konstanten Zustand des Seins.',
+    'Precision beats power, and timing beats speed': 'Präzision schlägt Kraft, und Timing schlägt Geschwindigkeit',
+    '= strength + speed. It makes you faster, stronger in bursts, safer on your feet, burns more calories, keeps you feeling...': '= Stärke + Geschwindigkeit. Es macht Sie schneller, stärker in Schüben, sicherer auf den Füßen, verbrennt mehr Kalorien, hält Sie fühlen...',
+    'By stimulating these energy points, acupressure helps harmonize the flow of life force energy (Qi or Prana), empowering...': 'Durch Stimulierung dieser Energiepunkte hilft die Akupressur, den Fluss der Lebensenergie (Qi oder Prana) zu harmonisieren und zu ermächtigen...',
+    'Authenticity - Teaching methods rooted in ancient wisdom and validated by modern understanding.': 'Authentizität - Lehrmethoden, die in alter Weisheit verwurzelt und durch modernes Verständnis validiert sind.',
+    'What our participants say': 'Was unsere Teilnehmer sagen',
+    'Every individual lives in alignment with their soul\'s purpose, contributing to a thriving, conscious civilization.': 'Jeder Individuum lebt im Einklang mit dem Zweck seiner Seele und trägt zu einer blühenden, bewussten Zivilisation bei.',
+    'Designing Spaces for Healing': 'Heilende Räume gestalten',
+    'Ritual and Rhythm in Modern Life': 'Ritual und Rhythmus im modernen Leben',
+    'Your expert is your partner, celebrating victories and navigating challenges with you.': 'Ihr Experte ist Ihr Partner, feiert Siege mit Ihnen und navigiert durch Herausforderungen.',
+    'We envision a future where holistic wellness practices are woven into the fabric of everyday life, where people don\'t just treat symptoms, but cultivate lasting vitality and inner peace.': 'Wir unsen uns eine Zukunft, in der ganzheitliche Wellness-Praktiken in den Alltag gewoben sind, in der Menschen nicht nur Symptome behandeln, sondern anhaltende Vitalität und inneren Frieden kultivieren.',
+  }
+};
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getLocalizedField<T = string>(
   item: any,
@@ -9,7 +105,17 @@ export function getLocalizedField<T = string>(
   if (localizedValue !== null && localizedValue !== undefined && localizedValue !== '') {
     return localizedValue as T;
   }
-  return item[`${field}_${fallbackLocale}`] as T;
+  const fallbackValue = item[`${field}_${fallbackLocale}`];
+  
+  // If German content is missing in database, try to translate common English phrases
+  if (locale === 'de' && fallbackValue && typeof fallbackValue === 'string') {
+    const translated = commonTranslations['de']?.[fallbackValue];
+    if (translated) {
+      return translated as T;
+    }
+  }
+  
+  return fallbackValue as T;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

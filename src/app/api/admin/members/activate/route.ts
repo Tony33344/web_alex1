@@ -52,33 +52,35 @@ export async function POST(request: Request) {
     try {
       const { data: profile } = await admin
         .from('profiles')
-        .select('full_name, email')
+        .select('full_name, email, preferred_language')
         .eq('id', userId)
         .single();
       const { data: { user: memberUser } } = await admin.auth.admin.getUserById(userId);
       const recipientEmail = profile?.email || memberUser?.email;
       if (recipientEmail) {
         const userName = profile?.full_name || recipientEmail.split('@')[0] || 'there';
+        const userLocale = (profile as any)?.preferred_language || 'en';
         const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
         const emailContent = prepareEmail({
           to: recipientEmail,
           subject: 'Membership Activated',
           template: EmailTemplates.MEMBERSHIP_CONFIRMATION,
+          locale: userLocale,
           variables: {
             user_name: userName,
             membership_name: plan === 'yearly' ? 'Yearly Membership' : 'Monthly Membership',
             plan_type: plan === 'yearly' ? 'Yearly Membership' : 'Monthly Membership',
             billing_cycle: plan === 'yearly' ? 'Yearly' : 'Monthly',
             payment_amount: plan === 'yearly' ? 'CHF 120' : 'CHF 15',
-            start_date: now.toLocaleDateString('en', { dateStyle: 'long' }),
-            next_billing_date: endDate.toLocaleDateString('en', { dateStyle: 'long' }),
+            start_date: now.toLocaleDateString(userLocale, { dateStyle: 'long' }),
+            next_billing_date: endDate.toLocaleDateString(userLocale, { dateStyle: 'long' }),
             member_id: userId.substring(0, 8).toUpperCase(),
             dashboard_url: `${appUrl}/dashboard`,
-            programs_url: `${appUrl}/en/coach-training`,
+            programs_url: `${appUrl}/${userLocale}/coach-training`,
             user_email: recipientEmail,
             payment_method: 'Bank Transfer',
             invoice_url: `${appUrl}/dashboard`,
-            help_center_url: `${appUrl}/en/about`,
+            help_center_url: `${appUrl}/${userLocale}/about`,
           },
         });
         await sendEmail({ to: recipientEmail, subject: emailContent.subject, html: emailContent.html });

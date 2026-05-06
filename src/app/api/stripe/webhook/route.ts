@@ -5,6 +5,7 @@ import { stripe } from '@/lib/stripe/client';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { sendEmail } from '@/lib/email/transporter';
 import { prepareEmail, EmailTemplates } from '@/lib/email/templates';
+import { getLocalizedField } from '@/lib/localization';
 
 function isUuid(value: string): boolean {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
@@ -64,10 +65,11 @@ export async function POST(request: Request) {
     template: string,
     userId: string,
     subject: string,
-    variables: Record<string, string>
+    variables: Record<string, string>,
+    locale: string = 'en'
   ) {
     try {
-      console.log(`🔍 Attempting to send email to user ${userId} with template ${template}`);
+      console.log(`🔍 Attempting to send email to user ${userId} with template ${template} (locale: ${locale})`);
       const profile = await getUserProfile(userId);
       if (!profile?.email) {
         console.warn('⚠️ No email found for user:', userId);
@@ -80,6 +82,7 @@ export async function POST(request: Request) {
         to: profile.email,
         template: template as any,
         subject,
+        locale,
         variables: {
           ...variables,
           user_name: profile.full_name || 'Valued Member',
@@ -129,6 +132,8 @@ export async function POST(request: Request) {
           .eq('id', userId);
 
         // Send membership confirmation email
+        const profile = await getUserProfile(userId);
+        const userLocale = (profile as any)?.preferred_language || 'en';
         const amount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';
         await sendConfirmationEmail(
           EmailTemplates.MEMBERSHIP_CONFIRMATION,
@@ -137,11 +142,12 @@ export async function POST(request: Request) {
           {
             membership_name: plan === 'yearly' ? 'Annual Membership' : 'Monthly Membership',
             billing_cycle: plan === 'yearly' ? 'Yearly' : 'Monthly',
-            next_billing_date: new Date(sub.current_period_end * 1000).toLocaleDateString('en-US', { 
-              year: 'numeric', month: 'long', day: 'numeric' 
+            next_billing_date: new Date(sub.current_period_end * 1000).toLocaleDateString(userLocale, {
+              year: 'numeric', month: 'long', day: 'numeric'
             }),
             payment_amount: `CHF ${amount}`,
-          }
+          },
+          userLocale
         );
       }
 
@@ -201,29 +207,33 @@ export async function POST(request: Request) {
           .single();
         
         if (eventData) {
+          const profile = await getUserProfile(userId);
+          const userLocale = (profile as any)?.preferred_language || 'en';
           const amount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';
           const orderId = session.id.slice(-8).toUpperCase();
           const currency = eventData.currency || 'CHF';
           const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
-          const eventUrl = `${appUrl}/en/events/${eventId}`;
+          const eventUrl = `${appUrl}/${userLocale}/events/${eventId}`;
+          const eventTitle = getLocalizedField(eventData, 'title', userLocale) || eventData.title_en;
           await sendConfirmationEmail(
             EmailTemplates.EVENT_REGISTRATION,
             userId,
-            `Registration Confirmed: ${eventData.title_en}`,
+            `Registration Confirmed: ${eventTitle}`,
             {
-              event_title: eventData.title_en,
-              event_date: new Date(eventData.start_date).toLocaleDateString('en-US', { 
-                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+              event_title: eventTitle,
+              event_date: new Date(eventData.start_date).toLocaleDateString(userLocale, {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
               }),
-              event_time: new Date(eventData.start_date).toLocaleTimeString('en-US', { 
-                hour: '2-digit', minute: '2-digit' 
+              event_time: new Date(eventData.start_date).toLocaleTimeString(userLocale, {
+                hour: '2-digit', minute: '2-digit'
               }),
               event_location: eventData.location || 'TBD',
               order_id: orderId,
               payment_amount: `${currency} ${amount}`,
               event_url: eventUrl,
               calendar_url: eventUrl,
-            }
+            },
+            userLocale
           );
         } else {
           console.error(`🎫 Event not found for ID: ${eventId}`);
@@ -253,28 +263,33 @@ export async function POST(request: Request) {
           .single();
         
         if (programData) {
+          const profile = await getUserProfile(userId);
+          const userLocale = (profile as any)?.preferred_language || 'en';
           const amount = session.amount_total ? (session.amount_total / 100).toFixed(2) : '0.00';
           const orderId = session.id.slice(-8).toUpperCase();
           const currency = programData.currency || 'CHF';
+          const programName = getLocalizedField(programData, 'name', userLocale) || programData.name_en;
+          const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
           await sendConfirmationEmail(
             EmailTemplates.COACH_TRAINING_REGISTRATION,
             userId,
-            `Enrollment Confirmed: ${programData.name_en}`,
+            `Enrollment Confirmed: ${programName}`,
             {
-              program_name: programData.name_en,
-              start_date: programData.start_date ? new Date(programData.start_date).toLocaleDateString('en-US', { 
-                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' 
+              program_name: programName,
+              start_date: programData.start_date ? new Date(programData.start_date).toLocaleDateString(userLocale, {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
               }) : 'TBD',
-              program_time: programData.start_date ? new Date(programData.start_date).toLocaleTimeString('en-US', { 
-                hour: '2-digit', minute: '2-digit', hour12: false 
+              program_time: programData.start_date ? new Date(programData.start_date).toLocaleTimeString(userLocale, {
+                hour: '2-digit', minute: '2-digit', hour12: false
               }) : 'TBD',
               program_duration: programData.duration || 'See details',
               location: programData.location || 'TBD',
               max_participants: programData.max_participants?.toString() || 'TBD',
               order_id: orderId,
               payment_amount: `${currency} ${amount}`,
-              program_url: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/coach-training/${programData.slug && !isUuid(programData.slug) ? programData.slug : generateSlug(programData.name_en)}`,
-            }
+              program_url: `${appUrl}/${userLocale}/coach-training/${programData.slug && !isUuid(programData.slug) ? programData.slug : generateSlug(programName)}`,
+            },
+            userLocale
           );
         }
       }
@@ -305,10 +320,12 @@ export async function POST(request: Request) {
 
         // Send donation confirmation email
         if (donationData) {
+          const profile = await getUserProfile(userId);
+          const userLocale = (profile as any)?.preferred_language || 'en';
           const amount = (donationData.amount / 100).toFixed(2);
           const currency = donationData.currency?.toUpperCase() || 'CHF';
           const receiptId = `DON-${donationData.id.slice(-8).toUpperCase()}`;
-          const donationDate = new Date().toLocaleDateString('en-US', {
+          const donationDate = new Date().toLocaleDateString(userLocale, {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
@@ -323,7 +340,8 @@ export async function POST(request: Request) {
               donation_amount: `${currency} ${amount}`,
               donation_date: donationDate,
               receipt_id: receiptId,
-            }
+            },
+            userLocale
           );
         }
       }

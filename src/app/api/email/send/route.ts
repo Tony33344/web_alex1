@@ -7,7 +7,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { to, template, variables, subject } = body;
+    const { to, template, variables, subject, locale } = body;
 
     // Validate required fields
     if (!to || !template || !subject) {
@@ -30,6 +30,7 @@ export async function POST(request: Request) {
       to,
       template,
       subject,
+      locale: locale || 'en',
       variables: variables || {},
     });
 
@@ -70,12 +71,14 @@ export async function sendEventRegistrationEmail(
   eventTime: string,
   eventLocation: string,
   orderId: string,
-  amount: string
+  amount: string,
+  locale: string = 'en'
 ) {
   const { html, subject } = prepareEmail({
     to: userEmail,
     template: EmailTemplates.EVENT_REGISTRATION,
     subject: `Registration Confirmed: ${eventTitle}`,
+    locale,
     variables: {
       user_name: userName,
       event_title: eventTitle,
@@ -98,12 +101,14 @@ export async function sendCoachTrainingEmail(
   startDate: string,
   duration: string,
   orderId: string,
-  amount: string
+  amount: string,
+  locale: string = 'en'
 ) {
   const { html, subject } = prepareEmail({
     to: userEmail,
     template: EmailTemplates.COACH_TRAINING_REGISTRATION,
     subject: `Enrollment Confirmed: ${programName}`,
+    locale,
     variables: {
       user_name: userName,
       program_name: programName,
@@ -124,12 +129,14 @@ export async function sendMembershipConfirmationEmail(
   membershipName: string,
   billingCycle: string,
   nextBillingDate: string,
-  amount: string
+  amount: string,
+  locale: string = 'en'
 ) {
   const { html, subject } = prepareEmail({
     to: userEmail,
     template: EmailTemplates.MEMBERSHIP_CONFIRMATION,
     subject: 'Welcome to Infinity Role Teachers Membership',
+    locale,
     variables: {
       user_name: userName,
       membership_name: membershipName,
@@ -146,12 +153,14 @@ export async function sendMembershipConfirmationEmail(
 export async function sendWelcomeEmail(
   userEmail: string,
   userName: string,
-  dashboardUrl: string = 'https://infinityroleteachers.com/en/welcome'
+  dashboardUrl: string = 'https://infinityroleteachers.com/en/welcome',
+  locale: string = 'en'
 ) {
   const { html, subject } = prepareEmail({
     to: userEmail,
     template: EmailTemplates.WELCOME,
     subject: 'Welcome to Infinity Role Teachers',
+    locale,
     variables: {
       user_name: userName,
       dashboard_url: dashboardUrl,

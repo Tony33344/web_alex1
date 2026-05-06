@@ -6,20 +6,32 @@ const EMAILS_DIR = join(process.cwd(), 'emails', 'application');
 // Template cache to avoid reading files repeatedly
 const templateCache: Map<string, string> = new Map();
 
-export function loadTemplate(templateName: string): string {
-  // Check cache first
-  if (templateCache.has(templateName)) {
-    return templateCache.get(templateName)!;
+export function loadTemplate(templateName: string, locale: string = 'en'): string {
+  // Check cache first with locale
+  const cacheKey = `${templateName}-${locale}`;
+  if (templateCache.has(cacheKey)) {
+    return templateCache.get(cacheKey)!;
   }
 
+  // Try to load language-specific template first
+  const languageSpecificPath = join(EMAILS_DIR, locale, `${templateName}.html`);
+  const defaultPath = join(EMAILS_DIR, `${templateName}.html`);
+
   try {
-    const templatePath = join(EMAILS_DIR, `${templateName}.html`);
-    const template = readFileSync(templatePath, 'utf-8');
-    templateCache.set(templateName, template);
+    // Try language-specific template
+    const template = readFileSync(languageSpecificPath, 'utf-8');
+    templateCache.set(cacheKey, template);
     return template;
   } catch (error) {
-    console.error(`Failed to load email template: ${templateName}`, error);
-    throw new Error(`Email template not found: ${templateName}`);
+    // Fallback to English template
+    try {
+      const template = readFileSync(defaultPath, 'utf-8');
+      templateCache.set(cacheKey, template);
+      return template;
+    } catch (fallbackError) {
+      console.error(`Failed to load email template: ${templateName} for locale ${locale}`, error);
+      throw new Error(`Email template not found: ${templateName}`);
+    }
   }
 }
 
@@ -58,10 +70,10 @@ export interface TemplatedEmailOptions {
   variables: Record<string, string>;
 }
 
-export function prepareEmail(options: TemplatedEmailOptions): { subject: string; html: string } {
-  const template = loadTemplate(options.template);
+export function prepareEmail(options: TemplatedEmailOptions & { locale?: string }): { subject: string; html: string } {
+  const template = loadTemplate(options.template, options.locale || 'en');
   const html = renderTemplate(template, options.variables);
-  
+
   return {
     subject: options.subject,
     html,

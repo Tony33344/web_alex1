@@ -1,22 +1,26 @@
 -- Populate German translations for events
 UPDATE events SET 
   title_de = 'BEWEGTE MEDITATION WORKSHOP mit Meister Zhen Hua Yang - Innere Harmonie: 2-Tage Nei Gong',
-  description_de = 'Innere Harmonie - Bewegte Meditation. Fühlen Sie sich, als ob Ihr Körper und Geist nicht synchron sind? Stellen Sie das Gleichgewicht durch Innere Harmonie wieder her, einen 2-tägigen Workshop unter der Leitung von Meister Zhen Hua Yang.'
+  description_de = 'Innere Harmonie - Bewegte Meditation. Fühlen Sie sich, als ob Ihr Körper und Geist nicht synchron sind? Stellen Sie das Gleichgewicht durch Innere Harmonie wieder her, einen 2-tägigen Workshop unter der Leitung von Meister Zhen Hua Yang.',
+  long_content_de = 'Innere Harmonie - Bewegte Meditation. Fühlen Sie sich, als ob Ihr Körper und Geist nicht synchron sind? Stellen Sie das Gleichgewicht durch Innere Harmonie wieder her, einen 2-tägigen Workshop unter der Leitung von Meister Zhen Hua Yang. Eine Einführung in Organ...'
 WHERE title_en = 'MOVING MEDITATION WORKSHOP with Master Zhen Hua Yang - Inner Harmony: 2-Days Nei Gong';
 
 UPDATE events SET 
   title_de = 'SUNYOGA ist Sonnenmeditation mit SUNYOGI, 3 Tage wissenschaftliche spirituelle Heilung (Stufen 1-3)',
-  description_de = 'SUNYOGA ist Sonnenmeditation mit SUNYOGI, 3 Tage wissenschaftliche spirituelle Heilung (Stufen 1-3)'
+  description_de = 'SUNYOGA ist Sonnenmeditation mit SUNYOGI, 3 Tage wissenschaftliche spirituelle Heilung (Stufen 1-3)',
+  long_content_de = 'SUNYOGA ist Sonnenmeditation mit SUNYOGI, 3 Tage wissenschaftliche spirituelle Heilung (Stufen 1-3)'
 WHERE title_en = 'SUNYOGA is Sun Meditation with SUNYOGI, 3-days of Scientific Spiritual Healing (Levels1-3)';
 
 UPDATE events SET 
   title_de = 'LEHRERKURS FÜR AKUPRESSUR mit Swamiji SUNYOGI, 4 Tage wissenschaftliche spirituelle Heilung (Stufen 1-4)',
-  description_de = 'LEHRERKURS FÜR AKUPRESSUR mit Swamiji SUNYOGI, 4 Tage wissenschaftliche spirituelle Heilung (Stufen 1-4)'
+  description_de = 'LEHRERKURS FÜR AKUPRESSUR mit Swamiji SUNYOGI, 4 Tage wissenschaftliche spirituelle Heilung (Stufen 1-4)',
+  long_content_de = 'LEHRERKURS FÜR AKUPRESSUR mit Swamiji SUNYOGI, 4 Tage wissenschaftliche spirituelle Heilung (Stufen 1-4)'
 WHERE title_en = 'TEACHER COURSE for ACUPRESSURE with Swamiji SUNYOGI, 4-days of Scientific Spiritual Healing (Levels1-4)';
 
 UPDATE events SET 
   title_de = 'HARMONIE INNEN: 2-Tage Reise zur Ganzheit',
-  description_de = 'HARMONIE INNEN: 2-Tage Reise zur Ganzheit'
+  description_de = 'HARMONIE INNEN: 2-Tage Reise zur Ganzheit',
+  long_content_de = 'HARMONIE INNEN: 2-Tage Reise zur Ganzheit'
 WHERE title_en = 'HARMONY WITHIN: 2 - days journey to wholeness';
 
 -- Update location names to German
@@ -116,4 +120,49 @@ UPDATE programs SET
   name_de = 'Avalon - Sunyoga Sonnenmeditation Stufe 1-2 Kurs + kostenlose Chakra-Reinigungsübungen',
   description_de = description_en,
   long_content_de = long_content_en
-WHERE name_en LIKE '%Avalon - Sunyoga Sun Meditation Level 1-2 Course + free chakra cleansing exercises%';
+WHERE name_en LIKE '%chakra cleansing exercises%';
+
+-- Populate German translations for teacher specialties
+UPDATE teachers SET 
+  specialties = ARRAY['Meditation', 'Ganzheitliche Heilung', 'Ernährung', 'Spezielle Körperübungen', 'Lebensberatung']
+WHERE specialties = ARRAY['Meditation', 'Holistic Healing', 'Nutrition', 'Special body exercises', 'Life Guidance'];
+
+UPDATE teachers SET 
+  specialties = ARRAY['Ganzheitliche Heilung', 'Arzt', 'Meditation', 'Ernährung', 'Pädagoge', 'Quantendiagnostik']
+WHERE specialties = ARRAY['Holistic Healing', 'Physician', 'Meditation', 'Nutrition', 'Educator', 'Quantum Diagnostic'];
+
+UPDATE teachers SET 
+  specialties = ARRAY['Yoga & Meditation', 'Wellness-Coaching', 'Akupressur', 'Reconnection-Heilung', 'Lebensberatung']
+WHERE specialties = ARRAY['Yoga & Meditation', 'Wellness Coaching', 'Acupressure', 'Reconnection Healing', 'Life Guidance'];
+
+-- Populate German translations for testimonials
+UPDATE testimonials SET 
+  content_de = 'In ihrem Kern ist Akasha tief dem Leben und dem Wachstum anderer gewidmet. Sie trägt eine seltene Kombination aus Empathie, Stärke, Intuition und Ehrlichkeit. Menschen fühlen sich in ihrer Nähe gesehen, und das allein kann transformierend sein. Diese Plattform komplett...'
+WHERE content_en LIKE '%At her core, Akasha is deeply devoted to life%';
+
+UPDATE testimonials SET 
+  content_de = 'Wenn nötig, kann sie Struktur, Klarheit und Disziplin bringen. Doch Akasha tut dies auf eine Weise, die Menschen ermächtigt, diese Qualitäten von innen heraus zu entwickeln, anstatt sich von außen unter Druck gesetzt zu fühlen. Ihre Präsenz drängt Menschen sanft dazu aufzusteigen...'
+WHERE content_en LIKE '%When needed, she can bring structure%';
+
+-- Populate German translations for pages
+UPDATE pages SET 
+  title_de = 'Mitgliedschaft',
+  content_de = 'Ihr Experte ist Ihr Partner, feiert Siege mit Ihnen und navigiert durch Herausforderungen.',
+  meta_description_de = 'Ihr Experte ist Ihr Partner, feiert Siege mit Ihnen und navigiert durch Herausforderungen.'
+WHERE slug = 'membership';
+
+UPDATE pages SET 
+  title_de = 'Kontakt',
+  content_de = 'Wir unsen uns eine Zukunft, in der ganzheitliche Wellness-Praktiken in den Alltag gewoben sind, in der Menschen nicht nur Symptome behandeln, sondern anhaltende Vitalität und inneren Frieden kultivieren.',
+  meta_description_de = 'Wir unsen uns eine Zukunft, in der ganzheitliche Wellness-Praktiken in den Alltag gewoben sind.'
+WHERE slug = 'contact';
+
+-- Update blog post descriptions
+UPDATE blog_posts SET 
+  content_de = 'Jedes Individuum lebt im Einklang mit dem Zweck seiner Seele und trägt zu einer blühenden, bewussten Zivilisation bei.'
+WHERE content_en LIKE '%Every individual lives in alignment with their soul%';
+
+-- Update home page content
+UPDATE pages SET 
+  content_de = 'Wenn Lehrer zu Infinity Role Teachers werden und jedes Herz mit Liebe schlägt, erwacht der Planet – und auch wir. Gemeinsam gebären wir eine neue Ära des bewussten Wandels.'
+WHERE slug = 'home';

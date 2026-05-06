@@ -10,8 +10,9 @@ import { processContent } from '@/lib/utils/text';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
+  const t = await getTranslations();
   const page = await getPage('volunteer');
-  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : 'Volunteer';
+  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : t('volunteer.title');
   const desc = page ? (getLocalizedField(page, 'meta_description', locale) || page.meta_description_en || '') : '';
   return {
     title: `${title} | About`,
@@ -25,13 +26,13 @@ export default async function VolunteerPage({ params }: { params: Promise<{ loca
   const t = await getTranslations();
   const page = await getPage('volunteer');
 
-  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : 'Volunteer';
+  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : t('volunteer.title');
   const content = page ? (getLocalizedField(page, 'content', locale) || page.content_en) : null;
   const textColor = page?.text_color || '#1a1a1a';
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-      <Breadcrumbs locale={locale} items={[{ label: 'About', href: `/${locale}/about` }, { label: title }]} />
+      <Breadcrumbs locale={locale} items={[{ label: t('navigation.about'), href: `/${locale}/about` }, { label: title }]} />
 
       <div className="mt-8 space-y-10">
         {/* Hero */}
@@ -45,7 +46,7 @@ export default async function VolunteerPage({ params }: { params: Promise<{ loca
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/90">
                     <HandHeart className="h-5 w-5 text-primary-foreground" />
                   </div>
-                  <span className="text-sm font-medium text-white/80 uppercase tracking-wider">Volunteer</span>
+                  <span className="text-sm font-medium text-white/80 uppercase tracking-wider">{t('volunteer.title')}</span>
                 </div>
                 <h1 className="text-3xl font-bold text-white sm:text-4xl lg:text-5xl tracking-tight">{title}</h1>
               </div>
@@ -56,7 +57,7 @@ export default async function VolunteerPage({ params }: { params: Promise<{ loca
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/30">
                   <HandHeart className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
                 </div>
-                <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Volunteer</span>
+                <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t('volunteer.title')}</span>
               </div>
               <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">{title}</h1>
             </div>
@@ -76,26 +77,26 @@ export default async function VolunteerPage({ params }: { params: Promise<{ loca
             <div className="space-y-4">
               <Card className="border-emerald-200/50 bg-emerald-50/50 dark:border-emerald-900/30 dark:bg-emerald-950/20">
                 <CardContent className="pt-6 space-y-4">
-                  <h3 className="font-semibold">Support Our Work</h3>
+                  <h3 className="font-semibold">{t('volunteer.supportOurWork')}</h3>
                   <Link
                     href={`/${locale}/about/donate`}
                     className="flex items-center justify-between rounded-lg border bg-background p-4 text-sm font-medium transition-colors hover:border-primary hover:bg-primary/5 group"
                   >
-                    <span>Make a Donation</span>
+                    <span>{t('volunteer.makeDonation')}</span>
                     <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                   </Link>
                   <Link
                     href={`/${locale}/about/mission`}
                     className="flex items-center justify-between rounded-lg border bg-background p-4 text-sm font-medium transition-colors hover:border-primary hover:bg-primary/5 group"
                   >
-                    <span>Our Mission</span>
+                    <span>{t('volunteer.ourMission')}</span>
                     <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                   </Link>
                   <Link
                     href={`/${locale}/contact`}
                     className="flex items-center justify-between rounded-lg border bg-background p-4 text-sm font-medium transition-colors hover:border-primary hover:bg-primary/5 group"
                   >
-                    <span>Contact Us</span>
+                    <span>{t('volunteer.contactUs')}</span>
                     <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                   </Link>
                 </CardContent>
@@ -106,7 +107,7 @@ export default async function VolunteerPage({ params }: { params: Promise<{ loca
           <Card className="border-dashed">
             <CardContent className="py-16 text-center">
               <HandHeart className="mx-auto h-12 w-12 text-muted-foreground/40 mb-4" />
-              <p className="text-muted-foreground">Volunteer page content will appear here once published in the admin panel.</p>
+              <p className="text-muted-foreground">{t('volunteer.contentComingSoon')}</p>
             </CardContent>
           </Card>
         )}

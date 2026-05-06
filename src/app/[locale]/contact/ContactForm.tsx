@@ -31,11 +31,11 @@ export function ContactForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-      if (!res.ok) throw new Error('Failed to send message');
+      if (!res.ok) throw new Error(t('contact.sendFailed'));
       setSuccess(true);
       reset();
     } catch {
-      setError('Something went wrong. Please try again.');
+      setError(t('contact.sendError'));
     }
     setLoading(false);
   }
@@ -47,7 +47,7 @@ export function ContactForm() {
           <Send className="h-8 w-8 text-primary" />
         </div>
         <h3 className="text-lg font-semibold">{t('contact.success')}</h3>
-        <Button variant="outline" onClick={() => setSuccess(false)}>Send Another Message</Button>
+        <Button variant="outline" onClick={() => setSuccess(false)}>{t('contact.sendAnother')}</Button>
       </div>
     );
   }

@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
+import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { getPage } from '@/lib/queries/pages';
 import { getLocalizedField } from '@/lib/localization';
@@ -19,6 +20,7 @@ export default async function MembersPage({
 }) {
   const { locale } = await params;
   const { session_id } = await searchParams;
+  const t = await getTranslations();
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
@@ -43,7 +45,7 @@ export default async function MembersPage({
   }
 
   const page = await getPage('members');
-  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : 'Members';
+  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : t('members.title');
   const content = page ? (getLocalizedField(page, 'content', locale) || page.content_en) : null;
   const surveyCompleted = !!profile.survey_completed_at;
   const textColor = page?.text_color || '#1a1a1a';
@@ -59,14 +61,14 @@ export default async function MembersPage({
               <Crown className="h-8 w-8 text-white" />
             </div>
             <h1 className="text-4xl font-bold tracking-tight mb-4">
-              Members Only
+              {t('members.membersOnly')}
             </h1>
             <p className="text-lg text-muted-foreground">
-              Welcome, {profile.full_name || 'Member'}! Here's your exclusive content.
+              {t('members.welcome', { name: profile.full_name || t('members.member') })}
             </p>
             <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 text-sm font-medium">
               <Lock className="h-4 w-4" />
-              {profile.subscription_plan === 'yearly' ? 'Yearly Member' : 'Monthly Member'}
+              {profile.subscription_plan === 'yearly' ? t('members.yearlyMember') : t('members.monthlyMember')}
             </div>
           </div>
 
@@ -79,18 +81,18 @@ export default async function MembersPage({
                 </div>
                 <div>
                   <h3 className="font-semibold text-lg mb-1">
-                    {surveyCompleted ? 'Update your personalized plan profile' : 'Get your personalized 1-month plan'}
+                    {surveyCompleted ? t('members.updatePlan') : t('members.getPlan')}
                   </h3>
                   <p className="text-sm text-muted-foreground max-w-xl">
                     {surveyCompleted
-                      ? 'Your answers are saved. One of our Infinity Role Teachers will be in touch. Update anytime.'
-                      : 'Answer a few quick questions. One of our Infinity Role Teachers will then contact you (phone, Zoom, Signal or WhatsApp) to co-create a 1-month plan for body, mind and spirit.'}
+                      ? t('members.updatePlanDesc')
+                      : t('members.getPlanDesc')}
                   </p>
                 </div>
               </div>
               <Link href="/members/survey">
                 <Button className="bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 shrink-0">
-                  {surveyCompleted ? 'Edit answers' : 'Start questionnaire'}
+                  {surveyCompleted ? t('members.editAnswers') : t('members.startQuestionnaire')}
                 </Button>
               </Link>
             </div>
@@ -106,14 +108,14 @@ export default async function MembersPage({
               <Card className="hover:shadow-lg transition-shadow border-amber-200 dark:border-amber-800">
                 <CardHeader>
                   <BookOpen className="h-10 w-10 text-amber-500 mb-2" />
-                  <CardTitle>Exclusive Resources</CardTitle>
+                  <CardTitle>{t('members.exclusiveResources')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Access downloadable guides, templates, and member-only materials.
+                    {t('members.exclusiveResourcesDesc')}
                   </p>
                   <Button variant="outline" className="w-full">
-                    Browse Resources
+                    {t('members.browseResources')}
                   </Button>
                 </CardContent>
               </Card>
@@ -121,14 +123,14 @@ export default async function MembersPage({
               <Card className="hover:shadow-lg transition-shadow border-amber-200 dark:border-amber-800">
                 <CardHeader>
                   <Video className="h-10 w-10 text-amber-500 mb-2" />
-                  <CardTitle>Video Library</CardTitle>
+                  <CardTitle>{t('members.videoLibrary')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Watch recorded workshops, training sessions, and exclusive video content.
+                    {t('members.videoLibraryDesc')}
                   </p>
                   <Button variant="outline" className="w-full">
-                    Watch Videos
+                    {t('members.watchVideos')}
                   </Button>
                 </CardContent>
               </Card>
@@ -136,14 +138,14 @@ export default async function MembersPage({
               <Card className="hover:shadow-lg transition-shadow border-amber-200 dark:border-amber-800">
                 <CardHeader>
                   <Calendar className="h-10 w-10 text-amber-500 mb-2" />
-                  <CardTitle>Member Events</CardTitle>
+                  <CardTitle>{t('members.memberEvents')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Join exclusive member-only events, Q&A sessions, and networking meetups.
+                    {t('members.memberEventsDesc')}
                   </p>
                   <Button variant="outline" className="w-full">
-                    View Events
+                    {t('members.viewEvents')}
                   </Button>
                 </CardContent>
               </Card>
@@ -151,21 +153,21 @@ export default async function MembersPage({
               <Card className="hover:shadow-lg transition-shadow border-amber-200 dark:border-amber-800 md:col-span-2 lg:col-span-3">
                 <CardHeader>
                   <Download className="h-10 w-10 text-amber-500 mb-2" />
-                  <CardTitle>Quick Downloads</CardTitle>
+                  <CardTitle>{t('members.quickDownloads')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-sm text-muted-foreground mb-6">
-                    Get instant access to our most popular member resources.
+                    {t('members.quickDownloadsDesc')}
                   </p>
                   <div className="grid gap-4 md:grid-cols-3">
                     <Button variant="secondary" className="w-full">
-                      📄 Member Handbook
+                      {t('members.memberHandbook')}
                     </Button>
                     <Button variant="secondary" className="w-full">
-                      📋 Event Templates
+                      {t('members.eventTemplates')}
                     </Button>
                     <Button variant="secondary" className="w-full">
-                      🎯 Training Materials
+                      {t('members.trainingMaterials')}
                     </Button>
                   </div>
                 </CardContent>

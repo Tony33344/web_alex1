@@ -101,7 +101,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={homePage?.hero_image_url || "/logo/logo.jpeg"}
-                alt="Infinity Role Teachers"
+                alt={t('meta.siteName')}
                 className="max-w-md w-full object-contain"
                 style={{ background: 'transparent' }}
               />
@@ -171,7 +171,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                       <CardContent className="space-y-3">
                         <div className="space-y-2 text-sm text-muted-foreground">
                           <div className="flex items-center gap-2"><Calendar className="h-4 w-4 flex-shrink-0" />{dateRangeDisplay}</div>
-                          <div className="flex items-center gap-2"><MapPin className="h-4 w-4" />{event.is_online ? 'Online' : event.location || 'TBA'}</div>
+                          <div className="flex items-center gap-2"><MapPin className="h-4 w-4" />{event.is_online ? t('common.online') : event.location || t('events.tba')}</div>
                           {pricing.isEarlyBird && pricing.earlyBirdDeadline && (
                             <div className="flex items-center gap-2 text-amber-600 font-medium">
                               <Timer className="h-4 w-4" />
@@ -300,7 +300,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                 {(roleTeachersPage && getLocalizedField(roleTeachersPage, 'content', locale)) ? (
                   <div dangerouslySetInnerHTML={{ __html: getLocalizedField(roleTeachersPage, 'content', locale) || '' }} />
                 ) : (
-                  <p className="text-muted-foreground">Discover the wisdom and guidance of our expert Role Teachers</p>
+                  <p className="text-muted-foreground">{t('teachers.discoverWisdom')}</p>
                 )}
               </div>
             </div>
@@ -313,7 +313,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                     </div>
                     <CardHeader>
                       <CardTitle className="text-xl">{teacher.name}</CardTitle>
-                      <p className="text-sm text-muted-foreground">{getLocalizedField(teacher, 'title', locale) || 'Role Teacher'}</p>
+                      <p className="text-sm text-muted-foreground">{getLocalizedField(teacher, 'title', locale) || t('teachers.roleTeacher')}</p>
                     </CardHeader>
                     <CardContent className="flex flex-wrap gap-2">
                       {teacher.specialties?.map((s) => (
@@ -339,7 +339,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
               {(healthPage && getLocalizedField(healthPage, 'content', locale)) ? (
                 <div dangerouslySetInnerHTML={{ __html: getLocalizedField(healthPage, 'content', locale) || '' }} />
               ) : (
-                <p className="text-muted-foreground">Six pillars of health and transformation</p>
+                <p className="text-muted-foreground">{t('health.sixPillars')}</p>
               )}
             </div>
           </div>
@@ -382,12 +382,12 @@ export default async function HomePage({ params, searchParams }: { params: Promi
               );
             }) : (
               [
-                { icon: Leaf, title: 'Nutrition', description: 'Nourish your body with mindful eating practices' },
-                { icon: Sun, title: 'Sunyoga', description: 'Harness the healing energy of the sun' },
-                { icon: Heart, title: 'Yoga', description: 'Balance body, mind, and spirit through ancient practice' },
-                { icon: Brain, title: 'Meditation', description: 'Cultivate inner peace and clarity of mind' },
-                { icon: Dumbbell, title: 'Power Training', description: 'Build strength with conscious movement' },
-                { icon: Hand, title: 'Acupressure', description: 'Activate healing points for holistic wellbeing' },
+                { icon: Leaf, title: 'Nutrition', description: t('health.nutritionDesc') },
+                { icon: Sun, title: 'Sunyoga', description: t('health.sunyogaDesc') },
+                { icon: Heart, title: 'Yoga', description: t('health.yogaDesc') },
+                { icon: Brain, title: 'Meditation', description: t('health.meditationDesc') },
+                { icon: Dumbbell, title: 'Power Training', description: t('health.powerTrainingDesc') },
+                { icon: Hand, title: 'Acupressure', description: t('health.acupressureDesc') },
               ].map((item, i) => {
                 const palette = colorPalette[i % colorPalette.length];
                 return (
@@ -445,8 +445,8 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                 </>
               ) : (
                 <>
-                  <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Stay Tuned</h2>
-                  <p className="text-lg leading-relaxed text-primary-foreground/80">New events are coming soon. Follow us for updates.</p>
+                  <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('home.stayTuned')}</h2>
+                  <p className="text-lg leading-relaxed text-primary-foreground/80">{t('home.eventsComingSoon')}</p>
                   <Link href={`/${locale}/events`}>
                     <Button variant="secondary" size="lg" className="gap-2">
                       {t('navigation.events')}
@@ -475,7 +475,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                 {(coachTrainingPage && getLocalizedField(coachTrainingPage, 'content', locale)) ? (
                   <div dangerouslySetInnerHTML={{ __html: getLocalizedField(coachTrainingPage, 'content', locale) || '' }} />
                 ) : (
-                  <p className="text-muted-foreground">Become a certified wellness coach</p>
+                  <p className="text-muted-foreground">{t('programs.becomeCertified')}</p>
                 )}
               </div>
             </div>

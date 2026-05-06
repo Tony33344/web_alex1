@@ -37,7 +37,7 @@ export default async function HealthPage({ params }: { params: Promise<{ locale:
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         {categories.length === 0 ? (
-          <p className="text-center text-muted-foreground">Health categories will appear once added via the admin dashboard.</p>
+          <p className="text-center text-muted-foreground">{t('health.noCategoriesYet')}</p>
         ) : (
           <div className="flex flex-wrap justify-center gap-8">
             {categories.map((cat, i) => {

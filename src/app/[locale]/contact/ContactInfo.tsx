@@ -3,8 +3,10 @@
 import { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Instagram, Facebook, Twitter, Linkedin, Youtube } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { useTranslations } from 'next-intl';
 
 export function ContactInfo() {
+  const t = useTranslations();
   const [settings, setSettings] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -22,7 +24,7 @@ export function ContactInfo() {
             <Mail className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h4 className="text-sm font-semibold">Email</h4>
+            <h4 className="text-sm font-semibold">{t('contact.email')}</h4>
             <p className="text-sm text-muted-foreground">{settings.contact_email || 'info@infinityroleteachers.com'}</p>
           </div>
         </div>
@@ -32,7 +34,7 @@ export function ContactInfo() {
               <Phone className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h4 className="text-sm font-semibold">Phone</h4>
+              <h4 className="text-sm font-semibold">{t('contact.phone')}</h4>
               <p className="text-sm text-muted-foreground">{settings.contact_phone}</p>
             </div>
           </div>
@@ -43,7 +45,7 @@ export function ContactInfo() {
               <Phone className="h-5 w-5 text-primary" />
             </div>
             <div>
-              <h4 className="text-sm font-semibold">Phone (2)</h4>
+              <h4 className="text-sm font-semibold">{t('contact.phone2')}</h4>
               <p className="text-sm text-muted-foreground">{settings.contact_phone_2}</p>
             </div>
           </div>
@@ -53,15 +55,15 @@ export function ContactInfo() {
             <MapPin className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <h4 className="text-sm font-semibold">Address</h4>
-            <p className="text-sm text-muted-foreground">AMS4EVER AG<br />Switzerland</p>
+            <h4 className="text-sm font-semibold">{t('contact.address')}</h4>
+            <p className="text-sm text-muted-foreground">{t('footer.company')}<br />{t('contact.country')}</p>
           </div>
         </div>
 
         {/* Social Media */}
         {(settings.social_instagram || settings.social_facebook || settings.social_twitter || settings.social_linkedin || settings.social_youtube) && (
           <div className="pt-4 border-t">
-            <h4 className="text-sm font-semibold mb-3">Follow Us</h4>
+            <h4 className="text-sm font-semibold mb-3">{t('contact.findUs')}</h4>
             <div className="flex gap-3">
               {settings.social_instagram && (
                 <a href={settings.social_instagram} target="_blank" rel="noopener noreferrer" className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary transition-colors hover:bg-primary/20">

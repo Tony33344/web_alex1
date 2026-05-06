@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2, Lock, Eye, EyeOff } from 'lucide-react';
@@ -16,6 +17,7 @@ export default function ResetPasswordPage() {
   const params = useParams();
   const locale = params.locale as string;
   const router = useRouter();
+  const t = useTranslations('resetPassword');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -42,14 +44,14 @@ export default function ResetPasswordPage() {
     <div className="flex min-h-[80vh] items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">Reset Password</CardTitle>
-          <p className="mt-1 text-sm text-muted-foreground">Enter your new password</p>
+          <CardTitle className="text-2xl">{t('title')}</CardTitle>
+          <p className="mt-1 text-sm text-muted-foreground">{t('subtitle')}</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {error && <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</div>}
             <div className="space-y-2">
-              <Label htmlFor="password">New Password</Label>
+              <Label htmlFor="password">{t('newPassword')}</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
@@ -64,7 +66,7 @@ export default function ResetPasswordPage() {
                   onClick={() => setShowPassword((v) => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   tabIndex={-1}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-label={showPassword ? t('hidePassword') : t('showPassword')}
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -72,7 +74,7 @@ export default function ResetPasswordPage() {
               {errors.password && <p className="text-xs text-destructive">{errors.password.message}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirm_password">Confirm Password</Label>
+              <Label htmlFor="confirm_password">{t('confirmNewPassword')}</Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                 <Input
@@ -87,7 +89,7 @@ export default function ResetPasswordPage() {
                   onClick={() => setShowConfirmPassword((v) => !v)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
                   tabIndex={-1}
-                  aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                  aria-label={showConfirmPassword ? t('hidePassword') : t('showPassword')}
                 >
                   {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>
@@ -96,7 +98,7 @@ export default function ResetPasswordPage() {
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              Update Password
+              {t('updatePassword')}
             </Button>
           </form>
         </CardContent>

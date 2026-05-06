@@ -26,7 +26,7 @@ export default async function RoleTeachersPage({ params }: { params: Promise<{ l
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         {teachers.length === 0 ? (
-          <p className="text-center text-muted-foreground">No teachers found. Content will appear once added via the admin dashboard.</p>
+          <p className="text-center text-muted-foreground">{t('teachers.noTeachersYet')}</p>
         ) : (
           <div className="space-y-16">
             {teachers.map((teacher, i) => (
@@ -40,7 +40,7 @@ export default async function RoleTeachersPage({ params }: { params: Promise<{ l
                   <div>
                     <h2 className="text-3xl font-bold">{teacher.name}</h2>
                     <p className="mt-1 text-lg text-primary">
-                      {getLocalizedField(teacher, 'title', locale) || 'Role Teacher'}
+                      {getLocalizedField(teacher, 'title', locale) || t('teachers.roleTeacher')}
                     </p>
                   </div>
                   <p className="text-muted-foreground leading-relaxed">

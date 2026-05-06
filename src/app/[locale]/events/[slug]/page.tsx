@@ -20,8 +20,9 @@ export const revalidate = 0;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
+  const t = await getTranslations();
   const event = await getEvent(slug);
-  if (!event) return { title: 'Event Not Found' };
+  if (!event) return { title: t('eventDetail.eventNotFound') };
   const title = getLocalizedField(event, 'title', locale) || event.title_en;
   const description = getLocalizedField(event, 'description', locale) || '';
   return {
@@ -65,7 +66,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
         <div className="lg:col-span-2 space-y-6">
           <div className="flex flex-wrap gap-2">
             <Badge variant="outline">{event.is_online ? t('common.online') : t('common.inPerson')}</Badge>
-            {event.is_featured && <Badge className="bg-secondary text-secondary-foreground">Featured</Badge>}
+            {event.is_featured && <Badge className="bg-secondary text-secondary-foreground">{t('events.featured')}</Badge>}
             {event.tags?.map((tag) => (
               <Badge key={tag} variant="secondary">{tag}</Badge>
             ))}
@@ -85,9 +86,9 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
             <CardContent className="space-y-4 pt-6">
               <div className="space-y-3 text-sm">
                 <div className="flex items-center gap-3"><Calendar className="h-4 w-4 text-primary flex-shrink-0" /><span>{dateRangeDisplay}</span></div>
-                <div className="flex items-center gap-3"><MapPin className="h-4 w-4 text-primary" />{event.is_online ? <span>Online</span> : event.location ? <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`} target="_blank" rel="noopener noreferrer" className="underline hover:text-primary transition-colors">{event.location}</a> : <span>TBA</span>}</div>
+                <div className="flex items-center gap-3"><MapPin className="h-4 w-4 text-primary" />{event.is_online ? <span>{t('common.online')}</span> : event.location ? <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`} target="_blank" rel="noopener noreferrer" className="underline hover:text-primary transition-colors">{event.location}</a> : <span>{t('events.tba')}</span>}</div>
                 {spotsLeft !== null && (
-                  <div className="flex items-center gap-3"><Users className="h-4 w-4 text-primary" /><span>{spotsLeft > 0 ? `${spotsLeft} spots left` : t('common.eventFull')}</span></div>
+                  <div className="flex items-center gap-3"><Users className="h-4 w-4 text-primary" /><span>{spotsLeft > 0 ? t('events.spotsLeft', { count: spotsLeft }) : t('common.eventFull')}</span></div>
                 )}
               </div>
               <div className="border-t pt-4">
@@ -108,7 +109,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
 
           {galleryImages.length > 0 && (
             <div className="space-y-3">
-              <h2 className="text-lg font-semibold">Gallery</h2>
+              <h2 className="text-lg font-semibold">{t('members.gallery')}</h2>
               <GalleryGrid images={galleryImages} locale={locale} />
             </div>
           )}

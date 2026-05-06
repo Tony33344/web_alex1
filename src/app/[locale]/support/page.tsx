@@ -11,8 +11,8 @@ export default async function SupportPage({ params }: { params: Promise<{ locale
   const t = await getTranslations();
   const supportPage = await getPage('support');
 
-  const pageTitle = supportPage ? (getLocalizedField(supportPage, 'title', locale) || 'Customer Support') : 'Customer Support';
-  const pageContent = supportPage ? (getLocalizedField(supportPage, 'content', locale) || "We're here to help. Reach out to us for assistance with bookings, payments, or any questions.") : "We're here to help. Reach out to us for assistance with bookings, payments, or any questions.";
+  const pageTitle = supportPage ? (getLocalizedField(supportPage, 'title', locale) || t('support.title')) : t('support.title');
+  const pageContent = supportPage ? (getLocalizedField(supportPage, 'content', locale) || t('support.subtitle')) : t('support.subtitle');
 
   return (
     <>
@@ -50,7 +50,7 @@ export default async function SupportPage({ params }: { params: Promise<{ locale
                     <Mail className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold">Support Email</h4>
+                    <h4 className="text-sm font-semibold">{t('support.supportEmail')}</h4>
                     <a 
                       href="mailto:support@infinityroleteachers.com" 
                       className="text-sm text-muted-foreground hover:text-primary transition-colors"
@@ -65,10 +65,10 @@ export default async function SupportPage({ params }: { params: Promise<{ locale
                     <MapPin className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold">Company Address</h4>
+                    <h4 className="text-sm font-semibold">{t('support.companyAddress')}</h4>
                     <p className="text-sm text-muted-foreground">
-                      AMS4EVER AG<br />
-                      Switzerland
+                      {t('footer.company')}<br />
+                      {t('contact.country')}
                     </p>
                   </div>
                 </div>
@@ -78,10 +78,10 @@ export default async function SupportPage({ params }: { params: Promise<{ locale
                     <Clock className="h-5 w-5 text-primary" />
                   </div>
                   <div>
-                    <h4 className="text-sm font-semibold">Response Time</h4>
+                    <h4 className="text-sm font-semibold">{t('support.responseTime')}</h4>
                     <p className="text-sm text-muted-foreground">
-                      Within 24-48 hours<br />
-                      Monday - Friday
+                      {t('support.responseTimeValue')}<br />
+                      {t('support.responseDays')}
                     </p>
                   </div>
                 </div>
@@ -93,14 +93,14 @@ export default async function SupportPage({ params }: { params: Promise<{ locale
               <CardContent className="pt-6">
                 <div className="flex items-center gap-2 mb-4">
                   <HelpCircle className="h-5 w-5 text-primary" />
-                  <h3 className="font-semibold">Common Issues</h3>
+                  <h3 className="font-semibold">{t('support.commonIssues')}</h3>
                 </div>
                 <ul className="space-y-3 text-sm text-muted-foreground">
-                  <li>• Booking and registration problems</li>
-                  <li>• Payment and refund inquiries</li>
-                  <li>• Event and program information</li>
-                  <li>• Account access issues</li>
-                  <li>• Membership questions</li>
+                  <li>• {t('support.bookingIssues')}</li>
+                  <li>• {t('support.paymentInquiries')}</li>
+                  <li>• {t('support.eventInfo')}</li>
+                  <li>• {t('support.accountIssues')}</li>
+                  <li>• {t('support.membershipQuestions')}</li>
                 </ul>
               </CardContent>
             </Card>

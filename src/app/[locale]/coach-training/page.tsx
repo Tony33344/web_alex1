@@ -37,8 +37,8 @@ export default async function CoachTrainingPage({ params, searchParams }: CoachT
 
       <PaymentSuccessBanner
         param="payment"
-        title="Enrollment confirmed"
-        message="You're enrolled in the program. Check your email for next steps."
+        title={t('programs.enrollmentConfirmed')}
+        message={t('programs.enrollmentConfirmedDesc')}
       />
 
       {payment === 'cancelled' && (
@@ -46,8 +46,8 @@ export default async function CoachTrainingPage({ params, searchParams }: CoachT
           <div className="flex items-center gap-3 rounded-lg bg-amber-50 p-4 text-amber-800 dark:bg-amber-900/20 dark:text-amber-200">
             <XCircle className="h-5 w-5 shrink-0" />
             <div>
-              <p className="font-medium">Payment cancelled</p>
-              <p className="text-sm opacity-90">No worries — you can enroll again anytime.</p>
+              <p className="font-medium">{t('programs.paymentCancelled')}</p>
+              <p className="text-sm opacity-90">{t('programs.paymentCancelledDesc')}</p>
             </div>
           </div>
         </div>
@@ -55,7 +55,7 @@ export default async function CoachTrainingPage({ params, searchParams }: CoachT
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         {programs.length === 0 ? (
-          <p className="text-center text-muted-foreground">Programs will appear once added via the admin dashboard.</p>
+          <p className="text-center text-muted-foreground">{t('programs.noProgramsYet')}</p>
         ) : (
           <div className="space-y-12">
             {programs.map((program) => {
@@ -74,7 +74,7 @@ export default async function CoachTrainingPage({ params, searchParams }: CoachT
                     <div className="p-8 lg:col-span-3">
                       <div className="flex items-start justify-between">
                         <div>
-                          {program.is_featured && <Badge className="mb-3 bg-secondary text-secondary-foreground">Featured Program</Badge>}
+                          {program.is_featured && <Badge className="mb-3 bg-secondary text-secondary-foreground">{t('programs.featuredProgram')}</Badge>}
                           <CardTitle className="text-2xl">{name}</CardTitle>
                         </div>
                         <PriceTag pricing={pricing} freeLabel={t('common.free')} locale={locale} size="lg" />
@@ -92,7 +92,7 @@ export default async function CoachTrainingPage({ params, searchParams }: CoachT
                           <span className="flex items-start gap-1.5"><Clock className="mt-0.5 h-4 w-4 shrink-0" /><span className="whitespace-pre-line">{program.duration}</span></span>
                         )}
                         {program.max_participants && (
-                          <span className="flex items-center gap-1.5"><Users className="h-4 w-4" />Max {program.max_participants} participants</span>
+                          <span className="flex items-center gap-1.5"><Users className="h-4 w-4" />{t('programs.maxParticipants', { count: program.max_participants })}</span>
                         )}
                       </div>
                       {program.what_you_learn?.length > 0 && (

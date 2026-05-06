@@ -34,7 +34,7 @@ export default async function BlogPage({ params }: { params: Promise<{ locale: s
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         {posts.length === 0 ? (
-          <p className="text-center text-muted-foreground">No blog posts yet. Check back soon!</p>
+          <p className="text-center text-muted-foreground">{t('blog.noPostsYet')}</p>
         ) : (
           <div className="grid grid-cols-2 gap-8 items-stretch auto-rows-fr">
             {posts.map((post) => {

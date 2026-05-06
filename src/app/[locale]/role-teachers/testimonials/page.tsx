@@ -13,11 +13,11 @@ export default async function TestimonialsPage({ params }: { params: Promise<{ l
 
   return (
     <>
-      <PageHeader title={t('navigation.testimonials')} subtitle="Hear from our students and community members" />
+      <PageHeader title={t('navigation.testimonials')} subtitle={t('testimonials.subtitle')} />
 
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         {testimonials.length === 0 ? (
-          <p className="text-center text-muted-foreground">Testimonials will appear once added via the admin dashboard.</p>
+          <p className="text-center text-muted-foreground">{t('testimonials.noTestimonialsYet')}</p>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {testimonials.map((item) => (

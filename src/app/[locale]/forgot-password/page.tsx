@@ -12,7 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { createClient } from '@/lib/supabase/client';
 
 export default function ForgotPasswordPage() {
-  const t = useTranslations('auth');
+  const t = useTranslations('forgotPassword');
   const params = useParams();
   const locale = params.locale as string;
   const [email, setEmail] = useState('');
@@ -46,12 +46,12 @@ export default function ForgotPasswordPage() {
             <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10">
               <Mail className="h-8 w-8 text-primary" />
             </div>
-            <h2 className="text-xl font-bold">Check your email</h2>
+            <h2 className="text-xl font-bold">{t('checkEmail')}</h2>
             <p className="text-sm text-muted-foreground">
-              If an account exists with that email, we&apos;ve sent a password reset link.
+              {t('resetLinkSent')}
             </p>
             <Link href={`/${locale}/login`}>
-              <Button variant="outline" className="mt-4">Back to Login</Button>
+              <Button variant="outline" className="mt-4">{t('backToLogin')}</Button>
             </Link>
           </CardContent>
         </Card>
@@ -63,22 +63,22 @@ export default function ForgotPasswordPage() {
     <div className="flex min-h-[80vh] items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <CardTitle className="text-2xl">{t('forgotPassword')}</CardTitle>
-          <p className="mt-1 text-sm text-muted-foreground">Enter your email to receive a reset link</p>
+          <CardTitle className="text-2xl">{t('title')}</CardTitle>
+          <p className="mt-1 text-sm text-muted-foreground">{t('subtitle')}</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</div>}
             <div className="space-y-2">
-              <Label htmlFor="email">{t('email')}</Label>
+              <Label htmlFor="email">{t('emailLabel')}</Label>
               <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
               {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-              Send Reset Link
+              {t('sendResetLink')}
             </Button>
             <p className="text-center text-sm text-muted-foreground">
-              <Link href={`/${locale}/login`} className="font-medium text-primary hover:underline">Back to Login</Link>
+              <Link href={`/${locale}/login`} className="font-medium text-primary hover:underline">{t('backToLogin')}</Link>
             </p>
           </form>
         </CardContent>

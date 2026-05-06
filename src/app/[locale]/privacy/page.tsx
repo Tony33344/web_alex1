@@ -8,8 +8,9 @@ import { Breadcrumbs } from '@/components/shared/Breadcrumbs';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
+  const t = await getTranslations();
   const page = await getPage('privacy');
-  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : 'Privacy Policy';
+  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : t('legal.privacyPolicy');
   const desc = page ? (getLocalizedField(page, 'meta_description', locale) || page.meta_description_en || '') : '';
   return {
     title: `${title} | Infinity Role Teachers`,
@@ -23,7 +24,7 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
   const t = await getTranslations();
   const page = await getPage('privacy');
 
-  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : 'Privacy Policy';
+  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : t('legal.privacyPolicy');
   const content = page ? (getLocalizedField(page, 'content', locale) || page.content_en) : null;
   const textColor = page?.text_color || '#1a1a1a';
 
@@ -38,7 +39,7 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
               <Shield className="h-6 w-6 text-primary" />
             </div>
-            <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Privacy</span>
+            <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t('legal.privacy')}</span>
           </div>
           <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h1>
         </div>
@@ -51,7 +52,7 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
         ) : (
           <div className="rounded-lg border border-dashed p-16 text-center">
             <Shield className="mx-auto h-12 w-12 text-muted-foreground/40 mb-4" />
-            <p className="text-muted-foreground">Privacy policy content will appear here once published in the admin panel.</p>
+            <p className="text-muted-foreground">{t('legal.privacyContentComingSoon')}</p>
           </div>
         )}
       </div>

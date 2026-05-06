@@ -26,6 +26,10 @@
   "home": {
     "heroTitle": "Transformez votre vie par le bien-être holistique",
     "heroSubtitle": "Découvrez votre potentiel infini avec nos Enseignants de Rôle experts",
+    "heroTransform": "Transformez votre vie",
+    "heroQuote": "\"Lorsque les enseignants deviennent Infinity Role Teachers et que chaque cœur bat d'amour, la planète s'éveille — et nous aussi.\" Ensemble, nous donnons naissance à une nouvelle ère d'évolution consciente.",
+    "missionDescription": "Autonomiser les individus dans leur voyage vers le bien-être holistique en fournissant une éducation transformatrice, des pratiques de guérison authentiques et une communauté mondiale de soutien guidée par des Enseignants de Rôle expérimentés.",
+    "visionDescription": "Un monde où chacun a accès à la sagesse ancienne et aux pratiques modernes nécessaires pour atteindre l'équilibre, la santé et leur potentiel infini.",
     "explorePrograms": "Explorer les programmes",
     "joinMembership": "Devenir membre",
     "aboutTitle": "À propos",
@@ -65,7 +69,11 @@
     "minRead": "{minutes} min de lecture",
     "newsletterAltText": "Infinity Role Teachers",
     "newsletterSuccessMessage": "Merci de vous être abonné !",
-    "newsletterErrorMessage": "Une erreur s'est produite. Veuillez réessayer."
+    "newsletterErrorMessage": "Une erreur s'est produite. Veuillez réessayer.",
+    "healthSectionTitle": "Santé",
+    "blogSectionTitle": "Blog",
+    "membershipSectionTitle": "Adhésion",
+    "contactSectionTitle": "Contact"
   },
   "common": {
     "learnMore": "En savoir plus",

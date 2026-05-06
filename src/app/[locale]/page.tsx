@@ -235,7 +235,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                 )}
                 <CardContent className="p-4 space-y-3">
                   <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
-                    To empower individuals on their journey toward holistic wellness by providing transformative education, authentic healing practices, and a supportive global community guided by experienced Role Teachers.
+                    {t('home.missionDescription')}
                   </p>
                   <div className="flex items-center gap-2 text-sm font-medium text-primary transition-colors group-hover:gap-3">
                     {t('common.learnMore')}
@@ -275,7 +275,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
                 )}
                 <CardContent className="p-4 space-y-3">
                   <p className="text-sm text-muted-foreground leading-relaxed line-clamp-3">
-                    A world where everyone has access to the ancient wisdom and modern practices needed to achieve balance, health, and their infinite potential.
+                    {t('home.visionDescription')}
                   </p>
                   <div className="flex items-center gap-2 text-sm font-medium text-primary transition-colors group-hover:gap-3">
                     {t('common.learnMore')}
@@ -333,7 +333,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-12 text-center">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              {(healthPage && getLocalizedField(healthPage, 'title', locale)) || t('home.healthTitle')}
+              {(healthPage && getLocalizedField(healthPage, 'title', locale)) || t('home.healthSectionTitle')}
             </h2>
             <div className="mt-4 prose prose-lg max-w-3xl mx-auto dark:prose-invert">
               {(healthPage && getLocalizedField(healthPage, 'content', locale)) ? (
@@ -581,7 +581,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mb-12 flex flex-col items-center text-center">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              {(blogPage && getLocalizedField(blogPage, 'title', locale)) || t('home.latestBlog')}
+              {(blogPage && getLocalizedField(blogPage, 'title', locale)) || t('home.blogSectionTitle')}
             </h2>
             <div className="mt-2 prose dark:prose-invert">
               {(blogPage && getLocalizedField(blogPage, 'content', locale)) ? (
@@ -632,7 +632,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
       <section className="bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-20">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-            {(membershipPage && getLocalizedField(membershipPage, 'title', locale)) || t('home.membershipCta')}
+            {(membershipPage && getLocalizedField(membershipPage, 'title', locale)) || t('home.membershipSectionTitle')}
           </h2>
           <div className="mt-4 prose prose-lg dark:prose-invert mx-auto">
             {(membershipPage && getLocalizedField(membershipPage, 'content', locale)) ? (
@@ -670,7 +670,7 @@ export default async function HomePage({ params, searchParams }: { params: Promi
       <section className="bg-background py-16">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <h2 className="text-2xl font-bold tracking-tight">
-            {(contactPage && getLocalizedField(contactPage, 'title', locale)) || t('home.getInTouch')}
+            {(contactPage && getLocalizedField(contactPage, 'title', locale)) || t('home.contactSectionTitle')}
           </h2>
           <div className="mt-2 prose dark:prose-invert mx-auto">
             {(contactPage && getLocalizedField(contactPage, 'content', locale)) ? (

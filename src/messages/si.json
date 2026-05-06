@@ -26,6 +26,10 @@
   "home": {
     "heroTitle": "Spremenite svoje življenje s celostnim zdravjem",
     "heroSubtitle": "Odkrijte svoj neskončni potencial z našimi strokovnimi učitelji vlog",
+    "heroTransform": "Spremenite svoje življenje",
+    "heroQuote": "\"Ko učitelji postanejo Infinity Role Teachers in vsako srce bije z ljubeznijo, se planet prebudi — in tudi mi.\" Skupaj rodimo novo dobo zavestne evolucije.",
+    "missionDescription": "Posameznike na njihovi poti do celovitega dobrega počutja opremiti s preoblikovalno izobraževanjo, avtentičnimi zdravilnimi praksami in podporno globalno skupnostjo pod vodstvom izkušenih učiteljev vlog.",
+    "visionDescription": "Svet, v katerem vsakdo ima dostop do stare modrosti in modernih praks, potrebnih za doseganje ravnotežja, zdravja in njihovega neskončnega potenciala.",
     "explorePrograms": "Raziščite programe",
     "joinMembership": "Postanite član",
     "aboutTitle": "O nas",
@@ -65,7 +69,11 @@
     "minRead": "{minutes} min branja",
     "newsletterAltText": "Infinity Role Teachers",
     "newsletterSuccessMessage": "Hvala za naročilo!",
-    "newsletterErrorMessage": "Nekaj je šlo narobe. Poskusite znova."
+    "newsletterErrorMessage": "Nekaj je šlo narobe. Poskusite znova.",
+    "healthSectionTitle": "Zdravje",
+    "blogSectionTitle": "Blog",
+    "membershipSectionTitle": "Članstvo",
+    "contactSectionTitle": "Kontakt"
   },
   "common": {
     "learnMore": "Več informacij",

@@ -25,7 +25,11 @@
   },
   "home": {
     "heroTitle": "Trasforma la tua vita attraverso il benessere olistico",
-    "heroSubtitle": "Scopri il tuo potenziale infinito con i nostri Insegnanti di Ruolo esperti",
+    "heroSubtitle": "Scopri il tuo potenziale infinito con i nostri esperti Insegnanti di Ruolo",
+    "heroTransform": "Trasforma la tua vita",
+    "heroQuote": "\"Quando gli insegnanti diventano Infinity Role Teachers e ogni cuore batte con amore, il pianeta si risveglia — e anche noi.\" Insieme diamo vita a una nuova era di evoluzione cosciente.",
+    "missionDescription": "Potenziare gli individui nel loro viaggio verso il benessere olistico fornendo un'istruzione trasformativa, pratiche di guarigione autentiche e una comunità globale di supporto guidata da esperti Insegnanti di Ruolo.",
+    "visionDescription": "Un mondo in cui tutti hanno accesso alla saggezza antica e alle pratiche moderne necessarie per raggiungere l'equilibrio, la salute e il loro potenziale infinito.",
     "explorePrograms": "Scopri i programmi",
     "joinMembership": "Diventa membro",
     "aboutTitle": "Chi siamo",
@@ -65,7 +69,11 @@
     "minRead": "{minutes} min di lettura",
     "newsletterAltText": "Infinity Role Teachers",
     "newsletterSuccessMessage": "Grazie per esserti iscritto!",
-    "newsletterErrorMessage": "Qualcosa è andato storto. Riprova."
+    "newsletterErrorMessage": "Qualcosa è andato storto. Riprova.",
+    "healthSectionTitle": "Salute",
+    "blogSectionTitle": "Blog",
+    "membershipSectionTitle": "Iscrizione",
+    "contactSectionTitle": "Contatti"
   },
   "common": {
     "learnMore": "Scopri di più",

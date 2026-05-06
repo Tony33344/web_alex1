@@ -25,7 +25,11 @@
   },
   "home": {
     "heroTitle": "Verwandeln Sie Ihr Leben durch ganzheitliches Wohlbefinden",
-    "heroSubtitle": "Entdecken Sie Ihr unendliches Potenzial mit unseren erfahrenen Rollenlehrern",
+    "heroSubtitle": "Entdecken Sie Ihr unbegrenztes Potenzial mit unseren erfahrenen Rollenlehrern",
+    "heroTransform": "Transformieren Sie Ihr Leben",
+    "heroQuote": "\"Wenn Lehrer zu Infinity Role Teachers werden und jedes Herz mit Liebe schlägt, erwacht der Planet – und auch wir.\" Gemeinsam gebären wir eine neue Ära bewusster Evolution.",
+    "missionDescription": "Individuen auf ihrer Reise zum ganzheitlichen Wohlbefinden zu stärken, indem wir transformative Bildung, authentische Heilpraktiken und eine unterstützende globale Gemeinschaft unter Anleitung erfahrener Rollenlehrer bieten.",
+    "visionDescription": "Eine Welt, in der jeder Zugang zur alten Weisheit und modernen Praktiken hat, die notwendig sind, um Balance, Gesundheit und ihr unbegrenztes Potenzial zu erreichen.",
     "explorePrograms": "Programme entdecken",
     "joinMembership": "Mitglied werden",
     "aboutTitle": "Über uns",
@@ -65,7 +69,11 @@
     "minRead": "{minutes} min Lesezeit",
     "newsletterAltText": "Infinity Role Teachers",
     "newsletterSuccessMessage": "Vielen Dank für Ihre Anmeldung!",
-    "newsletterErrorMessage": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+    "newsletterErrorMessage": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+    "healthSectionTitle": "Gesundheit",
+    "blogSectionTitle": "Blog",
+    "membershipSectionTitle": "Mitgliedschaft",
+    "contactSectionTitle": "Kontakt"
   },
   "common": {
     "learnMore": "Mehr erfahren",

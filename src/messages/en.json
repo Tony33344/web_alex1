@@ -26,6 +26,10 @@
   "home": {
     "heroTitle": "Transform Your Life Through Holistic Wellness",
     "heroSubtitle": "Discover your infinite potential with our expert Role Teachers",
+    "heroTransform": "Transform Your Life",
+    "heroQuote": "\"When teachers become Infinity Role Teachers, and every heart beats with love, the planet awakens—and so do we.\" Together, we give birth to a new era of conscious evolution.",
+    "missionDescription": "To empower individuals on their journey toward holistic wellness by providing transformative education, authentic healing practices, and a supportive global community guided by experienced Role Teachers.",
+    "visionDescription": "A world where everyone has access to the ancient wisdom and modern practices needed to achieve balance, health, and their infinite potential.",
     "explorePrograms": "Explore Programs",
     "joinMembership": "Join Membership",
     "aboutTitle": "About Us",
@@ -65,7 +69,11 @@
     "minRead": "{minutes} min read",
     "newsletterAltText": "Infinity Role Teachers",
     "newsletterSuccessMessage": "Thank you for subscribing!",
-    "newsletterErrorMessage": "Something went wrong. Please try again."
+    "newsletterErrorMessage": "Something went wrong. Please try again.",
+    "healthSectionTitle": "Health",
+    "blogSectionTitle": "Blog",
+    "membershipSectionTitle": "Membership",
+    "contactSectionTitle": "Contact"
   },
   "common": {
     "learnMore": "Learn More",

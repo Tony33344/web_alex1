@@ -29,9 +29,25 @@ export default function NewEventPage() {
     const res = await fetch('/api/admin/data', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ table: 'events', data: {
-        slug, title_en: fd.get('title_en'),
+        slug,
+        title_en: fd.get('title_en'),
+        title_de: fd.get('title_de') || null,
+        title_it: fd.get('title_it') || null,
+        title_fr: fd.get('title_fr') || null,
+        title_hi: fd.get('title_hi') || null,
+        title_si: fd.get('title_si') || null,
         description_en: description || null,
+        description_de: fd.get('description_de') || null,
+        description_it: fd.get('description_it') || null,
+        description_fr: fd.get('description_fr') || null,
+        description_hi: fd.get('description_hi') || null,
+        description_si: fd.get('description_si') || null,
         long_content_en: longContent || null,
+        long_content_de: fd.get('long_content_de') || null,
+        long_content_it: fd.get('long_content_it') || null,
+        long_content_fr: fd.get('long_content_fr') || null,
+        long_content_hi: fd.get('long_content_hi') || null,
+        long_content_si: fd.get('long_content_si') || null,
         start_date: fd.get('start_date') || null,
         end_date: fd.get('end_date') || null,
         location: fd.get('location') || null,
@@ -63,12 +79,34 @@ export default function NewEventPage() {
       <Card>
         <CardContent className="pt-6">
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="title_en">Title (English) *</Label>
-              <Input id="title_en" name="title_en" required />
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div className="space-y-2">
+                <Label htmlFor="title_en">Title (English) *</Label>
+                <Input id="title_en" name="title_en" required />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="title_de">Title (German)</Label>
+                <Input id="title_de" name="title_de" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="title_it">Title (Italian)</Label>
+                <Input id="title_it" name="title_it" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="title_fr">Title (French)</Label>
+                <Input id="title_fr" name="title_fr" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="title_hi">Title (Hindi)</Label>
+                <Input id="title_hi" name="title_hi" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="title_si">Title (Slovenian)</Label>
+                <Input id="title_si" name="title_si" />
+              </div>
             </div>
             <div className="space-y-2">
-              <Label>Short Description</Label>
+              <Label>Short Description (English)</Label>
               <input type="hidden" name="description_en" value={description} />
               <RichTextEditor
                 value={description || ''}
@@ -76,13 +114,35 @@ export default function NewEventPage() {
                 placeholder="Brief event description"
               />
             </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="description_de">Short Description (German)</Label>
+                <Textarea id="description_de" name="description_de" rows={4} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description_it">Short Description (Italian)</Label>
+                <Textarea id="description_it" name="description_it" rows={4} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description_fr">Short Description (French)</Label>
+                <Textarea id="description_fr" name="description_fr" rows={4} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description_hi">Short Description (Hindi)</Label>
+                <Textarea id="description_hi" name="description_hi" rows={4} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="description_si">Short Description (Slovenian)</Label>
+                <Textarea id="description_si" name="description_si" rows={4} />
+              </div>
+            </div>
             <div className="space-y-2">
               <button
                 type="button"
                 onClick={() => setShowLongContent(!showLongContent)}
                 className="flex items-center gap-2 text-sm font-medium text-primary hover:underline"
               >
-                {showLongContent ? '▼' : '▶'} Full Content (Long Description)
+                {showLongContent ? '▼' : '▶'} Full Content (Long Description - English)
               </button>
               {showLongContent && (
                 <>
@@ -94,6 +154,28 @@ export default function NewEventPage() {
                   />
                 </>
               )}
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="long_content_de">Full Content (German)</Label>
+                <Textarea id="long_content_de" name="long_content_de" rows={8} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="long_content_it">Full Content (Italian)</Label>
+                <Textarea id="long_content_it" name="long_content_it" rows={8} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="long_content_fr">Full Content (French)</Label>
+                <Textarea id="long_content_fr" name="long_content_fr" rows={8} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="long_content_hi">Full Content (Hindi)</Label>
+                <Textarea id="long_content_hi" name="long_content_hi" rows={8} />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="long_content_si">Full Content (Slovenian)</Label>
+                <Textarea id="long_content_si" name="long_content_si" rows={8} />
+              </div>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">

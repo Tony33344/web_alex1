@@ -237,3 +237,17 @@ UPDATE pages SET
   content_de = 'Unsere Vision bei Infinity Role Teachers: Eine Welt, in der ganzheitliches Wohlbefinden eine Lebensweise ist, angetrieben von zertifizierten Coaches weltweit.',
   meta_description_de = 'Unsere Vision bei Infinity Role Teachers: Eine Welt, in der ganzheitliches Wohlbefinden eine Lebensweise ist, angetrieben von zertifizierten Coaches weltweit.'
 WHERE slug = 'vision';
+
+-- Update donate page content
+UPDATE pages SET 
+  title_de = 'Spenden',
+  content_de = 'Unterstützen Sie unsere Arbeit und helfen Sie uns, ein Zuhause für den Suchenden zu bauen.',
+  meta_description_de = 'Unterstützen Sie unsere Arbeit und helfen Sie uns, ein Zuhause für den Suchenden zu bauen.'
+WHERE slug = 'donate';
+
+-- Update volunteer page content
+UPDATE pages SET 
+  title_de = 'Freiwillig',
+  content_de = 'Treten Sie unserer Gemeinschaft bei und tragen Sie Ihre Zeit und Fähigkeiten bei.',
+  meta_description_de = 'Treten Sie unserer Gemeinschaft bei und tragen Sie Ihre Zeit und Fähigkeiten bei.'
+WHERE slug = 'volunteer';

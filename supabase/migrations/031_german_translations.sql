@@ -241,7 +241,7 @@ WHERE slug = 'vision';
 -- Update donate page content
 UPDATE pages SET 
   title_de = 'Spenden',
-  content_de = 'Unterstützen Sie unsere Arbeit und helfen Sie uns, ein Zuhause für den Suchenden zu bauen.',
+  content_de = 'Unterstützen Sie unsere Mission. Unterstützen Sie die Infinity Role Teachers Gemeinschaft. Ihre großzügigen Beiträge helfen uns, unsere Mission der Förderung der Selbstverwirklichung und des bewussten Lebens fortzusetzen. Erhebung des menschlichen Bewusstseins. IRT ist dem Aufbau einer bewussten Welt gewidmet und ermöglicht jeder Person, ihr Höchstpotenzial zu verwirklichen. Unterstützen Sie uns dabei, jedem Menschen auf dem Planeten mindestens einen Tropfen Spiritualität zu bieten. Bewusster Planet. Conscious Planet implementiert mehrere wegweisende Projekte zur Unterstützung des individuellen Wachstums, zur Revitalisierung des menschlichen Geistes, zum Aufbau von Gemeinschaften und zur Wiederherstellung der Umwelt.',
   meta_description_de = 'Unterstützen Sie unsere Arbeit und helfen Sie uns, ein Zuhause für den Suchenden zu bauen.'
 WHERE slug = 'donate';
 

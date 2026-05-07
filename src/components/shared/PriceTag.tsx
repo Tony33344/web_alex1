@@ -1,4 +1,7 @@
+'use client';
+
 import { Sparkles } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import type { ActivePricing } from '@/lib/utils/pricing';
 
 interface PriceTagProps {
@@ -14,6 +17,7 @@ interface PriceTagProps {
  * Renders inline; caller controls flex/alignment.
  */
 export function PriceTag({ pricing, freeLabel, locale, className = '', size = 'md' }: PriceTagProps) {
+  const t = useTranslations('programs');
   const { activePrice, regularPrice, isEarlyBird, earlyBirdDeadline, currency } = pricing;
 
   if (!activePrice || activePrice <= 0) {
@@ -39,7 +43,7 @@ export function PriceTag({ pricing, freeLabel, locale, className = '', size = 'm
       </div>
       <span className={`${smallSize} inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 font-medium text-amber-900 dark:bg-amber-900/30 dark:text-amber-200`}>
         <Sparkles className="h-3 w-3" />
-        Early bird until {deadlineLabel}
+        {t('earlyBirdUntil')} {deadlineLabel}
       </span>
     </div>
   );

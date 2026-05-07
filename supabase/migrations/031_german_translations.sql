@@ -214,6 +214,13 @@ UPDATE pages SET
   meta_description_de = 'Jedes Individuum lebt im Einklang mit dem Zweck seiner Seele und trägt zu einer blühenden, bewussten Zivilisation bei.'
 WHERE slug = 'blog';
 
+-- Update events page
+UPDATE pages SET 
+  title_de = 'Veranstaltungen',
+  content_de = 'Barrierefreiheit – Ganzheitliches Wohlbefinden für alle zugänglich machen, unabhängig vom Hintergrund.',
+  meta_description_de = 'Barrierefreiheit – Ganzheitliches Wohlbefinden für alle zugänglich machen, unabhängig vom Hintergrund.'
+WHERE slug = 'events';
+
 -- Update footer links in settings or create footer translations
 -- These are typically in settings or a separate table, for now we'll update the navigation if needed
 

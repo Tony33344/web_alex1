@@ -164,15 +164,6 @@ UPDATE programs SET
   long_content_de = COALESCE(long_content_de, long_content_en)
 WHERE name_de IS NULL OR name_de = '';
 
--- Update program location addresses to German
-UPDATE programs SET 
-  location_address_de = COALESCE(location_address_de, REPLACE(location_address_de, 'Slovenia', 'Slowenien'))
-WHERE location_address_de LIKE '%Slovenia%';
-
-UPDATE programs SET 
-  location_address_de = COALESCE(location_address_de, REPLACE(location_address_de, 'Switzerland', 'Schweiz'))
-WHERE location_address_de LIKE '%Switzerland%';
-
 -- Populate German translations for teacher specialties
 UPDATE teachers SET 
   specialties = ARRAY['Sunyoga', 'Meditation', 'Ganzheitliche Heilung', 'Ernährung', 'Spezielle Körperübungen', 'Lebensberatung']

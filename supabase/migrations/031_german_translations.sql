@@ -166,12 +166,12 @@ WHERE name_de IS NULL OR name_de = '';
 
 -- Update program location addresses to German
 UPDATE programs SET 
-  location_address_de = COALESCE(location_address_de, REPLACE(location_address_en, 'Slovenia', 'Slowenien'))
-WHERE location_address_en LIKE '%Slovenia%';
+  location_address_de = COALESCE(location_address_de, REPLACE(location_address_de, 'Slovenia', 'Slowenien'))
+WHERE location_address_de LIKE '%Slovenia%';
 
 UPDATE programs SET 
-  location_address_de = COALESCE(location_address_de, REPLACE(location_address_en, 'Switzerland', 'Schweiz'))
-WHERE location_address_en LIKE '%Switzerland%';
+  location_address_de = COALESCE(location_address_de, REPLACE(location_address_de, 'Switzerland', 'Schweiz'))
+WHERE location_address_de LIKE '%Switzerland%';
 
 -- Populate German translations for teacher specialties
 UPDATE teachers SET 

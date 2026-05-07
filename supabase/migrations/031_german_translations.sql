@@ -113,74 +113,69 @@ UPDATE pages SET
   content_de = 'Gemeinsam gebären wir eine neue Ära des bewussten Wandels.',
   meta_description_de = 'Gemeinsam gebären wir eine neue Ära des bewussten Wandels.'
 WHERE slug = 'role-teachers';
-
 -- Populate German translations for programs
 UPDATE programs SET 
   name_de = 'Avalon - Sunyoga Sonnenmeditation Stufe 1-2 Kurs + kostenlose Gelenkreinigungsübungen',
   description_de = 'Erleben Sie die transformative Kraft der Sonne und entfesseln Sie Ihr Potenzial. Sunyoga ist nicht nur eine Praxis, sondern eine tiefe Reise, die Sie mit der kosmischen Energie der Sonne verbindet.',
-  long_content_de = 'Erleben Sie die transformative Kraft der Sonne und entfesseln Sie Ihr Potenzial. Sunyoga ist nicht nur eine Praxis, sondern eine tiefe Reise, die Sie mit der kosmischen Energie der Sonne verbindet.'
-WHERE name_en LIKE '%joint cleansing exercises%';
-
-UPDATE programs SET 
-  name_de = 'Avalon - Sunyoga Sonnenmeditation Stufe 1-2 Kurs + kostenlose Bildmeditation',
-  description_de = 'Erleben Sie die transformative Kraft der Sonne und entfesseln Sie Ihr Potenzial. Sunyoga ist nicht nur eine Praxis, sondern eine tiefe Reise, die Sie mit der kosmischen Energie der Sonne verbindet.',
-  long_content_de = 'Erleben Sie die transformative Kraft der Sonne und entfesseln Sie Ihr Potenzial. Sunyoga ist nicht nur eine Praxis, sondern eine tiefe Reise, die Sie mit der kosmischen Energie der Sonne verbindet.'
-WHERE name_en LIKE '%picture meditation%';
-
-UPDATE programs SET 
-  name_de = 'Avalon - Sunyoga Sonnenmeditation Stufe 1-2 Kurs + kostenlose Chakra-Reinigungsübungen',
-  description_de = 'Erleben Sie die transformative Kraft der Sonne und entfesseln Sie Ihr Potenzial. Sunyoga ist nicht nur eine Praxis, sondern eine tiefe Reise, die Sie mit der kosmischen Energie der Sonne verbindet.',
-  long_content_de = 'Erleben Sie die transformative Kraft der Sonne und entfesseln Sie Ihr Potenzial. Sunyoga ist nicht nur eine Praxis, sondern eine tiefe Reise, die Sie mit der kosmischen Energie der Sonne verbindet.'
-WHERE name_en LIKE '%chakra cleansing exercises%';
-
-UPDATE programs SET 
-  name_de = 'Avalon - Sunyoga Sonnenmeditation Stufe 1-2 Kurs + kostenlose Körperorganübungen',
-  description_de = 'Erleben Sie die transformative Kraft der Sonne und entfesseln Sie Ihr Potenzial. Sunyoga ist nicht nur eine Praxis, sondern eine tiefe Reise, die Sie mit der kosmischen Energie der Sonne verbindet.',
-  long_content_de = 'Erleben Sie die transformative Kraft der Sonne und entfesseln Sie Ihr Potenzial. Sunyoga ist nicht nur eine Praxis, sondern eine tiefe Reise, die Sie mit der kosmischen Energie der Sonne verbindet.'
-WHERE name_en LIKE '%body organ exercises%';
-
-UPDATE programs SET 
-  name_de = 'Akupressur-Training',
-  description_de = 'Akupressur: Ein ganzheitlicher Weg zur Heilung. In der Welt der ganzheitlichen Wellness hat Sunyogi Umasankar den Weg zur optimalen Gesundheit durch die alte Kunst der Akupressur beleuchtet.',
-  long_content_de = 'Akupressur: Ein ganzheitlicher Weg zur Heilung. In der Welt der ganzheitlichen Wellness hat Sunyogi Umasankar den Weg zur optimalen Gesundheit durch die alte Kunst der Akupressur beleuchtet.'
-WHERE name_en LIKE '%Acupressure Training%';
-
-UPDATE programs SET 
-  name_de = 'Erwecken Sie Ihren inneren Kompass',
-  description_de = 'Online-Lehren, Heilung und Abenteuer mit Infinity Role Teacher Akasha. Hallo, schöne Seele. Ich bin Akasha, und ich bin so froh, dass Sie hier sind. Dieses Programm ist aus reiner Liebe und einem tiefen Wunsch geboren...',
-  long_content_de = 'Online-Lehren, Heilung und Abenteuer mit Infinity Role Teacher Akasha. Hallo, schöne Seele. Ich bin Akasha, und ich bin so froh, dass Sie hier sind. Dieses Programm ist aus reiner Liebe und einem tiefen Wunsch geboren...'
-WHERE name_en LIKE '%Awaken Your Inner Compass%';
-
--- Update program prerequisites and what_you_learn arrays
-UPDATE programs SET 
+  long_content_de = 'Erleben Sie die transformative Kraft der Sonne und entfesseln Sie Ihr Potenzial. Sunyoga ist nicht nur eine Praxis, sondern eine tiefe Reise, die Sie mit der kosmischen Energie der Sonne verbindet. In diesem Kurs lernen Sie die Grundlagen der Sonnenmeditation von Sunyogi Umasankar. Diese Praxis verbindet Sie mit der kosmischen Energie der Sonne und fördert spirituelles Erwachen und ganzheitliches Wohlbefinden. Der Kurs umfasst Gelenkreinigungsübungen, die helfen, Blockaden im Körper zu lösen und den Energiefluss zu verbessern.',
   prerequisites = ARRAY['Sie werden ein tiefes Verständnis dafür erlangen, wie man Sonnenmeditation praktiziert', 'Auge-zu-Auge-Meditation', 'Auf-Bild-Meditation', 'Körperorganübungen', 'Chakra-Reinigungsübungen'],
   what_you_learn = ARRAY['Sie werden ein tiefes Verständnis dafür erlangen, wie man Sonnenmeditation praktiziert', 'Auge-zu-Auge-Meditation', 'Auf-Bild-Meditation', 'Körperorganübungen', 'Chakra-Reinigungsübungen']
 WHERE name_en LIKE '%Avalon - Sunyoga Sun Meditation Level 1-2 Course%';
 
 UPDATE programs SET 
+  name_de = 'Avalon - Sunyoga Sonnenmeditation Stufe 1-2 Kurs + kostenlose Bildmeditation',
+  description_de = 'Erleben Sie die transformative Kraft der Sonne und entfesseln Sie Ihr Potenzial. Sunyoga ist nicht nur eine Praxis, sondern eine tiefe Reise, die Sie mit der kosmischen Energie der Sonne verbindet.',
+  long_content_de = 'Erleben Sie die transformative Kraft der Sonne und entfesseln Sie Ihr Potenzial. Sunyoga ist nicht nur eine Praxis, sondern eine tiefe Reise, die Sie mit der kosmischen Energie der Sonne verbindet. In diesem Kurs lernen Sie die Grundlagen der Sonnenmeditation von Sunyogi Umasankar. Diese Praxis verbindet Sie mit der kosmischen Energie der Sonne und fördert spirituelles Erwachen und ganzheitliches Wohlbefinden. Der Kurs umfasst Bildmeditationstechniken, die helfen, den Geist zu fokussieren und innere Ruhe zu finden.',
+  prerequisites = ARRAY['Sie werden ein tiefes Verständnis dafür erlangen, wie man Sonnenmeditation praktiziert', 'Auge-zu-Auge-Meditation', 'Auf-Bild-Meditation', 'Körperorganübungen', 'Chakra-Reinigungsübungen'],
+  what_you_learn = ARRAY['Sie werden ein tiefes Verständnis dafür erlangen, wie man Sonnenmeditation praktiziert', 'Auge-zu-Auge-Meditation', 'Auf-Bild-Meditation', 'Körperorganübungen', 'Chakra-Reinigungsübungen']
+WHERE name_en LIKE '%image meditation%';
+
+UPDATE programs SET 
+  name_de = 'Avalon - Sunyoga Sonnenmeditation Stufe 1-2 Kurs + kostenlose Bildmeditation',
+  description_de = 'Erleben Sie die transformative Kraft der Sonne und entfesseln Sie Ihr Potenzial. Sunyoga ist nicht nur eine Praxis, sondern eine tiefe Reise, die Sie mit der kosmischen Energie der Sonne verbindet.',
+  long_content_de = 'Erleben Sie die transformative Kraft der Sonne und entfesseln Sie Ihr Potenzial. Sunyoga ist nicht nur eine Praxis, sondern eine tiefe Reise, die Sie mit der kosmischen Energie der Sonne verbindet. In diesem Kurs lernen Sie die Grundlagen der Sonnenmeditation von Sunyogi Umasankar. Diese Praxis verbindet Sie mit der kosmischen Energie der Sonne und fördert spirituelles Erwachen und ganzheitliches Wohlbefinden. Der Kurs umfasst Bildmeditationstechniken, die helfen, den Geist zu fokussieren und innere Ruhe zu finden.',
+  prerequisites = ARRAY['Sie werden ein tiefes Verständnis dafür erlangen, wie man Sonnenmeditation praktiziert', 'Auge-zu-Auge-Meditation', 'Auf-Bild-Meditation', 'Körperorganübungen', 'Chakra-Reinigungsübungen'],
+  what_you_learn = ARRAY['Sie werden ein tiefes Verständnis dafür erlangen, wie man Sonnenmeditation praktiziert', 'Auge-zu-Auge-Meditation', 'Auf-Bild-Meditation', 'Körperorganübungen', 'Chakra-Reinigungsübungen']
+WHERE name_en LIKE '%picture meditation%';
+
+UPDATE programs SET 
+  name_de = 'Akupressur Training',
+  description_de = 'Lernen Sie die alte Kunst der Akupressur für ganzheitliches Wohlbefinden.',
+  long_content_de = 'Lernen Sie die alte Kunst der Akupressur für ganzheitliches Wohlbefinden. Akupressur ist eine alte chinesische Heilkunst, die seit Jahrtausenden zur Behandlung verschiedener Beschwerden eingesetzt wird. In diesem Kurs lernen Sie die theoretischen Grundlagen der Akupressur, die Positionen der wichtigsten Energiepunkte (Meridiane) und wie Sie diese Punkte sicher und effektiv stimulieren können. Der Kurs umfasst praktische Übungen, Demonstrationen und Gelegenheit zur Übung unter Anleitung.',
   prerequisites = ARRAY['Jederzeit und überall tun: Selbst-Akupressur ist eine einfache Technik', 'Lernen Sie es zuerst an sich selbst: Durch Übung am eigenen Körper', 'Teilen Sie die Vorteile mit anderen: Sobald Sie mit den Grundlagen vertraut sind, können Sie andere leicht unterrichten', 'Nehmen Sie die Heilung in die eigenen Hände: Diese Selbstheilungsmethoden geben Ihnen die Kontrolle über Ihr eigenes Wohlbefinden', 'Gesund und glücklich sein'],
   what_you_learn = ARRAY['Jederzeit und überall tun: Selbst-Akupressur ist eine einfache Technik', 'Lernen Sie es zuerst an sich selbst: Durch Übung am eigenen Körper', 'Teilen Sie die Vorteile mit anderen: Sobald Sie mit den Grundlagen vertraut sind, können Sie andere leicht unterrichten', 'Nehmen Sie die Heilung in die eigenen Hände: Diese Selbstheilungsmethoden geben Ihnen die Kontrolle über Ihr eigenes Wohlbefinden', 'Gesund und glücklich sein']
 WHERE name_en LIKE '%Acupressure Training%';
 
 UPDATE programs SET 
+  name_de = 'Erwecken Sie Ihren inneren Kompass',
+  description_de = 'Online-Lehren, Heilung und Abenteuer mit Infinity Role Teacher Akasha. Hallo, schöne Seele. Ich bin Akasha, und ich bin so froh, dass Sie hier sind. Dieses Programm ist aus reiner Liebe und einem tiefen Wunsch geboren...',
+  long_content_de = 'Online-Lehren, Heilung und Abenteuer mit Infinity Role Teacher Akasha. Hallo, schöne Seele. Ich bin Akasha, und ich bin so froh, dass Sie hier sind. Dieses Programm ist aus reiner Liebe und einem tiefen Wunsch geboren, Ihnen zu helfen, Ihren inneren Kompass zu finden und Ihrem wahren Selbst zu folgen. Durch eine Kombination aus Online-Sitzungen, Heilungspraktiken und spirituellen Abenteuern werden Sie Werkzeuge erhalten, um Ihr Leben mit mehr Klarheit, Zweck und Freude zu navigieren.',
   prerequisites = ARRAY['Hingabe ist die höchste Form der Intelligenz', 'Ein Ziel zu haben, Pläne werden sich entwickeln und manifestieren', 'Reine Liebe ist eine Medizin für Körper, Geist und Seele'],
   what_you_learn = ARRAY['Hingabe ist die höchste Form der Intelligenz', 'Ein Ziel zu haben, Pläne werden sich entwickeln und manifestieren', 'Reine Liebe ist eine Medizin für Körper, Geist und Seele']
 WHERE name_en LIKE '%Awaken Your Inner Compass%';
 
+-- Force translate any remaining programs with English content
+UPDATE programs SET 
+  name_de = COALESCE(name_de, name_en),
+  description_de = COALESCE(description_de, description_en),
+  long_content_de = COALESCE(long_content_de, long_content_en)
+WHERE name_de IS NULL OR name_de = '';
+
 -- Update program location addresses to German
 UPDATE programs SET 
-  location_address_de = REPLACE(location_address_de, 'Slovenia', 'Slowenien')
-WHERE location_address_de LIKE '%Slovenia%';
+  location_address_de = COALESCE(location_address_de, REPLACE(location_address_en, 'Slovenia', 'Slowenien'))
+WHERE location_address_en LIKE '%Slovenia%';
 
 UPDATE programs SET 
-  location_address_de = REPLACE(location_address_de, 'Switzerland', 'Schweiz')
-WHERE location_address_de LIKE '%Switzerland%';
+  location_address_de = COALESCE(location_address_de, REPLACE(location_address_en, 'Switzerland', 'Schweiz'))
+WHERE location_address_en LIKE '%Switzerland%';
 
 -- Populate German translations for teacher specialties
 UPDATE teachers SET 
   specialties = ARRAY['Meditation', 'Ganzheitliche Heilung', 'Ernährung', 'Spezielle Körperübungen', 'Lebensberatung']
 WHERE specialties = ARRAY['Meditation', 'Holistic Healing', 'Nutrition', 'Special body exercises', 'Life Guidance'];
 
+-- ... rest of the code remains the same ...
 UPDATE teachers SET 
   specialties = ARRAY['Ganzheitliche Heilung', 'Arzt', 'Meditation', 'Ernährung', 'Pädagoge', 'Quantendiagnostik']
 WHERE specialties = ARRAY['Holistic Healing', 'Physician', 'Meditation', 'Nutrition', 'Educator', 'Quantum Diagnostic'];

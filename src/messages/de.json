@@ -17,11 +17,14 @@
     "membership": "Mitgliedschaft",
     "blog": "Blog",
     "contact": "Kontakt",
+    "donate": "Spenden",
+    "volunteer": "Freiwillig",
     "login": "Anmelden",
     "register": "Registrieren",
     "profile": "Profil",
     "logout": "Abmelden",
-    "admin": "Admin-Dashboard"
+    "admin": "Admin-Dashboard",
+    "programs": "Programme"
   },
   "meta": {
     "siteName": "Infinity Role Teachers",

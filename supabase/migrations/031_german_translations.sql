@@ -1,27 +1,27 @@
--- Populate German translations for events
+-- Populate German translations for events (force overwrite)
 UPDATE events SET 
   title_de = 'BEWEGTE MEDITATION WORKSHOP mit Meister Zhen Hua Yang - Innere Harmonie: 2-Tage Nei Gong',
   description_de = 'Innere Harmonie - Bewegte Meditation. Fühlen Sie sich, als ob Ihr Körper und Geist nicht synchron sind? Stellen Sie das Gleichgewicht durch Innere Harmonie wieder her, einen 2-tägigen Workshop unter der Leitung von Meister Zhen Hua Yang.',
   long_content_de = 'Innere Harmonie - Bewegte Meditation. Fühlen Sie sich, als ob Ihr Körper und Geist nicht synchron sind? Stellen Sie das Gleichgewicht durch Innere Harmonie wieder her, einen 2-tägigen Workshop unter der Leitung von Meister Zhen Hua Yang. Eine Einführung in Organ...'
-WHERE title_en = 'MOVING MEDITATION WORKSHOP with Master Zhen Hua Yang - Inner Harmony: 2-Days Nei Gong';
+WHERE title_en LIKE '%MOVING MEDITATION WORKSHOP%';
 
 UPDATE events SET 
   title_de = 'SUNYOGA ist Sonnenmeditation mit SUNYOGI, 3 Tage wissenschaftliche spirituelle Heilung (Stufen 1-3)',
   description_de = 'SUNYOGA ist Sonnenmeditation mit SUNYOGI, 3 Tage wissenschaftliche spirituelle Heilung (Stufen 1-3)',
   long_content_de = 'SUNYOGA ist Sonnenmeditation mit SUNYOGI, 3 Tage wissenschaftliche spirituelle Heilung (Stufen 1-3)'
-WHERE title_en = 'SUNYOGA is Sun Meditation with SUNYOGI, 3-days of Scientific Spiritual Healing (Levels1-3)';
+WHERE title_en LIKE '%SUNYOGA is Sun Meditation%';
 
 UPDATE events SET 
   title_de = 'LEHRERKURS FÜR AKUPRESSUR mit Swamiji SUNYOGI, 4 Tage wissenschaftliche spirituelle Heilung (Stufen 1-4)',
   description_de = 'LEHRERKURS FÜR AKUPRESSUR mit Swamiji SUNYOGI, 4 Tage wissenschaftliche spirituelle Heilung (Stufen 1-4)',
   long_content_de = 'LEHRERKURS FÜR AKUPRESSUR mit Swamiji SUNYOGI, 4 Tage wissenschaftliche spirituelle Heilung (Stufen 1-4)'
-WHERE title_en = 'TEACHER COURSE for ACUPRESSURE with Swamiji SUNYOGI, 4-days of Scientific Spiritual Healing (Levels1-4)';
+WHERE title_en LIKE '%TEACHER COURSE for ACUPRESSURE%';
 
 UPDATE events SET 
   title_de = 'HARMONIE INNEN: 2-Tage Reise zur Ganzheit',
   description_de = 'HARMONIE INNEN: 2-Tage Reise zur Ganzheit',
   long_content_de = 'HARMONIE INNEN: 2-Tage Reise zur Ganzheit'
-WHERE title_en = 'HARMONY WITHIN: 2 - days journey to wholeness';
+WHERE title_en LIKE '%HARMONY WITHIN%';
 
 -- Update location names to German
 UPDATE events SET 
@@ -164,5 +164,24 @@ WHERE content_en LIKE '%Every individual lives in alignment with their soul%';
 
 -- Update home page content
 UPDATE pages SET 
-  content_de = 'Wenn Lehrer zu Infinity Role Teachers werden und jedes Herz mit Liebe schlägt, erwacht der Planet – und auch wir. Gemeinsam gebären wir eine neue Ära des bewussten Wandels.'
+  title_de = 'Willkommen bei Infinity Role Teachers',
+  content_de = 'Wenn Lehrer zu Infinity Role Teachers werden und jedes Herz mit Liebe schlägt, erwacht der Planet – und auch wir. Gemeinsam gebären wir eine neue Ära des bewussten Wandels.',
+  meta_description_de = 'Wenn Lehrer zu Infinity Role Teachers werden und jedes Herz mit Liebe schlägt, erwacht der Planet – und auch wir. Gemeinsam gebären wir eine neue Ära des bewussten Wandels.'
 WHERE slug = 'home';
+
+-- Update coach training page
+UPDATE pages SET 
+  title_de = 'Coach-Ausbildung',
+  content_de = 'Authentizität - Lehrmethoden, die in alter Weisheit verwurzelt und durch modernes Verständnis validiert sind.',
+  meta_description_de = 'Authentizität - Lehrmethoden, die in alter Weisheit verwurzelt und durch modernes Verständnis validiert sind.'
+WHERE slug = 'coach-training';
+
+-- Update blog page
+UPDATE pages SET 
+  title_de = 'Blog',
+  content_de = 'Jedes Individuum lebt im Einklang mit dem Zweck seiner Seele und trägt zu einer blühenden, bewussten Zivilisation bei.',
+  meta_description_de = 'Jedes Individuum lebt im Einklang mit dem Zweck seiner Seele und trägt zu einer blühenden, bewussten Zivilisation bei.'
+WHERE slug = 'blog';
+
+-- Update footer links in settings or create footer translations
+-- These are typically in settings or a separate table, for now we'll update the navigation if needed

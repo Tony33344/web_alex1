@@ -255,7 +255,10 @@
     "paymentCancelledDesc": "No worries — you can enroll again anytime.",
     "noProgramsYet": "Programs will appear once added via the admin dashboard.",
     "featuredProgram": "Featured Program",
-    "maxParticipants": "Max {count} participants"
+    "maxParticipants": "Max {count} participants",
+    "earlyBirdUntil": "Early bird until",
+    "durationDays": "{days} days",
+    "durationWeeksSessions": "{weeks} weeks / {sessions} sessions"
   },
   "events": {
     "paymentCancelled": "Payment cancelled",

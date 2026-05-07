@@ -255,7 +255,10 @@
     "paymentCancelledDesc": "Keine Sorge — Sie können sich jederzeit wieder anmelden.",
     "noProgramsYet": "Programme erscheinen, sobald sie über das Admin-Dashboard hinzugefügt wurden.",
     "featuredProgram": "Empfohlenes Programm",
-    "maxParticipants": "Max. {count} Teilnehmer"
+    "maxParticipants": "Max. {count} Teilnehmer",
+    "earlyBirdUntil": "Frühbucher endet am",
+    "durationDays": "{days} Tage",
+    "durationWeeksSessions": "{weeks} Wochen / {sessions} Sitzungen"
   },
   "events": {
     "paymentCancelled": "Zahlung storniert",

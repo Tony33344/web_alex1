@@ -216,3 +216,24 @@ WHERE slug = 'blog';
 
 -- Update footer links in settings or create footer translations
 -- These are typically in settings or a separate table, for now we'll update the navigation if needed
+
+-- Update about page content
+UPDATE pages SET 
+  title_de = 'Über uns',
+  content_de = 'Infinity Role Teachers fördert ganzheitliches Wohlbefinden durch Sunyoga, Akupressur, Meditation und bewusstes Coaching. Wir bauen Sandha-Gemeinschaften auf, die das unbegrenzte Potenzial in jedem Herzen erwecken, um eine wirklich vereinte, bewusste Welt gemeinsam zu erschaffen.',
+  meta_description_de = 'Infinity Role Teachers fördert ganzheitliches Wohlbefinden durch Sunyoga, Akupressur, Meditation und bewusstes Coaching.'
+WHERE slug = 'about';
+
+-- Update mission page content
+UPDATE pages SET 
+  title_de = 'Unsere Mission',
+  content_de = 'Unsere Mission bei Infinity Role Teachers: Individuen durch ganzheitliches Wohlbefinden, Sunyoga und zertifizierte Coach-Ausbildungsprogramme zu stärken.',
+  meta_description_de = 'Unsere Mission bei Infinity Role Teachers: Individuen durch ganzheitliches Wohlbefinden, Sunyoga und zertifizierte Coach-Ausbildungsprogramme zu stärken.'
+WHERE slug = 'mission';
+
+-- Update vision page content
+UPDATE pages SET 
+  title_de = 'Unsere Vision',
+  content_de = 'Unsere Vision bei Infinity Role Teachers: Eine Welt, in der ganzheitliches Wohlbefinden eine Lebensweise ist, angetrieben von zertifizierten Coaches weltweit.',
+  meta_description_de = 'Unsere Vision bei Infinity Role Teachers: Eine Welt, in der ganzheitliches Wohlbefinden eine Lebensweise ist, angetrieben von zertifizierten Coaches weltweit.'
+WHERE slug = 'vision';

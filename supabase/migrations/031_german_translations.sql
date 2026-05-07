@@ -180,10 +180,9 @@ WHERE location_address_en LIKE '%Switzerland%';
 
 -- Populate German translations for teacher specialties
 UPDATE teachers SET 
-  specialties = ARRAY['Meditation', 'Ganzheitliche Heilung', 'Ernährung', 'Spezielle Körperübungen', 'Lebensberatung']
-WHERE specialties = ARRAY['Meditation', 'Holistic Healing', 'Nutrition', 'Special body exercises', 'Life Guidance'];
+  specialties = ARRAY['Sunyoga', 'Meditation', 'Ganzheitliche Heilung', 'Ernährung', 'Spezielle Körperübungen', 'Lebensberatung']
+WHERE specialties = ARRAY['Sunyoga', 'Meditation', 'Holistic Healing', 'Nutrition', 'Special body exercises', 'Life Guidance'];
 
--- ... rest of the code remains the same ...
 UPDATE teachers SET 
   specialties = ARRAY['Ganzheitliche Heilung', 'Arzt', 'Meditation', 'Ernährung', 'Pädagoge', 'Quantendiagnostik']
 WHERE specialties = ARRAY['Holistic Healing', 'Physician', 'Meditation', 'Nutrition', 'Educator', 'Quantum Diagnostic'];
@@ -233,12 +232,12 @@ UPDATE pages SET
   meta_description_de = 'Authentizität - Lehrmethoden, die in alter Weisheit verwurzelt und durch modernes Verständnis validiert sind.'
 WHERE slug = 'coach-training';
 
--- Update blog page
+-- Update home page content
 UPDATE pages SET 
-  title_de = 'Blog',
-  content_de = 'Jedes Individuum lebt im Einklang mit dem Zweck seiner Seele und trägt zu einer blühenden, bewussten Zivilisation bei.',
-  meta_description_de = 'Jedes Individuum lebt im Einklang mit dem Zweck seiner Seele und trägt zu einer blühenden, bewussten Zivilisation bei.'
-WHERE slug = 'blog';
+  title_de = 'Infinity Role Teachers',
+  content_de = 'Gemeinsam gebären wir eine neue Ära des bewussten Wandels. Infinity Role Teachers fördert ganzheitliches Wohlbefinden durch Sunyoga, Akupressur, Meditation und bewusstes Coaching. Wir bauen Sandha-Gemeinschaften auf, die das unbegrenzte Potenzial in jedem Herzen erwecken, um eine wirklich vereinte, bewusste Welt gemeinsam zu erschaffen.',
+  meta_description_de = 'Gemeinsam gebären wir eine neue Ära des bewussten Wandels.'
+WHERE slug = 'home';
 
 -- Update events page
 UPDATE pages SET 

@@ -153,15 +153,18 @@ WHERE name_en LIKE '%Awaken Your Inner Compass%';
 
 -- Update program prerequisites and what_you_learn arrays
 UPDATE programs SET 
-  prerequisites = ARRAY['Sie werden ein tiefes Verständnis dafür erlangen, wie man Sonnenmeditation praktiziert', 'Auge-zu-Auge-Meditation', 'Auf-Bild-Meditation', 'Körperorganübungen', 'Chakra-Reinigungsübungen']
+  prerequisites = ARRAY['Sie werden ein tiefes Verständnis dafür erlangen, wie man Sonnenmeditation praktiziert', 'Auge-zu-Auge-Meditation', 'Auf-Bild-Meditation', 'Körperorganübungen', 'Chakra-Reinigungsübungen'],
+  what_you_learn = ARRAY['Sie werden ein tiefes Verständnis dafür erlangen, wie man Sonnenmeditation praktiziert', 'Auge-zu-Auge-Meditation', 'Auf-Bild-Meditation', 'Körperorganübungen', 'Chakra-Reinigungsübungen']
 WHERE name_en LIKE '%Avalon - Sunyoga Sun Meditation Level 1-2 Course%';
 
 UPDATE programs SET 
-  prerequisites = ARRAY['Jederzeit und überall tun: Selbst-Akupressur ist eine einfache Technik', 'Lernen Sie es zuerst an sich selbst: Durch Übung am eigenen Körper', 'Teilen Sie die Vorteile mit anderen: Sobald Sie mit den Grundlagen vertraut sind, können Sie andere leicht unterrichten', 'Nehmen Sie die Heilung in die eigenen Hände: Diese Selbstheilungsmethoden geben Ihnen die Kontrolle über Ihr eigenes Wohlbefinden', 'Gesund und glücklich sein']
+  prerequisites = ARRAY['Jederzeit und überall tun: Selbst-Akupressur ist eine einfache Technik', 'Lernen Sie es zuerst an sich selbst: Durch Übung am eigenen Körper', 'Teilen Sie die Vorteile mit anderen: Sobald Sie mit den Grundlagen vertraut sind, können Sie andere leicht unterrichten', 'Nehmen Sie die Heilung in die eigenen Hände: Diese Selbstheilungsmethoden geben Ihnen die Kontrolle über Ihr eigenes Wohlbefinden', 'Gesund und glücklich sein'],
+  what_you_learn = ARRAY['Jederzeit und überall tun: Selbst-Akupressur ist eine einfache Technik', 'Lernen Sie es zuerst an sich selbst: Durch Übung am eigenen Körper', 'Teilen Sie die Vorteile mit anderen: Sobald Sie mit den Grundlagen vertraut sind, können Sie andere leicht unterrichten', 'Nehmen Sie die Heilung in die eigenen Hände: Diese Selbstheilungsmethoden geben Ihnen die Kontrolle über Ihr eigenes Wohlbefinden', 'Gesund und glücklich sein']
 WHERE name_en LIKE '%Acupressure Training%';
 
 UPDATE programs SET 
-  prerequisites = ARRAY['Hingabe ist die höchste Form der Intelligenz', 'Ein Ziel zu haben, Pläne werden sich entwickeln und manifestieren', 'Reine Liebe ist eine Medizin für Körper, Geist und Seele']
+  prerequisites = ARRAY['Hingabe ist die höchste Form der Intelligenz', 'Ein Ziel zu haben, Pläne werden sich entwickeln und manifestieren', 'Reine Liebe ist eine Medizin für Körper, Geist und Seele'],
+  what_you_learn = ARRAY['Hingabe ist die höchste Form der Intelligenz', 'Ein Ziel zu haben, Pläne werden sich entwickeln und manifestieren', 'Reine Liebe ist eine Medizin für Körper, Geist und Seele']
 WHERE name_en LIKE '%Awaken Your Inner Compass%';
 
 -- Update program location addresses to German

@@ -62,7 +62,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
 
           {program.what_you_learn?.length > 0 && (
             <div>
-              <h2 className="text-xl font-bold mb-4">What You&apos;ll Learn</h2>
+              <h2 className="text-xl font-bold mb-4">{t('programs.whatYoullLearn')}</h2>
               <ul className="space-y-3">
                 {program.what_you_learn.map((item) => (
                   <li key={item} className="flex items-start gap-3 text-sm">
@@ -75,7 +75,7 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
 
           {program.prerequisites?.length > 0 && (
             <div>
-              <h2 className="text-xl font-bold mb-4">Prerequisites</h2>
+              <h2 className="text-xl font-bold mb-4">{t('programs.requirements')}</h2>
               <ul className="space-y-2">
                 {program.prerequisites.map((item) => (
                   <li key={item} className="text-sm text-muted-foreground">• {item}</li>
@@ -105,25 +105,25 @@ export default async function ProgramDetailPage({ params }: { params: Promise<{ 
                   <div className="flex items-start gap-3"><Clock className="mt-0.5 h-4 w-4 shrink-0 text-primary" /><span className="whitespace-pre-line">{program.duration}</span></div>
                 )}
                 {program.max_participants && (
-                  <div className="flex items-center gap-3"><Users className="h-4 w-4 text-primary" />Max {program.max_participants} participants</div>
+                  <div className="flex items-center gap-3"><Users className="h-4 w-4 text-primary" />{t('programs.maxParticipants', { count: program.max_participants })}</div>
                 )}
-                <div className="flex items-center gap-3"><Award className="h-4 w-4 text-primary" />Certificate included</div>
+                <div className="flex items-center gap-3"><Award className="h-4 w-4 text-primary" />{t('programs.certificateIncluded')}</div>
               </div>
               <EnrollButtonClient locale={locale} programId={program.id} label={t('common.enrollNow')} stripepriceId={pricing.activeStripePriceId} price={pricing.activePrice} currency={pricing.currency} programName={name} />
-              <p className="text-xs text-center text-muted-foreground">Secure your spot — limited availability</p>
+              <p className="text-xs text-center text-muted-foreground">{t('programs.secureSpot')}</p>
             </CardContent>
           </Card>
 
           {/* Gallery in sidebar */}
           {galleryImages.length > 0 && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Gallery</h3>
+              <h3 className="text-lg font-semibold">{t('programs.gallery')}</h3>
               <GalleryGrid images={galleryImages} locale={locale} />
             </div>
           )}
 
           <Link href={`/${locale}/coach-training`} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-            <ArrowLeft className="h-4 w-4" /> {t('common.backTo')} {t('navigation.coachTraining')}
+            <ArrowLeft className="h-4 w-4" /> {t('programs.backToCoachTraining')}
           </Link>
         </div>
       </div>

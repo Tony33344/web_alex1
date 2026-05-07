@@ -2,25 +2,29 @@
 UPDATE events SET 
   title_de = 'BEWEGTE MEDITATION WORKSHOP mit Meister Zhen Hua Yang - Innere Harmonie: 2-Tage Nei Gong',
   description_de = 'Innere Harmonie - Bewegte Meditation. Fühlen Sie sich, als ob Ihr Körper und Geist nicht synchron sind? Stellen Sie das Gleichgewicht durch Innere Harmonie wieder her, einen 2-tägigen Workshop unter der Leitung von Meister Zhen Hua Yang.',
-  long_content_de = 'Innere Harmonie - Bewegte Meditation. Fühlen Sie sich, als ob Ihr Körper und Geist nicht synchron sind? Stellen Sie das Gleichgewicht durch Innere Harmonie wieder her, einen 2-tägigen Workshop unter der Leitung von Meister Zhen Hua Yang. Eine Einführung in Organ...'
+  long_content_de = 'Innere Harmonie - Bewegte Meditation. Fühlen Sie sich, als ob Ihr Körper und Geist nicht synchron sind? Stellen Sie das Gleichgewicht durch Innere Harmonie wieder her, einen 2-tägigen Workshop unter der Leitung von Meister Zhen Hua Yang. Eine Einführung in Organ Nei Gong und grundlegende Qi Gong Übungen für Anfänger und Fortgeschrittene. Dieser Workshop bietet eine tiefgreifende Erfahrung, bei der Sie lernen, wie Sie Ihre innere Energie harmonisieren und Körper, Geist und Geist in Einklang bringen können. Durch sanfte Bewegungen, Atemtechniken und meditative Praxis werden Sie Werkzeuge erhalten, um Stress abzubauen, Vitalität zu steigern und ein tiefes Gefühl von innerem Frieden zu kultivieren.',
+  location_address_de = 'Maribor-Pohorje, Slowenien'
 WHERE title_en LIKE '%MOVING MEDITATION WORKSHOP%';
 
 UPDATE events SET 
   title_de = 'SUNYOGA ist Sonnenmeditation mit SUNYOGI, 3 Tage wissenschaftliche spirituelle Heilung (Stufen 1-3)',
-  description_de = 'SUNYOGA ist Sonnenmeditation mit SUNYOGI, 3 Tage wissenschaftliche spirituelle Heilung (Stufen 1-3)',
-  long_content_de = 'SUNYOGA ist Sonnenmeditation mit SUNYOGI, 3 Tage wissenschaftliche spirituelle Heilung (Stufen 1-3)'
-WHERE title_en LIKE '%SUNYOGA is Sun Meditation%';
+  description_de = 'SUNYOGA ist Sonnenmeditation mit SUNYOGI. 3 Tage wissenschaftliche spirituelle Heilung (Stufen 1-3). Lernen Sie die alte Kunst der Sonnenmeditation von Sunyogi Umasankar.',
+  long_content_de = 'SUNYOGA ist Sonnenmeditation mit SUNYOGI. 3 Tage wissenschaftliche spirituelle Heilung (Stufen 1-3). Lernen Sie die alte Kunst der Sonnenmeditation von Sunyogi Umasankar. Diese Praxis verbindet Sie mit der kosmischen Energie der Sonne und fördert spirituelles Erwachen und ganzheitliches Wohlbefinden. Sunyoga ist eine einfache aber mächtige Technik, die von Sunyogi Umasankar nach jahrelanger Forschung und Praxis entwickelt wurde. In diesem 3-tägigen Workshop lernen Sie die Grundlagen der Sonnenmeditation, verstehen die Wissenschaft dahinter und erfahren, wie diese Praxis Ihr Leben transformieren kann. Sie werden Techniken erlernen, um direkt mit der Energie der Sonne zu verbinden, Ihre spirituelle Entwicklung zu beschleunigen und ein tieferes Gefühl der Verbundenheit mit dem Universum zu entwickeln.',
+  location_address_de = 'Niederwangen bei Bern, Schweiz'
+WHERE title_en LIKE '%SUNYOGA is Sun meditation%';
 
 UPDATE events SET 
   title_de = 'LEHRERKURS FÜR AKUPRESSUR mit Swamiji SUNYOGI, 4 Tage wissenschaftliche spirituelle Heilung (Stufen 1-4)',
-  description_de = 'LEHRERKURS FÜR AKUPRESSUR mit Swamiji SUNYOGI, 4 Tage wissenschaftliche spirituelle Heilung (Stufen 1-4)',
-  long_content_de = 'LEHRERKURS FÜR AKUPRESSUR mit Swamiji SUNYOGI, 4 Tage wissenschaftliche spirituelle Heilung (Stufen 1-4)'
-WHERE title_en LIKE '%TEACHER COURSE for ACUPRESSURE%';
+  description_de = 'LEHRERKURS FÜR AKUPRESSUR mit Swamiji SUNYOGI. 4 Tage wissenschaftliche spirituelle Heilung (Stufen 1-4). Lernen Sie Akupressur von einem Meister.',
+  long_content_de = 'LEHRERKURS FÜR AKUPRESSUR mit Swamiji SUNYOGI. 4 Tage wissenschaftliche spirituelle Heilung (Stufen 1-4). Lernen Sie Akupressur von einem Meister. Diese umfassende Ausbildung deckt alle Grundlagen und fortgeschrittenen Techniken der Akupressur ab. Akupressur ist eine alte chinesische Heilkunst, die seit Jahrtausenden zur Behandlung verschiedener Beschwerden eingesetzt wird. In diesem Kurs lernen Sie die theoretischen Grundlagen der Akupressur, die Positionen der wichtigsten Energiepunkte (Meridiane) und wie Sie diese Punkte sicher und effektiv stimulieren können. Der Kurs umfasst praktische Übungen, Demonstrationen und Gelegenheit zur Übung unter Anleitung. Egal, ob Sie Akupressur für sich selbst, Ihre Familie oder als professioneller Heiler lernen möchten, dieser Kurs gibt Ihnen das Wissen und die Fähigkeiten, um zu beginnen.',
+  location_address_de = 'Niederwangen bei Bern, Schweiz'
+WHERE title_en LIKE '%TEACHER COURSE FOR ACUPRESSURE%';
 
 UPDATE events SET 
   title_de = 'HARMONIE INNEN: 2-Tage Reise zur Ganzheit',
-  description_de = 'HARMONIE INNEN: 2-Tage Reise zur Ganzheit',
-  long_content_de = 'HARMONIE INNEN: 2-Tage Reise zur Ganzheit'
+  description_de = 'HARMONIE INNEN: 2-Tage Reise zur Ganzheit. Eine transformative Erfahrung zur Wiederherstellung der inneren Balance.',
+  long_content_de = 'HARMONIE INNEN: 2-Tage Reise zur Ganzheit. Eine transformative Erfahrung zur Wiederherstellung der inneren Balance. Durch Meditation, Achtsamkeitsübungen und Energiearbeit werden Sie Werkzeuge erhalten, um Balance und Harmonie in Ihrem täglichen Leben zu kultivieren. Dieser Workshop ist für jeden geeignet, der nach mehr innerem Frieden, Klarheit und Wohlbefinden sucht. Durch eine Kombination aus geführten Meditationen, Atemübungen, sanften Bewegungen und Energiearbeit werden Sie lernen, wie Sie Stress abbauen, emotionale Blockaden lösen und ein tieferes Gefühl der Verbindung mit sich selbst entwickeln können. Die Techniken, die Sie lernen, sind einfach aber wirksam und können zu Hause in Ihre tägliche Praxis integriert werden.',
+  location_address_de = 'Interlaken, Schweiz'
 WHERE title_en LIKE '%HARMONY WITHIN%';
 
 -- Update location names to German

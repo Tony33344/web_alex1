@@ -87,21 +87,28 @@ WHERE name_en = 'Acupressure';
 -- Populate German translations for teachers
 UPDATE teachers SET 
   title_de = 'Verkörperter Führer für innere Orientierung',
-  bio_de = bio_en,
+  bio_de = 'Mit über 15 Jahren Erfahrung im ganzheitlichen Wohlbefinden leitet Avalon Schüler zu ihrem unbegrenzten Potenzial. Lernen Sie einen zertifizierten Sunyoga-Lehrer und engagierten Führer kennen. Er ist mehr als ein Coach oder Mentor; er ist ein mitfühlender Begleiter für Ihre einzigartige Reise zur Ganzheit. Egal, ob Sie...',
   short_bio_de = short_bio_en
 WHERE title_en = 'Embodied guide for inner orientation';
 
 UPDATE teachers SET 
   title_de = 'Traditionelle Weisheit und moderne Technologie für ganzheitliche Gesundheit verbinden',
-  bio_de = bio_en,
+  bio_de = 'Integrative Medizin & Präventive Gesundheitspionier. Willkommen in einem Raum, in dem traditionelle Heilweisheit auf moderne medizinische Innovation trifft. Dr. PI (mag. Sebastijan Piberl, dr. med. spec.) ist Arzt, Pädagoge und ganzheitlicher Gesundheitsführer, der sich der Stärkung von Einzelpersonen und Familien widmet, um...',
   short_bio_de = short_bio_en
 WHERE title_en = 'Bridging Traditional Wisdom and Modern Technology for Holistic Health';
 
 UPDATE teachers SET 
   title_de = 'Lehrer des Bewusstseins, der reinen Liebe und Spiritualität',
-  bio_de = bio_en,
+  bio_de = 'Akasha hat eine bemerkenswerte Fähigkeit, die Stärken in Menschen zu sehen, oft bevor sie diese selbst erkennen können. Sie ist tiefgründig und natürlich positiv, aber auf eine geerdete und authentische Weise. Sie ist nicht jemand, der leere motivierende Phrasen oder oberflächliche Ratschläge anbietet. Wenn sie arbeitet...',
   short_bio_de = short_bio_en
 WHERE title_en = 'Teacher of awareness, pure love and spirituality';
+
+-- Update role teachers page content
+UPDATE pages SET 
+  title_de = 'Rollenlehrer',
+  content_de = 'Gemeinsam gebären wir eine neue Ära des bewussten Wandels.',
+  meta_description_de = 'Gemeinsam gebären wir eine neue Ära des bewussten Wandels.'
+WHERE slug = 'role-teachers';
 
 -- Populate German translations for programs
 UPDATE programs SET 

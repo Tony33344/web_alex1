@@ -258,7 +258,11 @@
     "maxParticipants": "Max {count} participants",
     "earlyBirdUntil": "Early bird until",
     "durationDays": "{days} days",
-    "durationWeeksSessions": "{weeks} weeks / {sessions} sessions"
+    "durationWeeksSessions": "{weeks} weeks / {sessions} sessions",
+    "certificateIncluded": "Certificate included",
+    "secureSpot": "Secure your spot — limited availability",
+    "gallery": "Gallery",
+    "backToCoachTraining": "Back to Coach Training"
   },
   "events": {
     "paymentCancelled": "Payment cancelled",

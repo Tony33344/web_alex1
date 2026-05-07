@@ -164,6 +164,15 @@ UPDATE programs SET
   prerequisites = ARRAY['Hingabe ist die höchste Form der Intelligenz', 'Ein Ziel zu haben, Pläne werden sich entwickeln und manifestieren', 'Reine Liebe ist eine Medizin für Körper, Geist und Seele']
 WHERE name_en LIKE '%Awaken Your Inner Compass%';
 
+-- Update program location addresses to German
+UPDATE programs SET 
+  location_address_de = REPLACE(location_address_de, 'Slovenia', 'Slowenien')
+WHERE location_address_de LIKE '%Slovenia%';
+
+UPDATE programs SET 
+  location_address_de = REPLACE(location_address_de, 'Switzerland', 'Schweiz')
+WHERE location_address_de LIKE '%Switzerland%';
+
 -- Populate German translations for teacher specialties
 UPDATE teachers SET 
   specialties = ARRAY['Meditation', 'Ganzheitliche Heilung', 'Ernährung', 'Spezielle Körperübungen', 'Lebensberatung']

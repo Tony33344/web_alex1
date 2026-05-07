@@ -258,7 +258,11 @@
     "maxParticipants": "Max. {count} Teilnehmer",
     "earlyBirdUntil": "Frühbucher endet am",
     "durationDays": "{days} Tage",
-    "durationWeeksSessions": "{weeks} Wochen / {sessions} Sitzungen"
+    "durationWeeksSessions": "{weeks} Wochen / {sessions} Sitzungen",
+    "certificateIncluded": "Zertifikat enthalten",
+    "secureSpot": "Sichern Sie sich Ihren Platz — begrenzte Verfügbarkeit",
+    "gallery": "Galerie",
+    "backToCoachTraining": "Zurück zur Coach-Ausbildung"
   },
   "events": {
     "paymentCancelled": "Zahlung storniert",

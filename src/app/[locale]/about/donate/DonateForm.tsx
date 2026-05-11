@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslations } from 'next-intl';
 import { Loader2, Heart, CreditCard, Building2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -19,6 +19,7 @@ const donationSchema = {
 };
 
 export function DonateForm({ locale }: { locale: string }) {
+  const t = useTranslations('donate');
   const router = useRouter();
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
@@ -58,7 +59,7 @@ export function DonateForm({ locale }: { locale: string }) {
       });
       const data = await res.json();
       if (!res.ok) {
-        const errorMsg = data.error || 'Donation failed';
+        const errorMsg = data.error || t('donationFailed');
         setError(errorMsg);
         return { error: errorMsg };
       }
@@ -71,7 +72,7 @@ export function DonateForm({ locale }: { locale: string }) {
       setShowCheckout(false);
       return {};
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : 'Network error. Please try again.';
+      const errorMsg = err instanceof Error ? err.message : t('networkError');
       setError(errorMsg);
       return { error: errorMsg };
     } finally {
@@ -86,13 +87,13 @@ export function DonateForm({ locale }: { locale: string }) {
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
             <Heart className="h-8 w-8 fill-red-500 text-red-600" />
           </div>
-          <h3 className="text-xl font-semibold mb-2">Thank You!</h3>
-          <p className="text-muted-foreground mb-6">Your donation has been received. We appreciate your support.</p>
+          <h3 className="text-xl font-semibold mb-2">{t('thankYou')}</h3>
+          <p className="text-muted-foreground mb-6">{t('donationReceived')}</p>
           <Button onClick={() => {
             setSuccess(false);
             reset();
           }}>
-            Make Another Donation
+            {t('makeAnother')}
           </Button>
         </CardContent>
       </Card>
@@ -106,13 +107,13 @@ export function DonateForm({ locale }: { locale: string }) {
           <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 mb-4">
             <Building2 className="h-8 w-8 text-primary" />
           </div>
-          <h3 className="text-xl font-semibold mb-2">Bank Transfer Initiated</h3>
-          <p className="text-muted-foreground mb-6">Please complete the bank transfer using the reference number provided in your email.</p>
+          <h3 className="text-xl font-semibold mb-2">{t('bankTransferTitle')}</h3>
+          <p className="text-muted-foreground mb-6">{t('bankTransferDesc')}</p>
           <Button onClick={() => {
             setHasReference(false);
             reset();
           }}>
-            Make Another Donation
+            {t('makeAnother')}
           </Button>
         </CardContent>
       </Card>
@@ -124,25 +125,25 @@ export function DonateForm({ locale }: { locale: string }) {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Heart className="h-5 w-5 fill-red-500 text-red-600" />
-          Make a Donation
+          {t('cardTitle')}
         </CardTitle>
-        <CardDescription>Support our mission with a one-time donation</CardDescription>
+        <CardDescription>{t('cardDesc')}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit(handleClick)} className="space-y-6">
           {error && <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">{error}</div>}
 
           <div className="space-y-2">
-            <Label htmlFor="amount">Amount (CHF)</Label>
+            <Label htmlFor="amount">{t('amountLabel')}</Label>
             <Input
               id="amount"
               type="number"
               min="1"
               step="0.01"
-              placeholder="Enter amount"
+              placeholder={t('amountPlaceholder')}
               {...register('amount', { 
-                required: 'Amount is required',
-                min: { value: 1, message: 'Minimum amount is 1 CHF' },
+                required: t('amountRequired'),
+                min: { value: 1, message: t('minAmount') },
                 valueAsNumber: true,
                 onChange: (e) => setDonationAmount(parseFloat(e.target.value) || 0),
               })}
@@ -151,10 +152,10 @@ export function DonateForm({ locale }: { locale: string }) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="message">Message (Optional)</Label>
+            <Label htmlFor="message">{t('messageLabel')}</Label>
             <Textarea
               id="message"
-              placeholder="Add a message with your donation..."
+              placeholder={t('messagePlaceholder')}
               rows={4}
               {...register('message')}
             />
@@ -167,7 +168,7 @@ export function DonateForm({ locale }: { locale: string }) {
               disabled={loading || !donationAmount || donationAmount < 1}
             >
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Heart className="h-4 w-4 fill-red-500 text-red-600" />}
-              Donate
+              {t('donateButton')}
             </Button>
           </div>
 
@@ -178,7 +179,7 @@ export function DonateForm({ locale }: { locale: string }) {
                 setShowCheckout(open);
                 if (!open && hasReference) setSuccess(true);
               }}
-              title="Donation"
+              title={t('dialogTitle')}
               price={donationAmount}
               currency="CHF"
               onCheckout={handleCheckout}

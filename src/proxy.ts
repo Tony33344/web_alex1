@@ -51,7 +51,7 @@ export async function proxy(request: NextRequest) {
   const { user, supabaseResponse } = await updateSession(request);
 
   // Check protected routes
-  const strippedPath = pathname.replace(/^\/(en|de|it|fr|hi|si)/, '');
+  const strippedPath = pathname.replace(/^\/(en|de|fr|si)/, '');
 
   if (protectedRoutes.some((route) => strippedPath.startsWith(route))) {
     if (!user) {

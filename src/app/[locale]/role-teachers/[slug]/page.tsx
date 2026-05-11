@@ -15,11 +15,12 @@ import { SmartImage } from '@/components/shared/SmartImage';
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
   const teacher = await getTeacher(slug);
-  if (!teacher) return { title: 'Teacher Not Found' };
+  const t = await getTranslations();
+  if (!teacher) return { title: t('eventDetail.eventNotFound') };
   const title = teacher.name;
   const bio = getLocalizedField(teacher, 'short_bio', locale) || '';
   return {
-    title: `${title} | Role Teacher`,
+    title: `${title} | ${t('navigation.roleTeachers')}`,
     description: bio.slice(0, 160),
     openGraph: { title, description: bio.slice(0, 160), images: teacher.photo_url ? [teacher.photo_url] : [] },
   };
@@ -31,14 +32,15 @@ export default async function TeacherDetailPage({ params }: { params: Promise<{ 
 
   if (!teacher) notFound();
 
-  const title = getLocalizedField(teacher, 'title', locale) || 'Role Teacher';
+  const t = await getTranslations();
+  const title = getLocalizedField(teacher, 'title', locale) || t('navigation.roleTeachers');
   const bio = getLocalizedField(teacher, 'bio', locale) || '';
   const galleryImages = await getGalleryImages('teacher', teacher.id);
   const contentTextColor = '#1a1a1a';
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8">
-      <Breadcrumbs locale={locale} items={[{ label: 'Role Teachers', href: `/${locale}/role-teachers` }, { label: teacher.name }]} />
+      <Breadcrumbs locale={locale} items={[{ label: t('navigation.roleTeachers'), href: `/${locale}/role-teachers` }, { label: teacher.name }]} />
 
       {/* Main Image — adapts to landscape/portrait */}
       {(teacher.cover_image_url || teacher.photo_url) && (

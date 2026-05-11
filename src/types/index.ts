@@ -1,4 +1,4 @@
-export type Locale = 'en' | 'de' | 'it' | 'fr' | 'hi' | 'si';
+export type Locale = 'en' | 'de' | 'fr' | 'si';
 
 export type UserRole = 'user' | 'admin' | 'super_admin';
 

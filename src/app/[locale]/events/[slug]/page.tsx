@@ -109,7 +109,7 @@ export default async function EventDetailPage({ params }: { params: Promise<{ lo
 
           {galleryImages.length > 0 && (
             <div className="space-y-3">
-              <h2 className="text-lg font-semibold">{t('members.gallery')}</h2>
+              <h2 className="text-lg font-semibold">{t('programs.gallery')}</h2>
               <GalleryGrid images={galleryImages} locale={locale} />
             </div>
           )}

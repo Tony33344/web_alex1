@@ -19,12 +19,13 @@ export const revalidate = 0;
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
+  const t = await getTranslations();
   const program = await getProgram(slug);
-  if (!program) return { title: 'Program Not Found' };
+  if (!program) return { title: t('eventDetail.eventNotFound') };
   const name = getLocalizedField(program, 'name', locale) || program.name_en;
   const description = getLocalizedField(program, 'description', locale) || '';
   return {
-    title: `${name} | Coach Training`,
+    title: `${name} | ${t('navigation.coachTraining')}`,
     description: description.slice(0, 160),
     openGraph: { title: name, description: description.slice(0, 160), images: program.cover_image_url ? [program.cover_image_url] : [] },
   };

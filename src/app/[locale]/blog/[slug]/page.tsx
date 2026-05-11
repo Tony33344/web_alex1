@@ -14,7 +14,8 @@ import { SmartImage } from '@/components/shared/SmartImage';
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
   const post = await getBlogPost(slug);
-  if (!post) return { title: 'Post Not Found' };
+  const t = await getTranslations();
+  if (!post) return { title: t('eventDetail.eventNotFound') };
   const title = getLocalizedField(post, 'title', locale) || post.title_en;
   const excerpt = getLocalizedField(post, 'excerpt', locale) || '';
   const textColor = '#1a1a1a';

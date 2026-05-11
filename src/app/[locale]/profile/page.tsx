@@ -101,9 +101,9 @@ export default function ProfilePage() {
       .eq('id', user!.id);
 
     if (error) {
-      setMessage(`Error: ${error.message}`);
+      setMessage(t('profile.updateError'));
     } else {
-      setMessage('Profile updated successfully!');
+      setMessage(t('profile.updateSuccess'));
     }
     setSaving(false);
   }
@@ -166,7 +166,7 @@ export default function ProfilePage() {
             <CardContent>
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 {message && (
-                  <div className={`rounded-md p-3 text-sm ${message.startsWith('Error') ? 'bg-destructive/10 text-destructive' : 'bg-primary/10 text-primary'}`}>
+                  <div className={`rounded-md p-3 text-sm ${message === t('profile.updateSuccess') ? 'bg-primary/10 text-primary' : 'bg-destructive/10 text-destructive'}`}>
                     {message}
                   </div>
                 )}
@@ -228,7 +228,7 @@ export default function ProfilePage() {
                   <div>
                     <p className="text-xs uppercase tracking-wider opacity-80">{t('profile.activeMember')}</p>
                     <h3 className="text-2xl font-bold tracking-tight capitalize">
-                      {profile.subscription_plan} membership
+                      {profile.subscription_plan} {t('profile.membership')}
                     </h3>
                   </div>
                 </div>

@@ -199,8 +199,8 @@ export default async function HomePage({ params, searchParams }: { params: Promi
           {/* Centered title with accent band */}
           <div className="mb-10 text-center">
             <Badge variant="secondary" className="mb-3">{t('home.aboutUs')}</Badge>
-            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('home.aboutTitle') || 'Our Purpose'}</h2>
-            <p className="mt-2 text-muted-foreground">{t('home.aboutSubtitle') || 'Discover what drives us forward'}</p>
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{t('home.aboutTitle')}</h2>
+            <p className="mt-2 text-muted-foreground">{t('home.aboutSubtitle')}</p>
             {/* Accent band */}
             <div className="mx-auto mt-4 h-1 w-24 rounded-full bg-gradient-to-r from-primary via-secondary to-primary" />
           </div>
@@ -382,12 +382,12 @@ export default async function HomePage({ params, searchParams }: { params: Promi
               );
             }) : (
               [
-                { icon: Leaf, title: 'Nutrition', description: t('health.nutritionDesc') },
-                { icon: Sun, title: 'Sunyoga', description: t('health.sunyogaDesc') },
-                { icon: Heart, title: 'Yoga', description: t('health.yogaDesc') },
-                { icon: Brain, title: 'Meditation', description: t('health.meditationDesc') },
-                { icon: Dumbbell, title: 'Power Training', description: t('health.powerTrainingDesc') },
-                { icon: Hand, title: 'Acupressure', description: t('health.acupressureDesc') },
+                { icon: Leaf, title: t('health.nutrition'), description: t('health.nutritionDesc') },
+                { icon: Sun, title: t('health.sunyoga'), description: t('health.sunyogaDesc') },
+                { icon: Heart, title: t('health.yoga'), description: t('health.yogaDesc') },
+                { icon: Brain, title: t('health.meditation'), description: t('health.meditationDesc') },
+                { icon: Dumbbell, title: t('health.powerTraining'), description: t('health.powerTrainingDesc') },
+                { icon: Hand, title: t('health.acupressure'), description: t('health.acupressureDesc') },
               ].map((item, i) => {
                 const palette = colorPalette[i % colorPalette.length];
                 return (

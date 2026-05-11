@@ -13,11 +13,12 @@ import { SmartImage } from '@/components/shared/SmartImage';
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }): Promise<Metadata> {
   const { locale, slug } = await params;
   const category = await getHealthCategory(slug);
-  if (!category) return { title: 'Category Not Found' };
+  const t = await getTranslations();
+  if (!category) return { title: t('eventDetail.eventNotFound') };
   const name = getLocalizedField(category, 'name', locale) || category.name_en;
   const description = getLocalizedField(category, 'description', locale) || '';
   return {
-    title: `${name} | Health`,
+    title: `${name} | ${t('navigation.health')}`,
     description: description.slice(0, 160),
     openGraph: { title: name, description: description.slice(0, 160), images: category.cover_image_url ? [category.cover_image_url] : [] },
   };

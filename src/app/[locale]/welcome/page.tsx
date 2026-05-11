@@ -56,7 +56,7 @@ export default function WelcomePage() {
       href: `/${locale}/profile`,
       icon: UserCog,
       title: t('profile.editProfile'),
-      description: 'Update your name, phone, language',
+      description: t('welcome.editProfileDesc'),
       accent: 'text-blue-500 bg-blue-50 dark:bg-blue-950/30',
     },
     {
@@ -71,14 +71,14 @@ export default function WelcomePage() {
       href: `/${locale}/profile?tab=events`,
       icon: Calendar,
       title: t('profile.myEvents'),
-      description: 'Your registrations & bookings',
+      description: t('welcome.myEventsDesc'),
       accent: 'text-violet-500 bg-violet-50 dark:bg-violet-950/30',
     },
     {
       href: `/${locale}/profile?tab=settings`,
       icon: Settings,
       title: t('profile.accountSettings'),
-      description: 'Password & security',
+      description: t('welcome.accountSettingsDesc'),
       accent: 'text-slate-500 bg-slate-100 dark:bg-slate-900/50',
     },
   ];
@@ -90,15 +90,15 @@ export default function WelcomePage() {
           href: `/${locale}/members`,
           icon: Crown,
           title: t('profile.membersArea'),
-          description: 'Exclusive content & resources',
+          description: t('welcome.membersAreaDesc'),
           accent: 'text-amber-500 bg-amber-50 dark:bg-amber-950/30',
-          badge: 'Members',
+          badge: t('welcome.membersBadge'),
         },
         {
           href: `/${locale}/members/survey`,
           icon: Sparkles,
-          title: 'Personalized Plan',
-          description: 'Answer the questionnaire to get your 1-month plan',
+          title: t('welcome.personalizedPlan'),
+          description: t('welcome.personalizedPlanDesc'),
           accent: 'text-yellow-500 bg-yellow-50 dark:bg-yellow-950/30',
         },
       ]
@@ -110,21 +110,21 @@ export default function WelcomePage() {
       href: `/${locale}/events`,
       icon: Calendar,
       title: t('header.events'),
-      description: 'Browse and register for upcoming events',
+      description: t('welcome.eventsDesc'),
       accent: 'text-primary bg-primary/10',
     },
     {
       href: `/${locale}/coach-training`,
       icon: Users,
       title: t('header.allPrograms'),
-      description: 'Coach training & role teachers programs',
+      description: t('welcome.programsDesc'),
       accent: 'text-primary bg-primary/10',
     },
     {
       href: `/${locale}/membership`,
       icon: Crown,
       title: t('header.membership'),
-      description: isActiveMember ? "You're already a member" : 'Join for exclusive benefits',
+      description: isActiveMember ? t('welcome.alreadyMember') : t('welcome.joinBenefits'),
       accent: 'text-primary bg-primary/10',
     },
   ];
@@ -139,17 +139,17 @@ export default function WelcomePage() {
               <Logo locale={locale} size={56} />
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-2">
-              Welcome, {name}!
+              {t('welcome.greeting', { name })}
             </h1>
             <p className="text-base sm:text-lg text-muted-foreground">
               {isActiveMember
-                ? "You're an active member. Everything you need, in one place."
-                : 'Your personal hub — manage your account, events and explore what we offer.'}
+                ? t('welcome.activeMemberSubtitle')
+                : t('welcome.inactiveMemberSubtitle')}
             </p>
             {isActiveMember && (
               <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gradient-to-r from-amber-100 to-yellow-100 dark:from-amber-950/40 dark:to-yellow-950/40 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-200 text-xs font-medium">
                 <Crown className="h-3.5 w-3.5" />
-                {profile?.subscription_plan === 'yearly' ? 'Yearly Member' : 'Monthly Member'}
+                {profile?.subscription_plan === 'yearly' ? t('welcome.yearlyMember') : t('welcome.monthlyMember')}
               </div>
             )}
           </div>
@@ -157,7 +157,7 @@ export default function WelcomePage() {
           {/* Account / Personal Hub */}
           <section className="mb-10">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4 px-1">
-              Your account
+              {t('welcome.yourAccount')}
             </h2>
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               {personalCards.map((c) => (
@@ -171,7 +171,7 @@ export default function WelcomePage() {
             <section className="mb-10">
               <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4 px-1 flex items-center gap-2">
                 <Crown className="h-4 w-4 text-amber-500" />
-                For members
+                {t('welcome.forMembers')}
               </h2>
               <div className="grid gap-4 sm:grid-cols-2">
                 {memberCards.map((c) => (
@@ -184,7 +184,7 @@ export default function WelcomePage() {
           {/* Explore */}
           <section className="mb-10">
             <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-4 px-1">
-              Explore
+              {t('welcome.explore')}
             </h2>
             <div className="grid gap-4 sm:grid-cols-3">
               {exploreCards.map((c) => (
@@ -199,14 +199,14 @@ export default function WelcomePage() {
               <CardContent className="pt-6">
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                   <div>
-                    <h3 className="text-lg font-semibold mb-1">Unlock members-only benefits</h3>
+                    <h3 className="text-lg font-semibold mb-1">{t('welcome.unlockBenefits')}</h3>
                     <p className="text-sm text-muted-foreground">
-                      Access exclusive content, workshops, and a personalized 1-month plan built for you.
+                      {t('welcome.unlockDescription')}
                     </p>
                   </div>
                   <Link href={`/${locale}/membership`}>
                     <Button className="shrink-0">
-                      View Plans <ArrowRight className="ml-2 h-4 w-4" />
+                      {t('welcome.viewPlans')} <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </Link>
                 </div>

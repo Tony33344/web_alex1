@@ -11,10 +11,11 @@ function stripHtml(html: string): string {
   return html.replace(/<[^>]*>/g, '').replace(/&nbsp;/g, ' ').trim();
 }
 
-export async function generateMetadata(): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const t = await getTranslations();
   return {
-    title: 'About Us | Infinity Role Teachers',
-    description: 'Learn about our mission, vision, and the values that guide the Infinity Role Teachers community.',
+    title: `${t('about.title')} | ${t('meta.siteName')}`,
+    description: t('meta.defaultDescription'),
   };
 }
 
@@ -32,12 +33,12 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
 
   const pages = { mission, vision, donate, volunteer };
 
-  const pageTitle = aboutPage ? (getLocalizedField(aboutPage, 'title', locale) || 'About Us') : 'About Us';
+  const pageTitle = aboutPage ? (getLocalizedField(aboutPage, 'title', locale) || t('about.title')) : t('about.title');
   const pageContent = aboutPage ? (getLocalizedField(aboutPage, 'content', locale) || '') : '';
 
   const cardDefs = [
-    { slug: 'mission', fallbackTitle: t('about.ourMission'), fallbackExcerpt: 'Discover the purpose and driving force behind everything we do.', icon: Target, gradient: 'from-primary/10 via-primary/5 to-secondary/10' },
-    { slug: 'vision', fallbackTitle: t('about.ourVision'), fallbackExcerpt: 'Explore the future we envision and the path we walk together.', icon: Compass, gradient: 'from-secondary/10 via-secondary/5 to-primary/10' },
+    { slug: 'mission', fallbackTitle: t('about.ourMission'), fallbackExcerpt: t('about.missionDesc'), icon: Target, gradient: 'from-primary/10 via-primary/5 to-secondary/10' },
+    { slug: 'vision', fallbackTitle: t('about.ourVision'), fallbackExcerpt: t('about.visionDesc'), icon: Compass, gradient: 'from-secondary/10 via-secondary/5 to-primary/10' },
     { slug: 'donate', fallbackTitle: t('about.donate'), fallbackExcerpt: t('about.donateDesc'), icon: Heart, gradient: 'from-rose-50 via-primary/5 to-secondary/10 dark:from-rose-950/20' },
     { slug: 'volunteer', fallbackTitle: t('about.volunteer'), fallbackExcerpt: t('about.volunteerDesc'), icon: HandHeart, gradient: 'from-emerald-50 via-primary/5 to-secondary/10 dark:from-emerald-950/20' },
   ];

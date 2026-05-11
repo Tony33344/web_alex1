@@ -10,11 +10,12 @@ import { processContent } from '@/lib/utils/text';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const { locale } = await params;
+  const t = await getTranslations();
   const page = await getPage('mission');
-  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : 'Our Mission';
+  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : t('about.ourMission');
   const desc = page ? (getLocalizedField(page, 'meta_description', locale) || page.meta_description_en || '') : '';
   return {
-    title: `${title} | About`,
+    title: `${title} | ${t('navigation.about')}`,
     description: desc.slice(0, 160),
     openGraph: { title, description: desc.slice(0, 160), images: page?.hero_image_url ? [page.hero_image_url] : [] },
   };
@@ -25,13 +26,13 @@ export default async function MissionPage({ params }: { params: Promise<{ locale
   const t = await getTranslations();
   const page = await getPage('mission');
 
-  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : 'Our Mission';
+  const title = page ? (getLocalizedField(page, 'title', locale) || page.title_en) : t('about.ourMission');
   const content = page ? (getLocalizedField(page, 'content', locale) || page.content_en) : null;
   const textColor = page?.text_color || '#1a1a1a';
 
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
-      <Breadcrumbs locale={locale} items={[{ label: 'About', href: `/${locale}/about` }, { label: title }]} />
+      <Breadcrumbs locale={locale} items={[{ label: t('navigation.about'), href: `/${locale}/about` }, { label: title }]} />
 
       <div className="mt-8 space-y-10">
         {/* Hero */}
@@ -45,7 +46,7 @@ export default async function MissionPage({ params }: { params: Promise<{ locale
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/90">
                     <Target className="h-5 w-5 text-primary-foreground" />
                   </div>
-                  <span className="text-sm font-medium text-white/80 uppercase tracking-wider">Our Mission</span>
+                  <span className="text-sm font-medium text-white/80 uppercase tracking-wider">{t('about.ourMission')}</span>
                 </div>
                 <h1 className="text-3xl font-bold text-white sm:text-4xl lg:text-5xl tracking-tight">{title}</h1>
               </div>
@@ -56,7 +57,7 @@ export default async function MissionPage({ params }: { params: Promise<{ locale
                 <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
                   <Target className="h-6 w-6 text-primary" />
                 </div>
-                <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">Our Mission</span>
+                <span className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{t('about.ourMission')}</span>
               </div>
               <h1 className="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">{title}</h1>
             </div>
@@ -76,26 +77,26 @@ export default async function MissionPage({ params }: { params: Promise<{ locale
             <div className="space-y-4">
               <Card className="border-primary/20 bg-primary/5">
                 <CardContent className="pt-6 space-y-4">
-                  <h3 className="font-semibold">Explore More</h3>
+                  <h3 className="font-semibold">{t('about.exploreMore')}</h3>
                   <Link
                     href={`/${locale}/about/vision`}
                     className="flex items-center justify-between rounded-lg border bg-background p-4 text-sm font-medium transition-colors hover:border-primary hover:bg-primary/5 group"
                   >
-                    <span>Read Our Vision</span>
+                    <span>{t('about.readOurVision')}</span>
                     <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                   </Link>
                   <Link
                     href={`/${locale}/role-teachers`}
                     className="flex items-center justify-between rounded-lg border bg-background p-4 text-sm font-medium transition-colors hover:border-primary hover:bg-primary/5 group"
                   >
-                    <span>Meet Our Teachers</span>
+                    <span>{t('teachers.meetTeachers')}</span>
                     <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                   </Link>
                   <Link
                     href={`/${locale}/contact`}
                     className="flex items-center justify-between rounded-lg border bg-background p-4 text-sm font-medium transition-colors hover:border-primary hover:bg-primary/5 group"
                   >
-                    <span>Get in Touch</span>
+                    <span>{t('contact.title')}</span>
                     <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
                   </Link>
                 </CardContent>
@@ -106,7 +107,7 @@ export default async function MissionPage({ params }: { params: Promise<{ locale
           <Card className="border-dashed">
             <CardContent className="py-16 text-center">
               <Target className="mx-auto h-12 w-12 text-muted-foreground/40 mb-4" />
-              <p className="text-muted-foreground">Mission content will appear here once published in the admin panel.</p>
+              <p className="text-muted-foreground">{t('about.contentComingSoon')}</p>
             </CardContent>
           </Card>
         )}

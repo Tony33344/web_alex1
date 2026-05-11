@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useTranslations, useLocale } from 'next-intl';
 import { Sparkles, CheckCircle2, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,6 +23,9 @@ type Question = {
 type Response = { question_id: string; answer: unknown };
 
 export default function SurveyPage() {
+  const t = useTranslations('members');
+  const tc = useTranslations('common');
+  const locale = useLocale();
   const router = useRouter();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
@@ -66,7 +70,7 @@ export default function SurveyPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!gdpr) {
-      setError('Please accept the data processing consent to continue.');
+      setError(t('surveyConsentRequired'));
       return;
     }
     setSaving(true);
@@ -82,11 +86,11 @@ export default function SurveyPage() {
         body: JSON.stringify({ answers: payload, gdpr: true }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Save failed');
+      if (!res.ok) throw new Error(data.error || t('saveFailed'));
       setSaved(true);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Save failed');
+      setError(err instanceof Error ? err.message : t('saveFailed'));
     } finally {
       setSaving(false);
     }
@@ -95,7 +99,7 @@ export default function SurveyPage() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-16 text-center text-muted-foreground">
-        Loading survey…
+        {t('surveyLoading')}
       </div>
     );
   }
@@ -109,7 +113,7 @@ export default function SurveyPage() {
             className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-6"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back to Members Area
+            {t('backToMembers')}
           </Link>
 
           {/* Header */}
@@ -118,11 +122,10 @@ export default function SurveyPage() {
               <Sparkles className="h-7 w-7 text-white" />
             </div>
             <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-2">
-              Your personalized plan starts here
+              {t('surveyHeader')}
             </h1>
             <p className="text-muted-foreground text-base sm:text-lg">
-              Share a few details so one of our Infinity Role Teachers can design a 1-month plan
-              for your body, mind and spirit — on a call that suits you (phone, Zoom, Signal, WhatsApp).
+              {t('surveyDesc')}
             </p>
           </div>
 
@@ -130,9 +133,9 @@ export default function SurveyPage() {
             <div className="mb-8 rounded-lg border border-emerald-200 bg-emerald-50 dark:border-emerald-900 dark:bg-emerald-950/30 p-4 flex items-start gap-3">
               <CheckCircle2 className="h-5 w-5 text-emerald-600 mt-0.5 shrink-0" />
               <div className="text-sm">
-                <p className="font-medium text-emerald-900 dark:text-emerald-100">Thank you!</p>
+                <p className="font-medium text-emerald-900 dark:text-emerald-100">{t('surveyThankYou')}</p>
                 <p className="text-emerald-800 dark:text-emerald-200">
-                  Your answers have been saved. One of our teachers will reach out to you within the next few days.
+                  {t('surveySaved')}
                 </p>
               </div>
             </div>
@@ -140,8 +143,8 @@ export default function SurveyPage() {
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {questions.map((q, i) => {
-              const label = q.question_en;
-              const help = q.help_text_en;
+              const label = (locale === 'si' && q.question_si) ? q.question_si : q.question_en;
+              const help = (locale === 'si' && q.help_text_si) ? q.help_text_si : q.help_text_en;
               return (
                 <Card key={q.id} className="border-amber-100 dark:border-amber-900/40">
                   <CardHeader className="pb-3">
@@ -248,14 +251,12 @@ export default function SurveyPage() {
                   <span className="text-sm">
                     <span className="flex items-center gap-1 font-medium mb-1">
                       <ShieldCheck className="h-4 w-4 text-blue-600" />
-                      I consent to the processing of my personal data
+                      {t('gdprConsent')}
                     </span>
                     <span className="text-muted-foreground">
-                      I agree that Infinity Role Teachers / AMS4EVER AG may store and process my answers
-                      solely for the purpose of designing a personalized health and wellness plan.
-                      I can withdraw consent at any time. See our{' '}
+                      {t('gdprDesc')}{' '}
                       <Link href="/privacy" className="underline underline-offset-2">
-                        Privacy Policy
+                        {tc('privacy')}
                       </Link>
                       .
                     </span>
@@ -272,14 +273,14 @@ export default function SurveyPage() {
 
             <div className="flex justify-end gap-3">
               <Button type="button" variant="outline" onClick={() => router.push('/members')}>
-                Cancel
+                {tc('cancel')}
               </Button>
               <Button
                 type="submit"
                 disabled={saving || !gdpr}
                 className="bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600"
               >
-                {saving ? 'Saving…' : saved ? 'Update answers' : 'Save & request my plan'}
+                {saving ? t('saving') : saved ? t('updateAnswers') : t('saveAndRequest')}
               </Button>
             </div>
           </form>

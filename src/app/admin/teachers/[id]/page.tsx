@@ -22,10 +22,11 @@ export default function EditTeacherPage() {
   const [photoUrl, setPhotoUrl] = useState('');
   const [shortBio, setShortBio] = useState('');
   const [bio, setBio] = useState('');
+  const [displayOrder, setDisplayOrder] = useState(0);
 
   useEffect(() => {
     fetch(`/api/admin/data?table=teachers&id=${id}`)
-      .then(r => r.json()).then(d => { const t = d as Teacher | null; setTeacher(t); setPhotoUrl(t?.photo_url || ''); setShortBio(t?.short_bio_en || ''); setBio(t?.bio_en || ''); setLoading(false); })
+      .then(r => r.json()).then(d => { const t = d as Teacher | null; setTeacher(t); setPhotoUrl(t?.photo_url || ''); setShortBio(t?.short_bio_en || ''); setBio(t?.bio_en || ''); setDisplayOrder(t?.display_order || 0); setLoading(false); })
       .catch(() => setLoading(false));
   }, [id]);
 
@@ -59,6 +60,7 @@ export default function EditTeacherPage() {
         specialties: (fd.get('specialties') as string).split(',').map((s: string) => s.trim()).filter(Boolean),
         photo_url: fd.get('photo_url') || null,
         is_active: fd.get('is_active') === 'on',
+        display_order: displayOrder,
       }}),
     });
     if (res.ok) router.push('/admin/teachers');
@@ -169,6 +171,10 @@ export default function EditTeacherPage() {
             <div className="space-y-2">
               <Label htmlFor="specialties">Specialties (comma-separated)</Label>
               <Input id="specialties" name="specialties" defaultValue={teacher.specialties?.join(', ') || ''} />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="display_order">Display Order (lower numbers appear first)</Label>
+              <Input id="display_order" name="display_order" type="number" value={displayOrder} onChange={e => setDisplayOrder(parseInt(e.target.value) || 0)} />
             </div>
             <div className="space-y-2">
               <Label>Teacher Photo</Label>
